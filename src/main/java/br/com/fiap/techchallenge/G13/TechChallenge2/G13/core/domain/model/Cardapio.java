@@ -1,8 +1,10 @@
-package br.com.fiap.techchallenge.G13.TechChallenge2.G13.domain.entity;
+package br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
+
+import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat.UUID;
 
 public class Cardapio {
     private final UUID id;
