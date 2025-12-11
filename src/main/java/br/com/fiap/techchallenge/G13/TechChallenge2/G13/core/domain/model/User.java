@@ -1,5 +1,4 @@
 package br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model;
-
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.enums.UserType;
 
 public class User {
