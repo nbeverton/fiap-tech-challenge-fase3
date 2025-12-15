@@ -53,8 +53,6 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
         entity.setCuisineType(restaurant.getCuisineType());
         entity.setOpeningHours(restaurant.getOpeningHours());
         entity.setOwnerId(restaurant.getOwnerId());
-        entity.setCreatedAt(restaurant.getCreatedAt());
-        entity.setUpdatedAt(restaurant.getUpdatedAt());
 
         return entity;
     }
@@ -66,9 +64,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
                 entity.getAddress(),
                 entity.getCuisineType(),
                 entity.getOpeningHours(),
-                entity.getOwnerId(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt()
+                entity.getOwnerId()
         );
     }
 }
