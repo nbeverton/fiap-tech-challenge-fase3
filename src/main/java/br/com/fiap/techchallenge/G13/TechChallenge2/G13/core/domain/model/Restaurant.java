@@ -1,6 +1,5 @@
 package br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model;
 
-import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -13,17 +12,13 @@ public class Restaurant {
     private String openingHours;
     private String ownerId;
 
-    private Instant createdAt;
-    private Instant updatedAt;
-
     public Restaurant(String id,
                       String name,
                       String address,
                       String cuisineType,
                       String openingHours,
-                      String ownerId,
-                      Instant createdAt,
-                      Instant updatedAt) {
+                      String ownerId
+                      ) {
 
         this.id = requireNonBlank(id, "id");
         this.name = requireNonBlank(name, "name");
@@ -31,8 +26,6 @@ public class Restaurant {
         this.cuisineType = cuisineType;
         this.openingHours = openingHours;
         this.ownerId = requireNonBlank(ownerId, "ownerId");
-        this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
-        this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt must not be null");
     }
 
     public static Restaurant create(String name,
@@ -40,16 +33,13 @@ public class Restaurant {
                                     String cuisineType,
                                     String openingHours,
                                     String ownerId) {
-        Instant now = Instant.now();
         return new Restaurant(
                 UUID.randomUUID().toString(),
                 name,
                 address,
                 cuisineType,
                 openingHours,
-                ownerId,
-                now,
-                now
+                ownerId
         );
     }
 
@@ -84,13 +74,6 @@ public class Restaurant {
         return ownerId;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -114,8 +97,6 @@ public class Restaurant {
                 ", cuisineType='" + cuisineType + '\'' +
                 ", openingHours='" + openingHours + '\'' +
                 ", ownerId='" + ownerId + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

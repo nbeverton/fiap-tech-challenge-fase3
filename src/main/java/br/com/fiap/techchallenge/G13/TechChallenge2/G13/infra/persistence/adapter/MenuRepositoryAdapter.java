@@ -129,8 +129,13 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
         entity.setPrice(menu.getPrice());
         entity.setDineInAvailable(menu.isDineInAvailable());
         entity.setImageUrl(menu.getImageUrl());
-        entity.setCreatedAt(menu.getCreatedAt());
-        entity.setUpdatedAt(menu.getUpdatedAt());
+
+        Instant now = Instant.now();
+        if (entity.getCreatedAt() == null) {
+            entity.setCreatedAt(now);
+        }
+        entity.setUpdatedAt(now);
+
         return entity;
     }
 
@@ -142,32 +147,18 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
                 entity.getPrice(),
                 entity.isDineInAvailable(),
                 entity.getImageUrl(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt(),
                 restaurant
         );
     }
 
     private Restaurant toRestaurantDomain(RestaurantEntity entity) {
-        Instant createdAt = entity.getCreatedAt();
-        Instant updatedAt = entity.getUpdatedAt();
-
-        if (createdAt == null) {
-            createdAt = Instant.now(); // TODO: decidir default melhor
-        }
-        if (updatedAt == null) {
-            updatedAt = createdAt;
-        }
-
         return new Restaurant(
                 entity.getId(),
                 entity.getName(),
                 entity.getAddress(),
                 entity.getCuisineType(),
                 entity.getOpeningHours(),
-                entity.getOwnerId(),
-                createdAt,
-                updatedAt
+                entity.getOwnerId()
         );
     }
 }

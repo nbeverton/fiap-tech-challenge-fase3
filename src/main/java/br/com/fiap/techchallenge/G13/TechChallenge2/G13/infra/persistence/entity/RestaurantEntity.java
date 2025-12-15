@@ -17,24 +17,18 @@ public class RestaurantEntity {
     private String openingHours;
     private String ownerId;
 
-    private Instant createdAt;
-    private Instant updatedAt;
-
     private List<MenuEntity> menu;
 
     public RestaurantEntity() {}
 
     public RestaurantEntity(String id, String name, String address, String cuisineType,
-                            String openingHours, String ownerId, Instant createdAt,
-                            Instant updatedAt, List<MenuEntity> menu) {
+                            String openingHours, String ownerId, List<MenuEntity> menu) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.cuisineType = cuisineType;
         this.openingHours = openingHours;
         this.ownerId = ownerId;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
         this.menu = menu;
     }
 
@@ -84,22 +78,6 @@ public class RestaurantEntity {
 
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public List<MenuEntity> getMenu() {

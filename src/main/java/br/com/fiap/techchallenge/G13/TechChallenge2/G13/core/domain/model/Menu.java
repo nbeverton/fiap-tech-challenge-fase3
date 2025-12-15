@@ -1,6 +1,5 @@
 package br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model;
 
-import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,11 +10,10 @@ public class Menu {
     private final double price;
     private final boolean dineInAvailable;
     private final String imageUrl;
-    private final Instant createdAt;
-    private final Instant updatedAt;
+
     private final Restaurant restaurant;
 
-    public Menu(String id, String name, String description, double price, boolean dineInAvailable, String imageUrl, Instant createdAt, Instant updatedAt, Restaurant restaurant) {
+    public Menu(String id, String name, String description, double price, boolean dineInAvailable, String imageUrl, Restaurant restaurant) {
 
         this.id = requireNonBlank(id, "id");
         this.name = requireNonBlank(name, "name" );
@@ -28,26 +26,22 @@ public class Menu {
 
         this.dineInAvailable = dineInAvailable;
         this.imageUrl = imageUrl;
-        this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
-        this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt must not be null");
         this.restaurant = Objects.requireNonNull(restaurant, "restaurant must not be null");
     }
 
     public static Menu create(String name,
                               String description,
                               double price,
-                              boolean onlyForDineIn,
+                              boolean dineInAvailable,
                               String imageUrl,
-                              Instant createdAt,
-                              Instant updatedAt,
                               Restaurant restaurant) {
         return new Menu(UUID.randomUUID().toString(),
                 name,
                 description,
                 price,
-                onlyForDineIn,
+                dineInAvailable,
                 imageUrl,
-                createdAt, updatedAt, restaurant);
+                restaurant);
     }
 
     private static String requireNonBlank(String value, String fieldName) {
@@ -81,14 +75,6 @@ public class Menu {
         return imageUrl;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
     public Restaurant getRestaurant() {
         return restaurant;
     }
@@ -116,8 +102,6 @@ public class Menu {
                 ", price=" + price +
                 ", dineInAvailable=" + dineInAvailable +
                 ", imageUrl='" + imageUrl + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 ", restaurant=" + restaurant +
                 '}';
     }
