@@ -1,4 +1,4 @@
-package br.com.fiap.techchallenge.G13.TechChallenge2.G13.infra.persistence.mapper;
+package br.com.fiap.techchallenge.G13.TechChallenge2.G13.infra.web.mapper;
 
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.enums.UserType;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model.Client;
