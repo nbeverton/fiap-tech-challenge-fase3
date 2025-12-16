@@ -1,7 +1,5 @@
 package br.com.fiap.techchallenge.G13.TechChallenge2.G13.infra.persistence.entity;
 
-import java.time.Instant;
-
 public class MenuEntity {
 
     private String id;
@@ -10,8 +8,6 @@ public class MenuEntity {
     private double price;
     private boolean dineInAvailable;
     private String imageUrl;
-    private Instant createdAt;
-    private Instant updatedAt;
 
     public MenuEntity() {
     }
@@ -21,17 +17,13 @@ public class MenuEntity {
                       String description,
                       double price,
                       boolean dineInAvailable,
-                      String imageUrl,
-                      Instant createdAt,
-                      Instant updatedAt) {
+                      String imageUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.dineInAvailable = dineInAvailable;
         this.imageUrl = imageUrl;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public String getId() {
@@ -80,21 +72,5 @@ public class MenuEntity {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

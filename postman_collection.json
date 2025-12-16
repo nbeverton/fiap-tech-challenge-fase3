@@ -1,0 +1,157 @@
+{
+  "info": {
+    "name": "TechChallenge2 - Restaurants API",
+    "_postman_id": "b3a1c6f0-0000-4000-8000-000000000000",
+    "description": "Coleção para testar a API de Restaurantes e Menus",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Restaurants",
+      "item": [
+        {
+          "name": "Create Restaurant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{
+  \"name\": \"Pizzaria do Bairro\",
+  \"addressId\": \"addr-123\",
+  \"cuisineType\": \"ITALIAN\",
+  \"openingHours\": { \"opens\": \"10:00\", \"closes\": \"23:00\" },
+  \"userId\": \"user-1\",
+  \"menu\": [
+    {
+      \"name\": \"Margherita\",
+      \"description\": \"Mussarela, tomate e manjericão\",
+      \"price\": 45.0,
+      \"dineInAvailable\": true,
+      \"imageUrl\": \"https://example.com/pizza.jpg\"
+    }
+  ]
+}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurants",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","restaurants"]
+            }
+          }
+        },
+        {
+          "name": "Get All Restaurants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurants",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","restaurants"]
+            }
+          }
+        },
+        {
+          "name": "Get Restaurant by Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurants/{{restaurantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","restaurants","{{restaurantId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Restaurant",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{
+  \"name\": \"Pizzaria Central (Atualizada)\",
+  \"addressId\": \"addr-123\",
+  \"cuisineType\": \"ITALIAN\",
+  \"openingHours\": { \"opens\": \"11:00\", \"closes\": \"22:00\" },
+  \"userId\": \"user-1\"
+}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurants/{{restaurantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","restaurants","{{restaurantId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Restaurant",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurants/{{restaurantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","restaurants","{{restaurantId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Menus",
+      "item": [
+        {
+          "name": "Create Menu Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{
+  \"name\": \"Calabresa\",
+  \"description\": \"Calabresa fatiada, cebola e azeitona\",
+  \"price\": 50.0,
+  \"dineInAvailable\": true,
+  \"imageUrl\": \"https://example.com/calabresa.jpg\"
+}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurants/{{restaurantId}}/menus",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","restaurants","{{restaurantId}}","menus"]
+            }
+          }
+        },
+        {
+          "name": "List Menus by Restaurant",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurants/{{restaurantId}}/menus",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","restaurants","{{restaurantId}}","menus"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": []
+}
+

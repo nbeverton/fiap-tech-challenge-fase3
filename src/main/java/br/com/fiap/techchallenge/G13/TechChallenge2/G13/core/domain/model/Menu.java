@@ -1,6 +1,5 @@
 package br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model;
 
-import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,11 +10,8 @@ public class Menu {
     private final double price;
     private final boolean dineInAvailable;
     private final String imageUrl;
-    private final Instant createdAt;
-    private final Instant updatedAt;
-    private final Restaurant restaurant;
 
-    public Menu(String id, String name, String description, double price, boolean dineInAvailable, String imageUrl, Instant createdAt, Instant updatedAt, Restaurant restaurant) {
+    public Menu(String id, String name, String description, double price, boolean dineInAvailable, String imageUrl) {
 
         this.id = requireNonBlank(id, "id");
         this.name = requireNonBlank(name, "name" );
@@ -28,26 +24,19 @@ public class Menu {
 
         this.dineInAvailable = dineInAvailable;
         this.imageUrl = imageUrl;
-        this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
-        this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt must not be null");
-        this.restaurant = Objects.requireNonNull(restaurant, "restaurant must not be null");
     }
 
     public static Menu create(String name,
                               String description,
                               double price,
                               boolean onlyForDineIn,
-                              String imageUrl,
-                              Instant createdAt,
-                              Instant updatedAt,
-                              Restaurant restaurant) {
+                              String imageUrl) {
         return new Menu(UUID.randomUUID().toString(),
                 name,
                 description,
                 price,
                 onlyForDineIn,
-                imageUrl,
-                createdAt, updatedAt, restaurant);
+                imageUrl);
     }
 
     private static String requireNonBlank(String value, String fieldName) {
@@ -81,20 +70,6 @@ public class Menu {
         return imageUrl;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -102,12 +77,10 @@ public class Menu {
         return Objects.equals(id, menu.id);
     }
 
-    @Override
     public int hashCode() {
         return Objects.hash(id);
     }
 
-    @Override
     public String toString() {
         return "Menu{" +
                 "id='" + id + '\'' +
@@ -116,9 +89,6 @@ public class Menu {
                 ", price=" + price +
                 ", dineInAvailable=" + dineInAvailable +
                 ", imageUrl='" + imageUrl + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", restaurant=" + restaurant +
                 '}';
     }
 }

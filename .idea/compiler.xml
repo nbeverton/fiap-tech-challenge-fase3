@@ -10,7 +10,6 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
         <module name="TechChallenge2.G13" />
-        <module name="fiap-tech-challenge-fase2" />
       </profile>
     </annotationProcessing>
   </component>

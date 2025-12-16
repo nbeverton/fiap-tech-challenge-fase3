@@ -1,10 +1,15 @@
 package br.com.fiap.techchallenge.G13.TechChallenge2.G13.infra.web.dto;
 
-public record RestaurantDto(
-        String name,
-        String address,
-        String cuisineType,
-        String openingHours,
-        String ownerId
-) {}
+import java.util.List;
 
+public record RestaurantDto(
+        String id,
+        String name,
+        String addressId,
+        String cuisineType,
+        OpeningHoursDto openingHours,
+        String userId,
+        List<MenuDto> menu
+) {
+    public record OpeningHoursDto(String opens, String closes) {}
+}

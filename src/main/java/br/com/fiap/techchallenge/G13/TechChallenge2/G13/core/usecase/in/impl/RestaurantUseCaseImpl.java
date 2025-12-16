@@ -1,13 +1,12 @@
 package br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.usecase.in.impl;
 
+import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.exception.NotFoundException;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model.Restaurant;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.usecase.in.RestaurantUseCase;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.usecase.out.RestaurantRepositoryPort;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class RestaurantUseCaseImpl implements RestaurantUseCase {
 
     private final RestaurantRepositoryPort restaurantRepositoryPort;
@@ -16,30 +15,36 @@ public class RestaurantUseCaseImpl implements RestaurantUseCase {
         this.restaurantRepositoryPort = restaurantRepositoryPort;
     }
 
-    @Override
     public Restaurant create(Restaurant restaurant) {
         return restaurantRepositoryPort.save(restaurant);
     }
 
-    @Override
     public Restaurant update(String id, Restaurant restaurant) {
-        // TODO: implementar regra de update correta (garantir id, etc.)
-        return restaurantRepositoryPort.save(restaurant);
+        // ensure the id matches and restaurant exists
+        Restaurant existing = restaurantRepositoryPort.findById(id)
+                .orElseThrow(() -> new NotFoundException("Restaurante não encontrado"));
+        // create a new Restaurant preserving id
+        Restaurant toSave = new Restaurant(
+                existing.getId(),
+                restaurant.getName(),
+                restaurant.getAddressId(),
+                restaurant.getCuisineType(),
+                restaurant.getOpeningHours(),
+                restaurant.getUserId(),
+                restaurant.getMenu()
+        );
+        return restaurantRepositoryPort.save(toSave);
     }
 
-    @Override
     public void delete(String id) {
         restaurantRepositoryPort.delete(id);
     }
 
-    @Override
     public Restaurant findById(String id) {
-        // TODO: trocar RuntimeException por exception de domínio (NotFoundException)
         return restaurantRepositoryPort.findById(id)
-                .orElseThrow(() -> new RuntimeException("Restaurante não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Restaurante não encontrado"));
     }
 
-    @Override
     public List<Restaurant> findAll() {
         return restaurantRepositoryPort.findAll();
     }

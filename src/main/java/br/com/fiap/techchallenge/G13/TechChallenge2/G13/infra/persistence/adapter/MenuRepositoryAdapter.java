@@ -1,6 +1,8 @@
 package br.com.fiap.techchallenge.G13.TechChallenge2.G13.infra.persistence.adapter;
 
+import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.enums.CuisineType;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model.Menu;
+import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model.OpeningHours;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model.Restaurant;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.usecase.out.MenuRepositoryPort;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.infra.persistence.entity.MenuEntity;
@@ -8,10 +10,10 @@ import br.com.fiap.techchallenge.G13.TechChallenge2.G13.infra.persistence.entity
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.infra.persistence.repository.SpringRestaurantRepository;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class MenuRepositoryAdapter implements MenuRepositoryPort {
@@ -48,23 +50,19 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Menu não foi salvo")); // TODO: tratar erro de forma adequada
 
-        Restaurant restaurantDomain = toRestaurantDomain(savedRestaurant);
-
-        return toDomain(savedMenuEntity, restaurantDomain);
+        return toDomain(savedMenuEntity);
     }
 
     @Override
     public void deleteById(String restaurantId, String menuId) {
         RestaurantEntity restaurantEntity = getRestaurantOrThrow(restaurantId);
 
-        // Se não tiver menus, não lança exception customizada por enquanto
         List<MenuEntity> menus = Optional.ofNullable(restaurantEntity.getMenu())
-                .orElseGet(ArrayList::new); // TODO: decidir regra de negócio para restaurante sem menus
+                .orElseGet(ArrayList::new);
         restaurantEntity.setMenu(menus);
 
         boolean removed = menus.removeIf(m -> m.getId().equals(menuId));
         if (!removed) {
-            // TODO: substituir por NotFoundException ou outra exception de domínio
             throw new IllegalStateException(
                     "Menu " + menuId + " não encontrado para o restaurante " + restaurantId
             );
@@ -80,35 +78,29 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
                     List<MenuEntity> menus = rest.getMenu();
                     if (menus == null) return Optional.empty();
 
-                    Restaurant restaurantDomain = toRestaurantDomain(rest);
-
                     return menus.stream()
                             .filter(m -> m.getId().equals(menuId))
                             .findFirst()
-                            .map(m -> toDomain(m, restaurantDomain));
+                            .map(this::toDomain);
                 });
     }
 
     @Override
     public List<Menu> findByRestaurantId(String restaurantId) {
         RestaurantEntity restaurantEntity = getRestaurantOrThrow(restaurantId);
-        Restaurant restaurantDomain = toRestaurantDomain(restaurantEntity);
 
         List<MenuEntity> entities = Optional.ofNullable(restaurantEntity.getMenu())
                 .orElse(List.of());
 
-        List<Menu> result = new ArrayList<>();
-        for (MenuEntity entity : entities) {
-            result.add(toDomain(entity, restaurantDomain));
-        }
-        return result;
+        return entities.stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
     }
 
     // ---------- helpers privados ----------
 
     private RestaurantEntity getRestaurantOrThrow(String restaurantId) {
         return restaurantRepository.findById(restaurantId)
-                // TODO: substituir RuntimeException por NotFoundException de domínio
                 .orElseThrow(() -> new RuntimeException("Restaurante " + restaurantId + " não encontrado"));
     }
 
@@ -129,45 +121,50 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
         entity.setPrice(menu.getPrice());
         entity.setDineInAvailable(menu.isDineInAvailable());
         entity.setImageUrl(menu.getImageUrl());
-        entity.setCreatedAt(menu.getCreatedAt());
-        entity.setUpdatedAt(menu.getUpdatedAt());
         return entity;
     }
 
-    private Menu toDomain(MenuEntity entity, Restaurant restaurant) {
+    private Menu toDomain(MenuEntity entity) {
         return new Menu(
                 entity.getId(),
                 entity.getName(),
                 entity.getDescription(),
                 entity.getPrice(),
                 entity.isDineInAvailable(),
-                entity.getImageUrl(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt(),
-                restaurant
+                entity.getImageUrl()
         );
     }
 
     private Restaurant toRestaurantDomain(RestaurantEntity entity) {
-        Instant createdAt = entity.getCreatedAt();
-        Instant updatedAt = entity.getUpdatedAt();
+        List<Menu> menu = Optional.ofNullable(entity.getMenu())
+                .orElse(List.of()).stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
 
-        if (createdAt == null) {
-            createdAt = Instant.now(); // TODO: decidir default melhor
+        OpeningHours opening = null;
+        if (entity.getOpeningHours() != null) {
+            opening = new OpeningHours(entity.getOpeningHours().getOpens(), entity.getOpeningHours().getCloses());
         }
-        if (updatedAt == null) {
-            updatedAt = createdAt;
+
+        CuisineType cuisine;
+        if (entity.getCuisineType() != null) {
+            try {
+                cuisine = CuisineType.valueOf(entity.getCuisineType());
+            } catch (Exception e) {
+                cuisine = CuisineType.OTHER;
+            }
+        } else {
+            cuisine = CuisineType.OTHER;
         }
 
         return new Restaurant(
                 entity.getId(),
                 entity.getName(),
-                entity.getAddress(),
-                entity.getCuisineType(),
-                entity.getOpeningHours(),
-                entity.getOwnerId(),
-                createdAt,
-                updatedAt
+                entity.getAddressId(),
+                cuisine,
+                opening,
+                entity.getUserId(),
+                menu
         );
     }
 }

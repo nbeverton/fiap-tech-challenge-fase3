@@ -3,11 +3,9 @@ package br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.usecase.in.impl;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.domain.model.Menu;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.usecase.in.MenuUseCase;
 import br.com.fiap.techchallenge.G13.TechChallenge2.G13.core.usecase.out.MenuRepositoryPort;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class MenuUseCaseImpl implements MenuUseCase {
 
     private final MenuRepositoryPort menuRepositoryPort;
@@ -16,30 +14,25 @@ public class MenuUseCaseImpl implements MenuUseCase {
         this.menuRepositoryPort = menuRepositoryPort;
     }
 
-    @Override
     public Menu create(String restaurantId, Menu menu) {
         return menuRepositoryPort.save(restaurantId, menu);
     }
 
-    @Override
     public Menu update(String restaurantId, String menuId, Menu menu) {
         // TODO: ajustar regra de update (garantir que o Menu tenha o ID correto)
         return menuRepositoryPort.save(restaurantId, menu);
     }
 
-    @Override
     public void delete(String restaurantId, String menuId) {
         menuRepositoryPort.deleteById(restaurantId, menuId);
     }
 
-    @Override
     public Menu findById(String restaurantId, String menuId) {
         // TODO: trocar RuntimeException por exception de domínio (NotFoundException)
         return menuRepositoryPort.findById(restaurantId, menuId)
                 .orElseThrow(() -> new RuntimeException("Menu não encontrado"));
     }
 
-    @Override
     public List<Menu> findByRestaurantId(String restaurantId) {
         return menuRepositoryPort.findByRestaurantId(restaurantId);
     }
