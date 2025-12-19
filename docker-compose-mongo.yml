@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  # MongoDB
+  mongodb:
+    image: mongo:7
+    container_name: mongodb-local
+    environment:
+      MONGO_INITDB_DATABASE: techchallenge
+      #MONGO_INITDB_ROOT_USERNAME: mongo
+      #MONGO_INITDB_ROOT_PASSWORD: 1234
+    ports:
+      - "27018:27017"
+    networks:
+      - fiap-network
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+networks:
+  fiap-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
