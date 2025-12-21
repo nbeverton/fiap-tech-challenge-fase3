@@ -1,7 +1,12 @@
 package br.com.fiap.techchallenge.infra.persistence.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 public class MenuEntity {
 
+    @Field
+    @Id
     private String id;
     private String name;
     private String description;

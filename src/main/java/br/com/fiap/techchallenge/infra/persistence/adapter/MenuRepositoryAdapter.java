@@ -1,9 +1,6 @@
 package br.com.fiap.techchallenge.infra.persistence.adapter;
 
-import br.com.fiap.techchallenge.core.domain.enums.CuisineType;
 import br.com.fiap.techchallenge.core.domain.model.Menu;
-import br.com.fiap.techchallenge.core.domain.model.OpeningHours;
-import br.com.fiap.techchallenge.core.domain.model.Restaurant;
 import br.com.fiap.techchallenge.core.usecase.out.MenuRepositoryPort;
 import br.com.fiap.techchallenge.infra.persistence.entity.MenuEntity;
 import br.com.fiap.techchallenge.infra.persistence.documents.RestaurantDocument;
@@ -27,16 +24,14 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
 
     @Override
     public Menu save(String restaurantId, Menu menu) {
-        RestaurantDocument restaurantEntity = getRestaurantOrThrow(restaurantId);
+        RestaurantDocument restaurant = getRestaurantOrThrow(restaurantId);
 
-        List<MenuEntity> menuList = restaurantEntity.getMenu();
-        if (menuList == null) {
-            menuList = new ArrayList<>();
-            restaurantEntity.setMenu(menuList);
-        }
+        List<MenuEntity> menuList = Optional.ofNullable(restaurant.getMenu())
+                .orElse(new ArrayList<>());
 
         MenuEntity menuEntity = toEntity(menu);
 
+        // Atualiza se já existe
         int index = indexOfMenu(menuList, menuEntity.getId());
         if (index >= 0) {
             menuList.set(index, menuEntity);
@@ -44,39 +39,38 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
             menuList.add(menuEntity);
         }
 
-        RestaurantDocument savedRestaurant = restaurantRepository.save(restaurantEntity);
+        restaurant.setMenu(menuList);
+        RestaurantDocument savedRestaurant = restaurantRepository.save(restaurant);
 
         MenuEntity savedMenuEntity = savedRestaurant.getMenu().stream()
                 .filter(m -> m.getId().equals(menuEntity.getId()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Menu não foi salvo")); // TODO: tratar erro de forma adequada
+                .orElseThrow(() -> new IllegalStateException("Menu não foi salvo"));
 
         return toDomain(savedMenuEntity);
     }
 
     @Override
     public void deleteById(String restaurantId, String menuId) {
-        RestaurantDocument restaurantEntity = getRestaurantOrThrow(restaurantId);
+        RestaurantDocument restaurant = getRestaurantOrThrow(restaurantId);
 
-        List<MenuEntity> menus = Optional.ofNullable(restaurantEntity.getMenu())
-                .orElseGet(ArrayList::new);
-        restaurantEntity.setMenu(menus);
+        List<MenuEntity> menus = Optional.ofNullable(restaurant.getMenu())
+                .orElse(new ArrayList<>());
 
         boolean removed = menus.removeIf(m -> m.getId().equals(menuId));
         if (!removed) {
-            throw new IllegalStateException(
-                    "Menu " + menuId + " não encontrado para o restaurante " + restaurantId
-            );
+            throw new IllegalStateException("Menu " + menuId + " não encontrado para o restaurante " + restaurantId);
         }
 
-        restaurantRepository.save(restaurantEntity);
+        restaurant.setMenu(menus);
+        restaurantRepository.save(restaurant);
     }
 
     @Override
     public Optional<Menu> findById(String restaurantId, String menuId) {
         return restaurantRepository.findById(restaurantId)
-                .flatMap(rest -> {
-                    List<MenuEntity> menus = rest.getMenu();
+                .flatMap(restaurant -> {
+                    List<MenuEntity> menus = restaurant.getMenu();
                     if (menus == null) return Optional.empty();
 
                     return menus.stream()
@@ -88,17 +82,17 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
 
     @Override
     public List<Menu> findByRestaurantId(String restaurantId) {
-        RestaurantDocument restaurantEntity = getRestaurantOrThrow(restaurantId);
+        RestaurantDocument restaurant = getRestaurantOrThrow(restaurantId);
 
-        List<MenuEntity> entities = Optional.ofNullable(restaurantEntity.getMenu())
+        List<MenuEntity> menus = Optional.ofNullable(restaurant.getMenu())
                 .orElse(List.of());
 
-        return entities.stream()
+        return menus.stream()
                 .map(this::toDomain)
                 .collect(Collectors.toList());
     }
 
-    // ---------- helpers privados ----------
+    // ---------- Helpers ----------
 
     private RestaurantDocument getRestaurantOrThrow(String restaurantId) {
         return restaurantRepository.findById(restaurantId)
@@ -126,7 +120,7 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
     }
 
     private Menu toDomain(MenuEntity entity) {
-        return  Menu.restore(
+        return Menu.restore(
                 entity.getId(),
                 entity.getName(),
                 entity.getDescription(),
@@ -135,37 +129,5 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
                 entity.getImageUrl()
         );
     }
-
-    private Restaurant toRestaurantDomain(RestaurantDocument entity) {
-        List<Menu> menu = Optional.ofNullable(entity.getMenu())
-                .orElse(List.of()).stream()
-                .map(this::toDomain)
-                .collect(Collectors.toList());
-
-        OpeningHours opening = null;
-        if (entity.getOpeningHours() != null) {
-            opening = new OpeningHours(entity.getOpeningHours().getOpens(), entity.getOpeningHours().getCloses());
-        }
-
-        CuisineType cuisine;
-        if (entity.getCuisineType() != null) {
-            try {
-                cuisine = CuisineType.valueOf(entity.getCuisineType());
-            } catch (Exception e) {
-                cuisine = CuisineType.OTHER;
-            }
-        } else {
-            cuisine = CuisineType.OTHER;
-        }
-
-        return new Restaurant(
-                entity.getId(),
-                entity.getName(),
-                entity.getAddressId(),
-                cuisine,
-                opening,
-                entity.getUserId(),
-                menu
-        );
-    }
 }
+

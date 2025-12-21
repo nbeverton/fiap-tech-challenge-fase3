@@ -7,6 +7,7 @@ import br.com.fiap.techchallenge.core.domain.model.Restaurant;
 import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 import br.com.fiap.techchallenge.infra.persistence.entity.MenuEntity;
 import br.com.fiap.techchallenge.infra.persistence.entity.OpeningHoursEntity;
+import br.com.fiap.techchallenge.infra.persistence.documents.OpeningHoursDocument;
 import br.com.fiap.techchallenge.infra.persistence.documents.RestaurantDocument;
 import br.com.fiap.techchallenge.infra.persistence.repository.SpringRestaurantRepository;
 import org.springframework.stereotype.Component;
@@ -50,6 +51,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
         repo.deleteById(id);
     }
 
+    // ---------- Conversão Domain -> Document ----------
     private RestaurantDocument toEntity(Restaurant restaurant) {
         RestaurantDocument entity = new RestaurantDocument();
 
@@ -57,10 +59,13 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
         entity.setName(restaurant.getName());
         entity.setAddressId(restaurant.getAddressId());
         entity.setCuisineType(restaurant.getCuisineType() == null ? null : restaurant.getCuisineType().name());
+
         OpeningHours oh = restaurant.getOpeningHours();
         if (oh != null) {
-            entity.setOpeningHours(new OpeningHoursEntity(oh.getOpens(), oh.getCloses()));
+            // Convertendo OpeningHoursEntity para OpeningHoursDocument
+            entity.setOpeningHours(toDocument(new OpeningHoursEntity(oh.getOpens(), oh.getCloses())));
         }
+
         entity.setUserId(restaurant.getUserId());
 
         List<MenuEntity> menuEntities = restaurant.getMenu().stream()
@@ -71,6 +76,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
         return entity;
     }
 
+    // ---------- Conversão Document -> Domain ----------
     private Restaurant toDomain(RestaurantDocument entity) {
         List<Menu> menu = entity.getMenu() == null ? List.of() : entity.getMenu().stream()
                 .map(this::menuToDomain)
@@ -78,11 +84,13 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
 
         OpeningHours opening = null;
         if (entity.getOpeningHours() != null) {
-            opening = new OpeningHours(entity.getOpeningHours().getOpens(), entity.getOpeningHours().getCloses());
+            opening = new OpeningHours(
+                    entity.getOpeningHours().getOpens(),
+                    entity.getOpeningHours().getCloses()
+            );
         }
 
-        // convert cuisineType string to enum if possible
-        CuisineType cuisine = null;
+        CuisineType cuisine;
         if (entity.getCuisineType() != null) {
             try {
                 cuisine = CuisineType.valueOf(entity.getCuisineType());
@@ -104,6 +112,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
         );
     }
 
+    // ---------- Conversão Menu ----------
     private MenuEntity menuToEntity(Menu m) {
         MenuEntity me = new MenuEntity();
         me.setId(m.getId());
@@ -116,7 +125,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
     }
 
     private Menu menuToDomain(MenuEntity me) {
-        return  Menu.restore(
+        return Menu.restore(
                 me.getId(),
                 me.getName(),
                 me.getDescription(),
@@ -125,4 +134,11 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
                 me.getImageUrl()
         );
     }
+
+    // ---------- Conversão OpeningHours ----------
+    private OpeningHoursDocument toDocument(OpeningHoursEntity entity) {
+        if (entity == null) return null;
+        return new OpeningHoursDocument(entity.getOpens(), entity.getCloses());
+    }
 }
+
