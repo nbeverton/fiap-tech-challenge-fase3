@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.UUID;
+import java.util.Objects;
+
 
 @Component
 public class MenuRepositoryAdapter implements MenuRepositoryPort {
@@ -31,6 +34,11 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
 
         MenuEntity menuEntity = toEntity(menu);
 
+        // ✅ Se veio sem id (CREATE), gera um
+        if (menuEntity.getId() == null || menuEntity.getId().isBlank()) {
+            menuEntity.setId(UUID.randomUUID().toString());
+        }
+
         // Atualiza se já existe
         int index = indexOfMenu(menuList, menuEntity.getId());
         if (index >= 0) {
@@ -43,7 +51,7 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
         RestaurantDocument savedRestaurant = restaurantRepository.save(restaurant);
 
         MenuEntity savedMenuEntity = savedRestaurant.getMenu().stream()
-                .filter(m -> m.getId().equals(menuEntity.getId()))
+                .filter(m -> Objects.equals(m.getId(), menuEntity.getId()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Menu não foi salvo"));
 
@@ -57,7 +65,7 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
         List<MenuEntity> menus = Optional.ofNullable(restaurant.getMenu())
                 .orElse(new ArrayList<>());
 
-        boolean removed = menus.removeIf(m -> m.getId().equals(menuId));
+        boolean removed = menus.removeIf(m -> Objects.equals(m.getId(), menuId));
         if (!removed) {
             throw new IllegalStateException("Menu " + menuId + " não encontrado para o restaurante " + restaurantId);
         }
@@ -74,7 +82,7 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
                     if (menus == null) return Optional.empty();
 
                     return menus.stream()
-                            .filter(m -> m.getId().equals(menuId))
+                            .filter(m -> Objects.equals(m.getId(), menuId))
                             .findFirst()
                             .map(this::toDomain);
                 });
@@ -100,13 +108,16 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
     }
 
     private int indexOfMenu(List<MenuEntity> menus, String menuId) {
+        if (menuId == null) return -1;
+
         for (int i = 0; i < menus.size(); i++) {
-            if (menus.get(i).getId().equals(menuId)) {
+            if (Objects.equals(menus.get(i).getId(), menuId)) {
                 return i;
             }
         }
         return -1;
     }
+
 
     private MenuEntity toEntity(Menu menu) {
         MenuEntity entity = new MenuEntity();
