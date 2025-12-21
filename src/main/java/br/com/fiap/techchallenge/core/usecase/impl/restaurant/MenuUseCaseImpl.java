@@ -1,7 +1,7 @@
-package br.com.fiap.techchallenge.core.usecase.in.impl;
+package br.com.fiap.techchallenge.core.usecase.impl.restaurant;
 
 import br.com.fiap.techchallenge.core.domain.model.Menu;
-import br.com.fiap.techchallenge.core.usecase.in.MenuUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.restaurant.MenuUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.MenuRepositoryPort;
 
 import java.util.List;

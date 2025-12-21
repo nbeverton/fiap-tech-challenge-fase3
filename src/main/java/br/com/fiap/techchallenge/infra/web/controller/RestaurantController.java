@@ -1,15 +1,15 @@
 package br.com.fiap.techchallenge.infra.web.controller;
 
 import br.com.fiap.techchallenge.core.domain.model.Restaurant;
-import br.com.fiap.techchallenge.core.usecase.in.RestaurantUseCase;
-import br.com.fiap.techchallenge.infra.web.dto.RestaurantDto;
-import br.com.fiap.techchallenge.infra.web.mapper.RestaurantMapper;
+import br.com.fiap.techchallenge.core.usecase.in.restaurant.RestaurantUseCase;
+import br.com.fiap.techchallenge.infra.web.dto.restaurant.RestaurantRequest;
+import br.com.fiap.techchallenge.infra.web.dto.restaurant.RestaurantResponse;
+import br.com.fiap.techchallenge.infra.web.mapper.restaurant.RestaurantMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/restaurants")
@@ -22,35 +22,43 @@ public class RestaurantController {
     }
 
     @PostMapping
-    public ResponseEntity<RestaurantDto> create(@RequestBody RestaurantDto dto) {
-        Restaurant restaurant = RestaurantMapper.toDomain(dto);
+    public ResponseEntity<RestaurantResponse> create(
+            @RequestBody RestaurantRequest request) {
+
+        Restaurant restaurant = RestaurantMapper.toDomain(request);
         Restaurant created = service.create(restaurant);
-        RestaurantDto response = RestaurantMapper.toDto(created);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(response);
+                .body(RestaurantMapper.toResponse(created));
     }
 
     @GetMapping
-    public ResponseEntity<List<RestaurantDto>> findAll() {
-        List<Restaurant> list = service.findAll();
-        List<RestaurantDto> dtos = list.stream()
-                .map(RestaurantMapper::toDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<List<RestaurantResponse>> findAll() {
+        return ResponseEntity.ok(
+                service.findAll()
+                        .stream()
+                        .map(RestaurantMapper::toResponse)
+                        .toList()
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RestaurantDto> findById(@PathVariable String id) {
-        Restaurant r = service.findById(id);
-        return ResponseEntity.ok(RestaurantMapper.toDto(r));
+    public ResponseEntity<RestaurantResponse> findById(@PathVariable String id) {
+        return ResponseEntity.ok(
+                RestaurantMapper.toResponse(service.findById(id))
+        );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RestaurantDto> update(@PathVariable String id, @RequestBody RestaurantDto dto) {
-        Restaurant restaurant = RestaurantMapper.toDomain(dto);
+    public ResponseEntity<RestaurantResponse> update(
+            @PathVariable String id,
+            @RequestBody RestaurantRequest request) {
+
+        Restaurant restaurant = RestaurantMapper.toDomain(request);
         Restaurant updated = service.update(id, restaurant);
-        return ResponseEntity.ok(RestaurantMapper.toDto(updated));
+
+        return ResponseEntity.ok(RestaurantMapper.toResponse(updated));
     }
 
     @DeleteMapping("/{id}")

@@ -1,9 +1,9 @@
 package br.com.fiap.techchallenge.infra.config;
 
-import br.com.fiap.techchallenge.core.usecase.in.RestaurantUseCase;
-import br.com.fiap.techchallenge.core.usecase.in.MenuUseCase;
-import br.com.fiap.techchallenge.core.usecase.in.impl.RestaurantUseCaseImpl;
-import br.com.fiap.techchallenge.core.usecase.in.impl.MenuUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.in.restaurant.RestaurantUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.restaurant.MenuUseCase;
+import br.com.fiap.techchallenge.core.usecase.impl.restaurant.RestaurantUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.restaurant.MenuUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.MenuRepositoryPort;
 import org.springframework.context.annotation.Bean;

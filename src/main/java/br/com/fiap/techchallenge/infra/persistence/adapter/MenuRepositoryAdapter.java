@@ -10,6 +10,7 @@ import br.com.fiap.techchallenge.infra.persistence.documents.RestaurantDocument;
 import br.com.fiap.techchallenge.infra.persistence.repository.SpringRestaurantRepository;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -118,18 +119,18 @@ public class MenuRepositoryAdapter implements MenuRepositoryPort {
         entity.setId(menu.getId());
         entity.setName(menu.getName());
         entity.setDescription(menu.getDescription());
-        entity.setPrice(menu.getPrice());
+        entity.setPrice(menu.getPrice().doubleValue());
         entity.setDineInAvailable(menu.isDineInAvailable());
         entity.setImageUrl(menu.getImageUrl());
         return entity;
     }
 
     private Menu toDomain(MenuEntity entity) {
-        return new Menu(
+        return  Menu.restore(
                 entity.getId(),
                 entity.getName(),
                 entity.getDescription(),
-                entity.getPrice(),
+                BigDecimal.valueOf(entity.getPrice()),
                 entity.isDineInAvailable(),
                 entity.getImageUrl()
         );

@@ -1,8 +1,8 @@
-package br.com.fiap.techchallenge.core.usecase.in.impl;
+package br.com.fiap.techchallenge.core.usecase.impl.restaurant;
 
 import br.com.fiap.techchallenge.core.domain.exception.NotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Restaurant;
-import br.com.fiap.techchallenge.core.usecase.in.RestaurantUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.restaurant.RestaurantUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 
 import java.util.List;
