@@ -1,0 +1,18 @@
+package br.com.fiap.techchallenge.core.usecase.impl.restaurant;
+
+import br.com.fiap.techchallenge.core.usecase.in.restaurant.DeleteRestaurantUseCase;
+import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
+
+public class DeleteRestaurantUseCaseImpl implements DeleteRestaurantUseCase {
+
+    private final RestaurantRepositoryPort repository;
+
+    public DeleteRestaurantUseCaseImpl(RestaurantRepositoryPort repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public void execute(String id) {
+        repository.delete(id);
+    }
+}
