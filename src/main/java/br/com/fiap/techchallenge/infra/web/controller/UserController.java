@@ -70,10 +70,7 @@ public class UserController {
             @RequestBody UpdateUserRequest input
             ){
 
-        User userUpdated = updateUserUseCase.execute(
-                id,
-                UserDtoMapper.toDomain(input)
-        );
+        User userUpdated = updateUserUseCase.execute(id, input);
 
         return ResponseEntity.ok(UserDtoMapper.toResponse(userUpdated));
     }

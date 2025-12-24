@@ -32,13 +32,12 @@ public class UserDtoMapper {
         };
     }
 
-    public static User toDomain(UpdateUserRequest input) {
-        return new Client(
-                input.name(),
-                input.email(),
-                input.login(),
-                input.password()
-        );
+    public static void updateDomain(User user, UpdateUserRequest input) {
+
+        user.updateName(input.name());
+        user.updateEmail(input.email());
+        user.updateLogin(input.login());
+        user.updatePassword(input.password());
     }
 
     public static UserResponse toResponse(User user) {
