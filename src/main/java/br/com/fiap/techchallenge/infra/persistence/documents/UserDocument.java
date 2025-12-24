@@ -1,6 +1,5 @@
 package br.com.fiap.techchallenge.infra.persistence.documents;
 
-import br.com.fiap.techchallenge.core.domain.enums.UserType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,7 +14,7 @@ public class UserDocument {
     private String id;
 
     private String name;
-    private UserType userType;
+    private String userType;
     private String email;
     private String login;
     private String password;
@@ -46,11 +45,11 @@ public class UserDocument {
         this.name = name;
     }
 
-    public UserType getUserType() {
+    public String getUserType() {
         return userType;
     }
 
-    public void setUserType(UserType userType) {
+    public void setUserType(String userType) {
         this.userType = userType;
     }
 
