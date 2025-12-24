@@ -7,6 +7,8 @@ import br.com.fiap.techchallenge.infra.web.dto.address.UpdateAddressRequest;
 
 public class AddressDtoMapper {
 
+    private AddressDtoMapper(){}
+
     public static Address toDomain(CreateAddressRequest request){
 
         return new Address(

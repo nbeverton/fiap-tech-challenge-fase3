@@ -6,6 +6,8 @@ import br.com.fiap.techchallenge.infra.web.dto.menu.MenuResponse;
 
 public class MenuMapper {
 
+    private MenuMapper(){}
+
     public static Menu toDomain(MenuRequest request) {
         return Menu.create(
                 request.name(),

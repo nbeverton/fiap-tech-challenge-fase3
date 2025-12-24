@@ -10,6 +10,8 @@ import br.com.fiap.techchallenge.infra.web.dto.user.UserResponse;
 
 public class UserDtoMapper {
 
+    private UserDtoMapper(){}
+
     public static User toDomain(CreateUserRequest request) {
         if (request.type() == UserType.OWNER) {
             return new Owner(
