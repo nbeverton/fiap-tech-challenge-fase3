@@ -25,7 +25,14 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     @Override
     public User save(User user) {
 
-        UserDocument document = UserMapper.toDocument(user);
+        UserDocument document = getOrCreate(user.getId());
+
+        document.setName(user.getName());
+        document.setUserType(user.getUserType());
+        document.setEmail(user.getEmail());
+        document.setLogin(user.getLogin());
+        document.setPassword(user.getPassword());
+
         UserDocument saved = repository.save(document);
 
         return UserMapper.toDomain(saved);
@@ -51,5 +58,24 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     public void deleteById(String id) {
 
         repository.deleteById(id);
+    }
+
+
+    /**
+     * Retrieves an existing MongoDB document when updating an entity
+     * or creates a new one when performing a create operation.
+     *
+     * This approach ensures that audit fields such as `createdAt`
+     * are preserved during update operations, since MongoDB replaces
+     * the entire document on save.
+     *
+     * @param id the entity identifier
+     * @return an existing document or a new instance if the id is null
+     */
+    private UserDocument getOrCreate(String id) {
+        return id == null
+                ? new UserDocument()
+                : repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entity not found: " + id));
     }
 }

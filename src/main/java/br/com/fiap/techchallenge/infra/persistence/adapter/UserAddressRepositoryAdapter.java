@@ -22,11 +22,18 @@ public class UserAddressRepositoryAdapter implements UserAddressRepositoryPort {
     @Override
     public UserAddress save(UserAddress userAddress) {
 
-        UserAddressDocument document = UserAddressMapper.toDocument(userAddress);
-        UserAddressDocument saved = repository.save(document);
+        UserAddressDocument document = getOrCreate(userAddress.getId());
 
+        document.setUserId(userAddress.getUserId());
+        document.setAddressId(userAddress.getAddressId());
+        document.setAddressType(userAddress.getType().name());
+        document.setLabel(userAddress.getLabel());
+        document.setPrincipal(userAddress.isPrincipal());
+
+        UserAddressDocument saved = repository.save(document);
         return UserAddressMapper.toDomain(saved);
     }
+
 
     @Override
     public void deleteById(String id) {
@@ -62,5 +69,24 @@ public class UserAddressRepositoryAdapter implements UserAddressRepositoryPort {
     public Optional<UserAddress> findUserAddressById(String id) {
         return repository.findById(id)
                 .map(UserAddressMapper::toDomain);
+    }
+
+
+    /**
+     * Retrieves an existing MongoDB document when updating an entity
+     * or creates a new one when performing a create operation.
+     *
+     * This approach ensures that audit fields such as `createdAt`
+     * are preserved during update operations, since MongoDB replaces
+     * the entire document on save.
+     *
+     * @param id the entity identifier
+     * @return an existing document or a new instance if the id is null
+     */
+    private UserAddressDocument getOrCreate(String id) {
+        return id == null
+                ? new UserAddressDocument()
+                : repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entity not found: " + id));
     }
 }

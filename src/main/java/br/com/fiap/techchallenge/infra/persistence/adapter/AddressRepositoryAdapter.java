@@ -24,7 +24,17 @@ public class AddressRepositoryAdapter implements AddressRepositoryPort {
     @Override
     public Address save(Address address) {
 
-        AddressDocument document = AddressMapper.toDocument(address);
+        AddressDocument document = getOrCreate(address.getId());
+
+        document.setPostalCode(address.getPostalCode());
+        document.setStreetName(address.getStreetName());
+        document.setStreetNumber(address.getStreetNumber());
+        document.setAdditionalInfo(address.getAdditionalInfo());
+        document.setNeighborhood(address.getNeighborhood());
+        document.setCity(address.getCity());
+        document.setStateProvince(address.getStateProvince());
+        document.setCountry(address.getCountry());
+
         AddressDocument saved = repository.save(document);
 
         return AddressMapper.toDomain(saved);
@@ -48,5 +58,24 @@ public class AddressRepositoryAdapter implements AddressRepositoryPort {
                 .stream()
                 .map(AddressMapper::toDomain)
                 .toList();
+    }
+
+
+    /**
+     * Retrieves an existing MongoDB document when updating an entity
+     * or creates a new one when performing a create operation.
+     *
+     * This approach ensures that audit fields such as `createdAt`
+     * are preserved during update operations, since MongoDB replaces
+     * the entire document on save.
+     *
+     * @param id the entity identifier
+     * @return an existing document or a new instance if the id is null
+     */
+    private AddressDocument getOrCreate(String id) {
+        return id == null
+                ? new AddressDocument()
+                : repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entity not found: " + id));
     }
 }
