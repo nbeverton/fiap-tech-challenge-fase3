@@ -86,11 +86,11 @@ public class UserDocument {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdateAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdateAt(LocalDateTime updateAt) {
-        this.updatedAt = updateAt;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
