@@ -1,4 +1,4 @@
-package br.com.fiap.techchallenge.infra.persistence.mapper.restaurant;
+package br.com.fiap.techchallenge.infra.web.mapper.restaurant;
 
 import br.com.fiap.techchallenge.core.domain.enums.CuisineType;
 import br.com.fiap.techchallenge.core.domain.model.Menu;
@@ -6,17 +6,14 @@ import br.com.fiap.techchallenge.core.domain.model.OpeningHours;
 import br.com.fiap.techchallenge.core.domain.model.Restaurant;
 import br.com.fiap.techchallenge.infra.web.dto.restaurant.RestaurantRequest;
 import br.com.fiap.techchallenge.infra.web.dto.restaurant.RestaurantResponse;
-import br.com.fiap.techchallenge.infra.web.dto.menu.MenuResponse;
-import br.com.fiap.techchallenge.infra.web.mapper.menu.MenuResponseMapper;
+import br.com.fiap.techchallenge.infra.web.mapper.menu.MenuWebMapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class RestaurantMapper {
+public class RestaurantWebMapper {
 
-    private RestaurantMapper() {}
+    private RestaurantWebMapper() {}
 
-    // REQUEST → DOMAIN
     public static Restaurant toDomain(RestaurantRequest request) {
 
         OpeningHours openingHours = request.openingHours() == null
@@ -28,18 +25,9 @@ public class RestaurantMapper {
 
         List<Menu> menu = request.menu() == null
                 ? List.of()
-                : request.menu().stream()
-                .map(m -> Menu.create(
-                        m.name(),
-                        m.description(),
-                        m.price(),
-                        m.dineInAvailable(),
-                        m.imageUrl()
-                ))
-                .collect(Collectors.toList());
+                : MenuWebMapper.toDomainList(request.menu());
 
-        return new Restaurant(
-                null,
+        return Restaurant.create(
                 request.name(),
                 request.addressId(),
                 CuisineType.valueOf(request.cuisineType()),
@@ -49,15 +37,7 @@ public class RestaurantMapper {
         );
     }
 
-    // DOMAIN → RESPONSE
     public static RestaurantResponse toResponse(Restaurant restaurant) {
-        if (restaurant == null) return null;
-
-        List<MenuResponse> menu = restaurant.getMenu() == null
-                ? List.of()
-                : restaurant.getMenu().stream()
-                .map(MenuResponseMapper::toResponse)
-                .toList();
 
         return new RestaurantResponse(
                 restaurant.getId(),
@@ -71,8 +51,7 @@ public class RestaurantMapper {
                         restaurant.getOpeningHours().getCloses()
                 ),
                 restaurant.getUserId(),
-                menu
+                MenuWebMapper.toResponseList(restaurant.getMenu())
         );
     }
 }
-

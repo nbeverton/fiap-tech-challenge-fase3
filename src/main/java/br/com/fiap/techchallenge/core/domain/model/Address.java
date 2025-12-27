@@ -3,6 +3,8 @@ package br.com.fiap.techchallenge.core.domain.model;
 public class Address {
 
     private final String id;
+    private final String userId;
+
     private String postalCode;
     private String streetName;
     private int streetNumber;
@@ -15,6 +17,7 @@ public class Address {
 
     public Address(
             String id,
+            String userId,
             String postalCode,
             String streetName,
             int streetNumber,
@@ -25,6 +28,7 @@ public class Address {
             String country) {
 
         this.id = id;
+        this.userId = userId;
         this.postalCode = postalCode;
         this.streetName = streetName;
         this.streetNumber = streetNumber;
@@ -36,16 +40,19 @@ public class Address {
     }
 
 
-    public Address(String postalCode,
-                   String streetName,
-                   int streetNumber,
-                   String additionalInfo,
-                   String neighborhood,
-                   String city,
-                   String stateProvince,
-                   String country) {
+    public Address(
+                        String userId,
+                        String postalCode,
+                        String streetName,
+                        int streetNumber,
+                        String additionalInfo,
+                        String neighborhood,
+                        String city,
+                        String stateProvince,
+                        String country) {
 
         this.id = null;
+        this.userId = userId;
         this.postalCode = postalCode;
         this.streetName = streetName;
         this.streetNumber = streetNumber;
@@ -55,6 +62,7 @@ public class Address {
         this.stateProvince = stateProvince;
         this.country = country;
     }
+    public String getUserId() { return userId; }
 
     public String getId() {
         return id;

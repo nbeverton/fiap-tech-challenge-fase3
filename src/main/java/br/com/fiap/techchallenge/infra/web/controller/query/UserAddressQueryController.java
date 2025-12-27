@@ -37,11 +37,10 @@ public class UserAddressQueryController {
     public List<AddressResponse> getAddressByUser(
             @PathVariable String userId
     ){
-        List<UserAddress> links =
-                findUserAddressByUserIdUseCase.execute(userId);
+        List<UserAddress> links = findUserAddressByUserIdUseCase.execute(userId);
 
         return links.stream()
-                .map(link -> findAddressByIdUseCase.execute(link.getAddressId())
+                .map(link -> findAddressByIdUseCase.execute(link.getAddressId(), userId)
                         .orElseThrow(() ->
                                 new RuntimeException("Address not found for id: " + link.getAddressId())
                         )
@@ -49,6 +48,7 @@ public class UserAddressQueryController {
                 .map(AddressDtoMapper::toResponse)
                 .toList();
     }
+
 
 
     @GetMapping("/addresses/{addressId}/users")

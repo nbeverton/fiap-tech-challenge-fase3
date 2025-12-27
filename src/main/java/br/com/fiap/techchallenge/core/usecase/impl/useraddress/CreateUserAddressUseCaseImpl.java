@@ -19,19 +19,11 @@ public class CreateUserAddressUseCaseImpl implements CreateUserAddressUseCase {
     }
 
 
-    @Override
-    public UserAddress execute(UserAddress userAddress) {
-
-        findUserByIdUseCase.execute(userAddress.getUserId())
-                .orElseThrow(() ->
-                        new RuntimeException("User not found: " + userAddress.getUserId())
-                );
-
-        findAddressByIdUseCase.execute(userAddress.getAddressId())
-                .orElseThrow(() ->
-                        new RuntimeException("Address not found: " + userAddress.getAddressId())
-                );
-
-        return userAddressRepository.save(userAddress);
-    }
+    @Override public UserAddress execute(UserAddress userAddress) { findUserByIdUseCase.execute(userAddress.getUserId())
+            .orElseThrow(() -> new RuntimeException("User not found: " +
+                            userAddress.getUserId()) );
+                            findAddressByIdUseCase.execute(userAddress.getAddressId(),
+                            userAddress.getUserId()) .orElseThrow(() -> new RuntimeException("Address not found: " +
+                                    userAddress.getAddressId()) );
+                            return userAddressRepository.save(userAddress); }
 }

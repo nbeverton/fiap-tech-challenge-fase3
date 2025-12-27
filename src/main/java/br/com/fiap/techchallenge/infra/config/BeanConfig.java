@@ -27,6 +27,7 @@ import br.com.fiap.techchallenge.core.usecase.in.menu.UpdateMenuUseCase;
 
 import br.com.fiap.techchallenge.core.usecase.out.MenuRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,8 +38,12 @@ public class BeanConfig {
     // ===================== Restaurant UseCases =====================
 
     @Bean
-    public CreateRestaurantUseCase createRestaurantUseCase(RestaurantRepositoryPort repository) {
-        return new CreateRestaurantUseCaseImpl(repository);
+    public CreateRestaurantUseCase createRestaurantUseCase(
+            RestaurantRepositoryPort restaurantRepository,
+            AddressRepositoryPort addressRepository) {
+        return new CreateRestaurantUseCaseImpl(
+                restaurantRepository,
+                addressRepository);
     }
 
     @Bean

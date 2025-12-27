@@ -8,13 +8,12 @@ public class DeleteAddressUseCaseImpl implements DeleteAddressUseCase {
     private final AddressRepositoryPort addressRepository;
 
 
-    public DeleteAddressUseCaseImpl(AddressRepositoryPort addressRepository){
+    public DeleteAddressUseCaseImpl(AddressRepositoryPort addressRepository) {
         this.addressRepository = addressRepository;
     }
 
-
     @Override
     public void execute(String id) {
-        addressRepository.delete(id);
+        addressRepository.deleteById(id);
     }
 }

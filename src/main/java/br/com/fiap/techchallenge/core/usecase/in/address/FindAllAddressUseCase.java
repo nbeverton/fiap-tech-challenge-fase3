@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface FindAllAddressUseCase {
 
-    List<Address> execute();
+    List<Address> execute(String userId);
 
 }

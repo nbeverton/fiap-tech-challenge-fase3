@@ -12,7 +12,7 @@ public class AddressDocument {
 
     @Id
     private String id;
-
+    private String userId;
     private String postalCode;
     private String streetName;
     private int streetNumber;

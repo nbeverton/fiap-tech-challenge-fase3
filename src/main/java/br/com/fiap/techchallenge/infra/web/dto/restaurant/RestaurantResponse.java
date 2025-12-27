@@ -1,6 +1,7 @@
 package br.com.fiap.techchallenge.infra.web.dto.restaurant;
 
 import java.util.List;
+import br.com.fiap.techchallenge.infra.web.dto.menu.MenuResponse;
 
 public record RestaurantResponse(
         String id,
@@ -17,12 +18,4 @@ public record RestaurantResponse(
             String closes
     ) {}
 
-    public record MenuResponse(
-            String id,
-            String name,
-            String description,
-            double price,
-            boolean dineInAvailable,
-            String imageUrl
-    ) {}
 }

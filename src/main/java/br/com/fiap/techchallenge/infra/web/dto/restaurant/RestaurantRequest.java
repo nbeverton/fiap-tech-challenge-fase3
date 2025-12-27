@@ -2,6 +2,7 @@ package br.com.fiap.techchallenge.infra.web.dto.restaurant;
 
 import java.math.BigDecimal;
 import java.util.List;
+import br.com.fiap.techchallenge.infra.web.dto.menu.MenuRequest;
 
 public record RestaurantRequest(
         String name,
@@ -17,11 +18,4 @@ public record RestaurantRequest(
             String closes
     ) {}
 
-    public record MenuRequest(
-            String name,
-            String description,
-            BigDecimal price,
-            boolean dineInAvailable,
-            String imageUrl
-    ) {}
 }
