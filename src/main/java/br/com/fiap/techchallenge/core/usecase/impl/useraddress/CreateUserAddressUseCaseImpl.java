@@ -24,10 +24,7 @@ public class CreateUserAddressUseCaseImpl implements CreateUserAddressUseCase {
 
         findUserByIdUseCase.execute(userAddress.getUserId());
 
-        findAddressByIdUseCase.execute(userAddress.getAddressId())
-                .orElseThrow(() ->
-                        new RuntimeException("Address not found: " + userAddress.getAddressId())
-                );
+        findAddressByIdUseCase.execute(userAddress.getAddressId());
 
         return userAddressRepository.save(userAddress);
     }
