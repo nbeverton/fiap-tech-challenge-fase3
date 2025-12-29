@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface FindUserByIdUseCase {
 
-    Optional<User> execute(String id);
+    User execute(String id);
 }
