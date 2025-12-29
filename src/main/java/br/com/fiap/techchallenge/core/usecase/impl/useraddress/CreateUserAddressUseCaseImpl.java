@@ -22,10 +22,7 @@ public class CreateUserAddressUseCaseImpl implements CreateUserAddressUseCase {
     @Override
     public UserAddress execute(UserAddress userAddress) {
 
-        findUserByIdUseCase.execute(userAddress.getUserId())
-                .orElseThrow(() ->
-                        new RuntimeException("User not found: " + userAddress.getUserId())
-                );
+        findUserByIdUseCase.execute(userAddress.getUserId());
 
         findAddressByIdUseCase.execute(userAddress.getAddressId())
                 .orElseThrow(() ->

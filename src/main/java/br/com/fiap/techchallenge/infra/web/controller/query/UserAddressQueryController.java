@@ -59,12 +59,9 @@ public class UserAddressQueryController {
                 findUserAddressByAddressIdUseCase.execute(addressId);
 
         return links.stream()
-                .map(link -> findUserByIdUseCase.execute(link.getUserId())
-                        .orElseThrow(() ->
-                                new RuntimeException("User not found for id: " + link.getUserId())
-                        )
-                )
+                .map(link -> findUserByIdUseCase.execute(link.getUserId()))
                 .map(UserDtoMapper::toResponse)
                 .toList();
     }
+
 }
