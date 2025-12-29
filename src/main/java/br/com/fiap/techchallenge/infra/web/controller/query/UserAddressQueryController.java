@@ -41,14 +41,11 @@ public class UserAddressQueryController {
                 findUserAddressByUserIdUseCase.execute(userId);
 
         return links.stream()
-                .map(link -> findAddressByIdUseCase.execute(link.getAddressId())
-                        .orElseThrow(() ->
-                                new RuntimeException("Address not found for id: " + link.getAddressId())
-                        )
-                )
+                .map(link -> findAddressByIdUseCase.execute(link.getAddressId()))
                 .map(AddressDtoMapper::toResponse)
                 .toList();
     }
+
 
 
     @GetMapping("/addresses/{addressId}/users")

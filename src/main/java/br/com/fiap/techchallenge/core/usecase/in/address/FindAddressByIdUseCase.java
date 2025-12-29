@@ -6,6 +6,5 @@ import java.util.Optional;
 
 public interface FindAddressByIdUseCase {
 
-    Optional<Address> execute(String id);
-
+    Address execute(String id);
 }

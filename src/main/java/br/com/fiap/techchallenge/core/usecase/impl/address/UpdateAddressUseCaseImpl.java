@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.core.usecase.impl.address;
 
+import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Address;
 import br.com.fiap.techchallenge.core.usecase.in.address.UpdateAddressUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
@@ -18,7 +19,7 @@ public class UpdateAddressUseCaseImpl implements UpdateAddressUseCase {
     public Address execute(String id, Address address) {
 
         Address existingAddress = addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Address not found with id: " + id));
+                .orElseThrow(() -> new AddressNotFoundException(id));
 
         existingAddress.updatePostalCode(address.getPostalCode());
         existingAddress.updateStreetName(address.getStreetName());

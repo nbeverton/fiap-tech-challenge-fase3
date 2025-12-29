@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.core.usecase.impl.address;
 
+import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Address;
 import br.com.fiap.techchallenge.core.usecase.in.address.FindAddressByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
@@ -16,7 +17,9 @@ public class FindAddressByIdUseCaseImpl implements FindAddressByIdUseCase {
     }
 
     @Override
-    public Optional<Address> execute(String id) {
-        return addressRepository.findById(id);
+    public Address execute(String id) {
+
+        return addressRepository.findById(id)
+                .orElseThrow(() -> new AddressNotFoundException(id));
     }
 }

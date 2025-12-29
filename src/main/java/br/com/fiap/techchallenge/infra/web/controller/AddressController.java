@@ -71,11 +71,11 @@ public class AddressController {
     @GetMapping("/{id}")
     public ResponseEntity<AddressResponse> findById(@PathVariable String id){
 
-        return findAddressByIdUseCase.execute(id)
-                .map(AddressDtoMapper::toResponse)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Address address = findAddressByIdUseCase.execute(id);
+
+        return ResponseEntity.ok(AddressDtoMapper.toResponse(address));
     }
+
 
 
     @GetMapping
