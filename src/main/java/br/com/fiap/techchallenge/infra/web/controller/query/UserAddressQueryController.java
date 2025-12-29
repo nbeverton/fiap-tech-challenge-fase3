@@ -37,6 +37,9 @@ public class UserAddressQueryController {
     public List<AddressResponse> getAddressByUser(
             @PathVariable String userId
     ){
+
+        findUserByIdUseCase.execute(userId);
+
         List<UserAddress> links =
                 findUserAddressByUserIdUseCase.execute(userId);
 
@@ -52,6 +55,9 @@ public class UserAddressQueryController {
     public List<UserResponse> getUserByAddress(
             @PathVariable String addressId
     ){
+
+        findAddressByIdUseCase.execute(addressId);
+
         List<UserAddress> links =
                 findUserAddressByAddressIdUseCase.execute(addressId);
 
