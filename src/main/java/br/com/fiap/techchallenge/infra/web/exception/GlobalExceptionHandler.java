@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.infra.web.exception;
 
+import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,4 +31,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
+
+    @ExceptionHandler(AddressNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleAddressNotFound(AddressNotFoundException ex) {
+
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
 }
