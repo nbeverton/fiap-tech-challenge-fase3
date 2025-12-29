@@ -14,6 +14,4 @@ public interface AddressRepositoryPort {
     Optional<Address> findById(String id);
 
     List<Address> findAll();
-
-    void deleteById(String id);
 }

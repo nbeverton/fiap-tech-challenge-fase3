@@ -20,6 +20,6 @@ public class DeleteAddressUseCaseImpl implements DeleteAddressUseCase {
         addressRepository.findById(id)
                 .orElseThrow(() -> new AddressNotFoundException(id));
 
-        addressRepository.deleteById(id);
+        addressRepository.delete(id);
     }
 }
