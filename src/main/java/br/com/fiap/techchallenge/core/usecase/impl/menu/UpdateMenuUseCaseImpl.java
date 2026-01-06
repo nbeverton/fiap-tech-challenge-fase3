@@ -1,6 +1,6 @@
 package br.com.fiap.techchallenge.core.usecase.impl.menu;
 
-import br.com.fiap.techchallenge.core.domain.exception.NotFoundException;
+import br.com.fiap.techchallenge.core.domain.exception.menu.MenuNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Menu;
 import br.com.fiap.techchallenge.core.usecase.in.menu.UpdateMenuUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.MenuRepositoryPort;
@@ -17,10 +17,10 @@ public class UpdateMenuUseCaseImpl implements UpdateMenuUseCase {
     public Menu execute(String restaurantId, String menuId, Menu menu) {
 
         Menu existing = repository.findById(restaurantId, menuId)
-                .orElseThrow(() -> new NotFoundException("Menu não encontrado"));
+                .orElseThrow(() -> new MenuNotFoundException(menuId));
 
         Menu toSave = Menu.restore(
-                existing.getId(),
+                existing.getId(),           // garante que o ID original é preservado
                 menu.getName(),
                 menu.getDescription(),
                 menu.getPrice(),

@@ -1,5 +1,7 @@
 package br.com.fiap.techchallenge.core.domain.model;
 
+import br.com.fiap.techchallenge.core.domain.exception.menu.InvalidMenuException;
+
 import java.math.BigDecimal;
 
 public class Menu {
@@ -19,9 +21,9 @@ public class Menu {
                  String imageUrl) {
 
         this.id = id;
-        this.name = name;
+        this.name = requireNonBlank(name, "name");
         this.description = description;
-        this.price = price;
+        this.price = requireNonNegative(price, "price");
         this.dineInAvailable = dineInAvailable;
         this.imageUrl = imageUrl;
     }
@@ -41,6 +43,23 @@ public class Menu {
                                boolean dineInAvailable,
                                String imageUrl) {
         return new Menu(id, name, description, price, dineInAvailable, imageUrl);
+    }
+
+    private String requireNonBlank(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new InvalidMenuException(fieldName + " must not be null or blank");
+        }
+        return value;
+    }
+
+    private BigDecimal requireNonNegative(BigDecimal value, String fieldName) {
+        if (value == null) {
+            throw new InvalidMenuException(fieldName + " must not be null");
+        }
+        if (value.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidMenuException(fieldName + " must not be negative");
+        }
+        return value;
     }
 
 

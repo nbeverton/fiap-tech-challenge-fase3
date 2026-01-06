@@ -8,11 +8,9 @@ public class DeleteUserUseCaseImpl implements DeleteUserUseCase {
 
     private final UserRepositoryPort userRepository;
 
-
     public DeleteUserUseCaseImpl(UserRepositoryPort userRepository){
         this.userRepository = userRepository;
     }
-
 
     @Override
     public void execute(String id) {

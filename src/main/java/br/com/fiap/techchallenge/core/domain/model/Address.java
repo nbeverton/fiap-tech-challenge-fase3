@@ -1,5 +1,7 @@
 package br.com.fiap.techchallenge.core.domain.model;
 
+import br.com.fiap.techchallenge.core.domain.exception.address.InvalidAddressException;
+
 public class Address {
 
     private final String id;
@@ -25,14 +27,14 @@ public class Address {
             String country) {
 
         this.id = id;
-        this.postalCode = postalCode;
-        this.streetName = streetName;
-        this.streetNumber = streetNumber;
-        this.additionalInfo = additionalInfo;
-        this.neighborhood = neighborhood;
-        this.city = city;
-        this.stateProvince = stateProvince;
-        this.country = country;
+        this.postalCode = requireNonBlank(postalCode, "postalCode");
+        this.streetName = requireNonBlank(streetName, "streetName");
+        this.streetNumber = requirePositive(streetNumber, "streetNumber");
+        this.additionalInfo = additionalInfo; // opcional
+        this.neighborhood = requireNonBlank(neighborhood, "neighborhood");
+        this.city = requireNonBlank(city, "city");
+        this.stateProvince = requireNonBlank(stateProvince, "stateProvince");
+        this.country = requireNonBlank(country, "country");
     }
 
 
@@ -45,15 +47,22 @@ public class Address {
                    String stateProvince,
                    String country) {
 
-        this.id = null;
-        this.postalCode = postalCode;
-        this.streetName = streetName;
-        this.streetNumber = streetNumber;
-        this.additionalInfo = additionalInfo;
-        this.neighborhood = neighborhood;
-        this.city = city;
-        this.stateProvince = stateProvince;
-        this.country = country;
+        this(null, postalCode, streetName, streetNumber, additionalInfo,
+                neighborhood, city, stateProvince, country);
+    }
+
+    private String requireNonBlank(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new InvalidAddressException(fieldName + " must not be null or blank");
+        }
+        return value;
+    }
+
+    private int requirePositive(int value, String fieldName) {
+        if (value <= 0) {
+            throw new InvalidAddressException(fieldName + " must be greater than zero");
+        }
+        return value;
     }
 
     public String getId() {
@@ -94,15 +103,15 @@ public class Address {
 
 
     public void updatePostalCode(String postalCode) {
-        this.postalCode = postalCode;
+        this.postalCode = requireNonBlank(postalCode, "postalCode");
     }
 
     public void updateStreetName(String streetName) {
-        this.streetName = streetName;
+        this.streetName = requireNonBlank(streetName, "streetName");
     }
 
     public void updateStreetNumber(int streetNumber) {
-        this.streetNumber = streetNumber;
+        this.streetNumber = requirePositive(streetNumber, "streetNumber");
     }
 
     public void updateAdditionalInfo(String additionalInfo) {
@@ -110,18 +119,18 @@ public class Address {
     }
 
     public void updateNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
+        this.neighborhood = requireNonBlank(neighborhood, "neighborhood");
     }
 
     public void updateCity(String city) {
-        this.city = city;
+        this.city = requireNonBlank(city, "city");
     }
 
     public void updateStateProvince(String stateProvince) {
-        this.stateProvince = stateProvince;
+        this.stateProvince = requireNonBlank(stateProvince, "stateProvince");
     }
 
     public void updateCountry(String country) {
-        this.country = country;
+        this.country = requireNonBlank(country, "country");
     }
 }

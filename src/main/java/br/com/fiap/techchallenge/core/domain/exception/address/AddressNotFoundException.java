@@ -1,6 +1,8 @@
 package br.com.fiap.techchallenge.core.domain.exception.address;
 
-public class AddressNotFoundException extends RuntimeException{
+import br.com.fiap.techchallenge.core.domain.exception.NotFoundException;
+
+public class AddressNotFoundException extends NotFoundException {
 
     public AddressNotFoundException(String id) {
 

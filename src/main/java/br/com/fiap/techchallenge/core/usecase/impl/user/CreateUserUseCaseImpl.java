@@ -8,15 +8,12 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
 
     private final UserRepositoryPort userRepository;
 
-
     public CreateUserUseCaseImpl(UserRepositoryPort userRepository){
         this.userRepository = userRepository;
     }
 
-
     @Override
     public User execute(User user) {
-
         return userRepository.save(user);
     }
 }

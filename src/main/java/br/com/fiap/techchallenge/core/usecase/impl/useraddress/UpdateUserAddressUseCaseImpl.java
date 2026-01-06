@@ -1,6 +1,7 @@
 package br.com.fiap.techchallenge.core.usecase.impl.useraddress;
 
 import br.com.fiap.techchallenge.core.domain.enums.AddressType;
+import br.com.fiap.techchallenge.core.domain.exception.useraddress.UserAddressNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.UserAddress;
 import br.com.fiap.techchallenge.core.usecase.in.useraddress.UpdateUserAddressUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.UserAddressRepositoryPort;
@@ -21,7 +22,7 @@ public class UpdateUserAddressUseCaseImpl implements UpdateUserAddressUseCase {
     ) {
 
         UserAddress existingUserAddress = userAddressRepository.findUserAddressById(id)
-                        .orElseThrow(() -> new RuntimeException("User Address not found with id: " + id));
+                        .orElseThrow(() -> new UserAddressNotFoundException(id));
 
         existingUserAddress.updateType(type);
         existingUserAddress.updateLabel(label);

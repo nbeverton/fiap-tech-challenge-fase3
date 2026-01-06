@@ -1,7 +1,7 @@
 package br.com.fiap.techchallenge.core.usecase.impl.restaurant;
 
-import br.com.fiap.techchallenge.core.domain.enums.UserType;
 import br.com.fiap.techchallenge.core.domain.exception.BusinessException;
+import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.user.UserNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Restaurant;
 import br.com.fiap.techchallenge.core.domain.model.User;
@@ -18,7 +18,8 @@ public class CreateRestaurantUseCaseImpl implements CreateRestaurantUseCase {
 
     public CreateRestaurantUseCaseImpl(
             RestaurantRepositoryPort restaurantRepository,
-            UserRepositoryPort userRepository, AddressRepositoryPort addressRepository
+            UserRepositoryPort userRepository,
+            AddressRepositoryPort addressRepository
     ) {
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
@@ -28,37 +29,27 @@ public class CreateRestaurantUseCaseImpl implements CreateRestaurantUseCase {
     @Override
     public Restaurant execute(Restaurant restaurant) {
 
-        if (restaurant.getAddressId() == null) {
-            throw new BusinessException("Endereço não informado");
-        }
-
+        // 1) Garante que o endereço existe
         addressRepository.findById(restaurant.getAddressId())
-                .orElseThrow(() ->
-                        new BusinessException("Invalid or non-existent address")
-                );
+                .orElseThrow(() -> new AddressNotFoundException(restaurant.getAddressId()));
 
-        if (restaurant.getUserId() == null) {
-            throw new BusinessException("User not informed");
-        }
-
+        // 2) Garante que o user existe
         User owner = userRepository.findById(restaurant.getUserId())
-                .orElseThrow(() ->
-                        new UserNotFoundException("User not informed")
-                );
+                .orElseThrow(() -> new UserNotFoundException(restaurant.getUserId()));
 
-        if (owner.getUserType() != UserType.OWNER) {
-            throw new BusinessException(
-                    "Only OWNER-type users can create restaurants"
-            );
+        // 3) Garante que é OWNER
+        if (!owner.isOwner()) {
+            throw new BusinessException("Only OWNER-type users can create restaurants");
         }
 
+        // 4) Garante que o endereço não está vinculado a outro restaurante
         restaurantRepository.findByAddressId(restaurant.getAddressId())
                 .ifPresent(r -> {
-                    throw new BusinessException(
-                            "This address is already linked to another restaurant"
-                    );
+                    throw new BusinessException("This address is already linked to another restaurant");
                 });
 
+        // 5) Salva
         return restaurantRepository.save(restaurant);
     }
+
 }

@@ -1,9 +1,11 @@
 package br.com.fiap.techchallenge.core.domain.exception.user;
 
-public class UserNotFoundException extends RuntimeException{
+import br.com.fiap.techchallenge.core.domain.exception.NotFoundException;
+
+public class UserNotFoundException extends NotFoundException {
 
     public UserNotFoundException(String id) {
 
-        super("User not found with id " + id);
+        super("User not found with id: " + id);
     }
 }

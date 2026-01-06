@@ -1,6 +1,6 @@
 package br.com.fiap.techchallenge.core.domain.exception;
 
-public class NotFoundException extends RuntimeException {
+public class NotFoundException extends BusinessException {
 
     public NotFoundException() {
         super();

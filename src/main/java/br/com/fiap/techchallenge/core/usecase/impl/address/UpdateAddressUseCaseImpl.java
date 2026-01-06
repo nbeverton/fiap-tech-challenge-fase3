@@ -9,11 +9,9 @@ public class UpdateAddressUseCaseImpl implements UpdateAddressUseCase {
 
     private final AddressRepositoryPort addressRepository;
 
-
     public UpdateAddressUseCaseImpl(AddressRepositoryPort addressRepository) {
         this.addressRepository = addressRepository;
     }
-
 
     @Override
     public Address execute(String id, Address address) {

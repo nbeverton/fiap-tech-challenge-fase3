@@ -1,7 +1,10 @@
 package br.com.fiap.techchallenge.core.domain.model;
 
 import br.com.fiap.techchallenge.core.domain.enums.CuisineType;
+import br.com.fiap.techchallenge.core.domain.exception.BusinessException;
 import br.com.fiap.techchallenge.core.domain.exception.NotFoundException;
+import br.com.fiap.techchallenge.core.domain.exception.menu.MenuAlreadyExistsException;
+import br.com.fiap.techchallenge.core.domain.exception.menu.MenuNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +58,7 @@ public class Restaurant {
 
     private static String requireNonBlank(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " must not be null or blank");
+            throw new BusinessException(fieldName + " must not be null or blank");
         }
         return value;
     }
@@ -92,12 +95,13 @@ public class Restaurant {
 
     public Restaurant addMenu(Menu newMenu) {
         Objects.requireNonNull(newMenu, "menu must not be null");
-        // ensure no duplicate id
+
         for (Menu m : this.menu) {
             if (m.getId().equals(newMenu.getId())) {
-                throw new IllegalArgumentException("Menu with id already exists: " + newMenu.getId());
+                throw new MenuAlreadyExistsException(newMenu.getId());
             }
         }
+
         List<Menu> newList = new ArrayList<>(this.menu);
         newList.add(newMenu);
         return new Restaurant(this.id, this.name, this.addressId, this.cuisineType, this.openingHours, this.userId, newList);
@@ -105,8 +109,10 @@ public class Restaurant {
 
     public Restaurant updateMenu(Menu updatedMenu) {
         Objects.requireNonNull(updatedMenu, "menu must not be null");
+
         List<Menu> newList = new ArrayList<>(this.menu);
         boolean found = false;
+
         for (int i = 0; i < newList.size(); i++) {
             if (newList.get(i).getId().equals(updatedMenu.getId())) {
                 newList.set(i, updatedMenu);
@@ -114,15 +120,24 @@ public class Restaurant {
                 break;
             }
         }
-        if (!found) throw new NotFoundException("Menu not found: " + updatedMenu.getId());
+
+        if (!found){
+            throw new MenuNotFoundException(updatedMenu.getId());
+        }
+
         return new Restaurant(this.id, this.name, this.addressId, this.cuisineType, this.openingHours, this.userId, newList);
     }
 
     public Restaurant removeMenu(String menuId) {
         Objects.requireNonNull(menuId, "menuId must not be null");
+
         List<Menu> newList = new ArrayList<>(this.menu);
         boolean removed = newList.removeIf(m -> m.getId().equals(menuId));
-        if (!removed) throw new NotFoundException("Menu not found: " + menuId);
+
+        if (!removed){
+            throw new MenuNotFoundException(menuId);
+        }
+
         return new Restaurant(this.id, this.name, this.addressId, this.cuisineType, this.openingHours, this.userId, newList);
     }
 

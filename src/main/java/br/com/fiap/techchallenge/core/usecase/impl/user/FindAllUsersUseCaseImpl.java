@@ -10,11 +10,9 @@ public class FindAllUsersUseCaseImpl implements FindAllUsersUseCase {
 
     private final UserRepositoryPort userRepository;
 
-
     public FindAllUsersUseCaseImpl(UserRepositoryPort userRepository){
         this.userRepository = userRepository;
     }
-
 
     @Override
     public List<User> execute() {

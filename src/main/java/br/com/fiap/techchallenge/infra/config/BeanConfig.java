@@ -52,8 +52,16 @@ public class BeanConfig {
     }
 
     @Bean
-    public UpdateRestaurantUseCase updateRestaurantUseCase(RestaurantRepositoryPort repository) {
-        return new UpdateRestaurantUseCaseImpl(repository);
+    public UpdateRestaurantUseCase updateRestaurantUseCase(
+            RestaurantRepositoryPort restaurantRepository,
+            UserRepositoryPort userRepository,
+            AddressRepositoryPort addressRepository
+    ) {
+        return new UpdateRestaurantUseCaseImpl(
+                restaurantRepository,
+                userRepository,
+                addressRepository
+        );
     }
 
     @Bean
