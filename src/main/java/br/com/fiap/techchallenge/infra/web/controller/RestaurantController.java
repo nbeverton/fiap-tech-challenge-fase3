@@ -85,8 +85,7 @@ public class RestaurantController {
         return ResponseEntity.noContent().build();
     }
 
-    // -------------------------------------Menu to
-    // Restaurant-------------------------------------
+    // ------------------------------------- Menu to Restaurant -------------------------------------//
 
     @PostMapping("/{restaurantId}/menus")
     public ResponseEntity<RestaurantResponse> addMenu(
@@ -115,6 +114,28 @@ public class RestaurantController {
 
         Restaurant restaurant = findRestaurantByIdUseCase.execute(restaurantId);
         return ResponseEntity.ok(restaurant.getMenu());
+    }
+
+    @PutMapping("/{restaurantId}/menus/{menuId}")
+    public ResponseEntity<RestaurantResponse> updateMenu(
+            @PathVariable String restaurantId,
+            @PathVariable String menuId,
+            @RequestBody Menu menuRequest) {
+
+        Restaurant restaurant = findRestaurantByIdUseCase.execute(restaurantId);
+
+        Menu updatedMenu = Menu.restore(
+                menuId,
+                menuRequest.getName(),
+                menuRequest.getDescription(),
+                menuRequest.getPrice(),
+                menuRequest.isDineInAvailable(),
+                menuRequest.getImageUrl());
+
+        Restaurant updated = restaurant.updateMenu(updatedMenu);
+        Restaurant saved = updateRestaurantUseCase.execute(restaurantId, updated);
+
+        return ResponseEntity.ok(RestaurantMapper.toResponse(saved));
     }
 
 }
