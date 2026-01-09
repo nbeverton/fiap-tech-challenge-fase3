@@ -1,16 +1,20 @@
 package br.com.fiap.techchallenge.infra.web.controller;
 
+import br.com.fiap.techchallenge.core.domain.enums.AddressType;
 import br.com.fiap.techchallenge.core.domain.model.User;
 import br.com.fiap.techchallenge.core.usecase.in.useraddress.AddAddressToUserUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.useraddress.UpdateUserAddressForUserUseCase;
 import br.com.fiap.techchallenge.infra.web.dto.user.CreateUserWithAddressRequest;
 import br.com.fiap.techchallenge.infra.web.dto.user.UpdateUserRequest;
 import br.com.fiap.techchallenge.infra.web.dto.user.UserResponse;
 import br.com.fiap.techchallenge.infra.web.dto.useraddress.AddAddressToUserRequest;
+import br.com.fiap.techchallenge.infra.web.dto.useraddress.UpdateUserAddressRequest;
 import br.com.fiap.techchallenge.infra.web.dto.useraddress.UserAddressSummaryResponse;
 import br.com.fiap.techchallenge.infra.web.mapper.user.UserDtoMapper;
 import br.com.fiap.techchallenge.core.usecase.in.user.*;
 import br.com.fiap.techchallenge.infra.web.mapper.user.UserWithAddressDtoMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.useraddress.AddAddressToUserDtoMapper;
+import br.com.fiap.techchallenge.infra.web.mapper.useraddress.UpdateUserAddressDtoMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.useraddress.UserAddressSummaryDtoMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +31,7 @@ public class UserController {
     private final FindUserByIdUseCase findUserByIdUseCase;
     private final FindAllUsersUseCase findAllUsersUseCase;
     private final UpdateUserUseCase updateUserUseCase;
+    private final UpdateUserAddressForUserUseCase updateUserAddressForUserUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
 
 
@@ -34,7 +39,7 @@ public class UserController {
             CreateUserWithAddressUseCase createUserWithAddressUseCase, AddAddressToUserUseCase addAddressToUserUseCase,
             FindUserByIdUseCase findUserByIdUseCase,
             FindAllUsersUseCase findAllUsersUseCase,
-            UpdateUserUseCase updateUserUseCase,
+            UpdateUserUseCase updateUserUseCase, UpdateUserAddressForUserUseCase updateUserAddressForUserUseCase,
             DeleteUserUseCase deleteUserUseCase
     ){
         this.createUserWithAddressUseCase = createUserWithAddressUseCase;
@@ -42,6 +47,7 @@ public class UserController {
         this.findUserByIdUseCase = findUserByIdUseCase;
         this.findAllUsersUseCase = findAllUsersUseCase;
         this.updateUserUseCase = updateUserUseCase;
+        this.updateUserAddressForUserUseCase = updateUserAddressForUserUseCase;
         this.deleteUserUseCase = deleteUserUseCase;
     }
 
@@ -89,7 +95,6 @@ public class UserController {
         return ResponseEntity.ok(UserDtoMapper.toResponse(user));
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> update(
             @PathVariable String id,
@@ -99,6 +104,27 @@ public class UserController {
         User userUpdated = updateUserUseCase.execute(id, input);
 
         return ResponseEntity.ok(UserDtoMapper.toResponse(userUpdated));
+    }
+
+    @PutMapping("/{userId}/addresses/{userAddressId}")
+    public ResponseEntity<List<UserAddressSummaryResponse>> updateUserAddress(
+            @PathVariable String userId,
+            @PathVariable String userAddressId,
+            @RequestBody UpdateUserAddressRequest request
+            ){
+
+        return ResponseEntity.ok(
+                updateUserAddressForUserUseCase.execute(
+                        userId,
+                        userAddressId,
+                        UpdateUserAddressDtoMapper.toAddressType(request),
+                        UpdateUserAddressDtoMapper.toLabel(request),
+                        UpdateUserAddressDtoMapper.toPrincipal(request)
+                )
+                        .stream()
+                        .map(UserAddressSummaryDtoMapper::toResponse)
+                        .toList()
+        );
     }
 
     @DeleteMapping("/{id}")

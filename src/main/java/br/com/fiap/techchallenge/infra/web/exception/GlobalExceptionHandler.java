@@ -3,6 +3,7 @@ package br.com.fiap.techchallenge.infra.web.exception;
 import br.com.fiap.techchallenge.core.domain.exception.BusinessException;
 import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.user.UserNotFoundException;
+import br.com.fiap.techchallenge.core.domain.exception.useraddress.CannotRemovePrincipalAddressException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +36,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiErrorResponse> handleBusinessException(BusinessException ex) {
+
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(CannotRemovePrincipalAddressException.class)
+    public ResponseEntity<ApiErrorResponse> handleCannotRemovePrincipalAddress(CannotRemovePrincipalAddressException ex) {
 
         ApiErrorResponse error = new ApiErrorResponse(
                 HttpStatus.CONFLICT.value(),

@@ -75,4 +75,16 @@ public class UserAddressBeanConfig {
 
         return new UpdateUserAddressUseCaseImpl(repository);
     }
+
+
+    @Bean
+    public UpdateUserAddressForUserUseCase updateUserAddressForUserUseCase(
+            UserAddressRepositoryPort userAddressRepositoryPort,
+            AddressRepositoryPort addressRepositoryPort
+    ){
+        return new UpdateUserAddressForUserUseCaseImpl(
+                userAddressRepositoryPort,
+                addressRepositoryPort
+        );
+    }
 }
