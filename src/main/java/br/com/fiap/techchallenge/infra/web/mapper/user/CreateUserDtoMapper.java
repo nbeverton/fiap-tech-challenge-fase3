@@ -2,17 +2,17 @@ package br.com.fiap.techchallenge.infra.web.mapper.user;
 
 import br.com.fiap.techchallenge.core.domain.enums.AddressType;
 import br.com.fiap.techchallenge.core.domain.enums.UserType;
-import br.com.fiap.techchallenge.core.usecase.in.user.CreateUserWithAddressInput;
-import br.com.fiap.techchallenge.infra.web.dto.user.CreateUserWithAddressRequest;
+import br.com.fiap.techchallenge.core.usecase.in.user.CreateUserInput;
+import br.com.fiap.techchallenge.infra.web.dto.user.CreateUserRequest;
 
-public class UserWithAddressDtoMapper {
+public class CreateUserDtoMapper {
 
-    private UserWithAddressDtoMapper(){};
+    private CreateUserDtoMapper(){};
 
 
-    public static CreateUserWithAddressInput toInput(CreateUserWithAddressRequest request){
+    public static CreateUserInput toInput(CreateUserRequest request){
 
-        return new CreateUserWithAddressInput(
+        return new CreateUserInput(
                 request.name(),
                 UserType.valueOf(request.userType()),
                 request.email(),

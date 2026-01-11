@@ -1,10 +1,9 @@
 package br.com.fiap.techchallenge.infra.web.controller;
 
-import br.com.fiap.techchallenge.core.domain.enums.AddressType;
 import br.com.fiap.techchallenge.core.domain.model.User;
 import br.com.fiap.techchallenge.core.usecase.in.useraddress.AddAddressToUserUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.useraddress.UpdateUserAddressForUserUseCase;
-import br.com.fiap.techchallenge.infra.web.dto.user.CreateUserWithAddressRequest;
+import br.com.fiap.techchallenge.infra.web.dto.user.CreateUserRequest;
 import br.com.fiap.techchallenge.infra.web.dto.user.UpdateUserRequest;
 import br.com.fiap.techchallenge.infra.web.dto.user.UserResponse;
 import br.com.fiap.techchallenge.infra.web.dto.useraddress.AddAddressToUserRequest;
@@ -12,7 +11,7 @@ import br.com.fiap.techchallenge.infra.web.dto.useraddress.UpdateUserAddressRequ
 import br.com.fiap.techchallenge.infra.web.dto.useraddress.UserAddressSummaryResponse;
 import br.com.fiap.techchallenge.infra.web.mapper.user.UserDtoMapper;
 import br.com.fiap.techchallenge.core.usecase.in.user.*;
-import br.com.fiap.techchallenge.infra.web.mapper.user.UserWithAddressDtoMapper;
+import br.com.fiap.techchallenge.infra.web.mapper.user.CreateUserDtoMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.useraddress.AddAddressToUserDtoMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.useraddress.UpdateUserAddressDtoMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.useraddress.UserAddressSummaryDtoMapper;
@@ -26,7 +25,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private final CreateUserWithAddressUseCase createUserWithAddressUseCase;
+    private final CreateUserUseCase createUserUseCase;
     private final AddAddressToUserUseCase addAddressToUserUseCase;
     private final FindUserByIdUseCase findUserByIdUseCase;
     private final FindAllUsersUseCase findAllUsersUseCase;
@@ -36,13 +35,13 @@ public class UserController {
 
 
     public UserController(
-            CreateUserWithAddressUseCase createUserWithAddressUseCase, AddAddressToUserUseCase addAddressToUserUseCase,
+            CreateUserUseCase createUserUseCase, AddAddressToUserUseCase addAddressToUserUseCase,
             FindUserByIdUseCase findUserByIdUseCase,
             FindAllUsersUseCase findAllUsersUseCase,
             UpdateUserUseCase updateUserUseCase, UpdateUserAddressForUserUseCase updateUserAddressForUserUseCase,
             DeleteUserUseCase deleteUserUseCase
     ){
-        this.createUserWithAddressUseCase = createUserWithAddressUseCase;
+        this.createUserUseCase = createUserUseCase;
         this.addAddressToUserUseCase = addAddressToUserUseCase;
         this.findUserByIdUseCase = findUserByIdUseCase;
         this.findAllUsersUseCase = findAllUsersUseCase;
@@ -52,9 +51,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> create(@RequestBody CreateUserWithAddressRequest request){
+    public ResponseEntity<UserResponse> create(@RequestBody CreateUserRequest request){
 
-        User user = createUserWithAddressUseCase.execute(UserWithAddressDtoMapper.toInput(request));
+        User user = createUserUseCase.execute(CreateUserDtoMapper.toInput(request));
 
         return ResponseEntity.status(201).body(UserDtoMapper.toResponse(user));
     }

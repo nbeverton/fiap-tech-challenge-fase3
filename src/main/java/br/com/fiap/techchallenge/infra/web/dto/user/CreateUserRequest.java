@@ -1,10 +1,13 @@
 package br.com.fiap.techchallenge.infra.web.dto.user;
 
-public record CreateUserRequest (
+public record CreateUserRequest(
         String name,
-        String type,
+        String userType,
         String email,
         String login,
-        String password
-){
+        String password,
+        String addressId,
+        String addressType,
+        String label
+) {
 }
