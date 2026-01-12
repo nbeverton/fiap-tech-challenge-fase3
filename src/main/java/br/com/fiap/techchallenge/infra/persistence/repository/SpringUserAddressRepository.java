@@ -14,6 +14,8 @@ public interface SpringUserAddressRepository extends MongoRepository<UserAddress
 
     List<UserAddressDocument> findByAddressIdAndPrincipalTrue(String addressId);
 
+    List<UserAddressDocument> findByIdAndPrincipalTrue(String id);
+
     Optional<UserAddressDocument> findByUserIdAndPrincipalTrue(String userId);
 
 

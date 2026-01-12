@@ -59,6 +59,14 @@ public class UserAddressRepositoryAdapter implements UserAddressRepositoryPort {
     }
 
     @Override
+    public List<UserAddress> findPrincipalsById(String id) {
+        return repository.findByIdAndPrincipalTrue(id)
+                .stream()
+                .map(UserAddressMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public List<UserAddress> findByUserId(String userId) {
         return repository.findByUserId(userId)
                 .stream()

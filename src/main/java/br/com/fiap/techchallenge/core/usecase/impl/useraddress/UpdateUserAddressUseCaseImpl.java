@@ -1,7 +1,7 @@
 package br.com.fiap.techchallenge.core.usecase.impl.useraddress;
 
 import br.com.fiap.techchallenge.core.domain.enums.AddressType;
-import br.com.fiap.techchallenge.core.domain.exception.useraddress.CannotRemovePrincipalAddressException;
+import br.com.fiap.techchallenge.core.domain.exception.useraddress.CannotDeletePrimaryAddressException;
 import br.com.fiap.techchallenge.core.domain.exception.useraddress.UserAddressNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.UserAddress;
 import br.com.fiap.techchallenge.core.usecase.in.useraddress.UpdateUserAddressUseCase;
@@ -30,7 +30,7 @@ public class UpdateUserAddressUseCaseImpl implements UpdateUserAddressUseCase {
 
         //2. Rule: Cannot Remove Primary Address
         if(isPrincipal && !principal){
-            throw new CannotRemovePrincipalAddressException(
+            throw new CannotDeletePrimaryAddressException(
                     existingUserAddress.getUserId()
             );
         }

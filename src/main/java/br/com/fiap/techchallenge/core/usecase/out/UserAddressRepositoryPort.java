@@ -15,6 +15,8 @@ public interface UserAddressRepositoryPort {
 
     List<UserAddress> findPrincipalsByAddressId(String addressId);
 
+    List<UserAddress> findPrincipalsById(String id);
+
     List<UserAddress> findByUserId(String userId);
 
     Optional<UserAddress> findPrincipalByUserId(String userId);

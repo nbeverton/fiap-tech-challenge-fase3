@@ -1,8 +1,7 @@
 package br.com.fiap.techchallenge.core.usecase.impl.address;
 
 import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
-import br.com.fiap.techchallenge.core.domain.exception.address.CannotDeletePrincipalAddressException;
-import br.com.fiap.techchallenge.core.domain.exception.useraddress.CannotRemovePrincipalAddressException;
+import br.com.fiap.techchallenge.core.domain.exception.useraddress.CannotDeletePrimaryAddressException;
 import br.com.fiap.techchallenge.core.domain.model.UserAddress;
 import br.com.fiap.techchallenge.core.usecase.in.address.DeleteAddressUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
@@ -40,7 +39,7 @@ public class DeleteAddressUseCaseImpl implements DeleteAddressUseCase {
                     .map(UserAddress::getUserId)
                     .toList();
 
-            throw new CannotDeletePrincipalAddressException(id, userIds);
+            throw new CannotDeletePrimaryAddressException(id, userIds);
         }
 
 

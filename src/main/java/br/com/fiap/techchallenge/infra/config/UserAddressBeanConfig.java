@@ -42,9 +42,15 @@ public class UserAddressBeanConfig {
 
 
     @Bean
-    public DeleteUserAddressUseCase deleteUserAddressUseCase(UserAddressRepositoryPort repository){
+    public DeleteUserAddressUseCase deleteUserAddressUseCase(
+            UserAddressRepositoryPort userAddressRepository,
+            AddressRepositoryPort addressRepository
+    ){
 
-        return new DeleteUserAddressUseCaseImpl(repository);
+        return new DeleteUserAddressUseCaseImpl(
+                userAddressRepository,
+                addressRepository
+        );
     }
 
 
