@@ -15,4 +15,6 @@ public interface UserRepositoryPort {
 
     void deleteById(String id);
 
+    Optional<User> findByLogin(String login);
+
 }

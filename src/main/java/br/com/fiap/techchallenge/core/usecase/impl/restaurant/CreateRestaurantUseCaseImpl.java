@@ -2,6 +2,7 @@ package br.com.fiap.techchallenge.core.usecase.impl.restaurant;
 
 import br.com.fiap.techchallenge.core.domain.exception.BusinessException;
 import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
+import br.com.fiap.techchallenge.core.domain.exception.restaurant.RestaurantAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.exception.user.UserNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Restaurant;
 import br.com.fiap.techchallenge.core.domain.model.User;
@@ -28,6 +29,12 @@ public class CreateRestaurantUseCaseImpl implements CreateRestaurantUseCase {
 
     @Override
     public Restaurant execute(Restaurant restaurant) {
+
+        // 0) Nome deve ser único
+        restaurantRepository.findByName(restaurant.getName())
+                .ifPresent(existing -> {
+                    throw new RestaurantAlreadyExistsException(restaurant.getName());
+                });
 
         // 1) Garante que o endereço existe
         addressRepository.findById(restaurant.getAddressId())

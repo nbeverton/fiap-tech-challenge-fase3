@@ -22,12 +22,19 @@ public abstract class User {
     }
 
     protected User(String id, String name, UserType type, String email, String login, String password) {
-        this.id = id; // pode ser null na criação
+        this.id = id;
         this.name = requireNonBlank(name, "name");
-        this.userType = Objects.requireNonNull(type, "userType must not be null");
+        this.userType = requireUserType(type);
         this.email = requireValidEmail(email);
         this.login = requireNonBlank(login, "login");
-        this.password = requireNonBlank (password, "password");
+        this.password = requireNonBlank(password, "password");
+    }
+
+    private UserType requireUserType(UserType type) {
+        if (type == null) {
+            throw new InvalidUserException("userType must be OWNER or CLIENT");
+        }
+        return type;
     }
 
     private String requireNonBlank(String value, String fieldName) {

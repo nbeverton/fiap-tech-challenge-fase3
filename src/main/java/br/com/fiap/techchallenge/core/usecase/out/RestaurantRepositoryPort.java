@@ -16,4 +16,6 @@ public interface RestaurantRepositoryPort {
     void delete(String id);
 
     Optional<Restaurant> findByAddressId(String addressId);
+
+    Optional<Restaurant> findByName(String name);
 }

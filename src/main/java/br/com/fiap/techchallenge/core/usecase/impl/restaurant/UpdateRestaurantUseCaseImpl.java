@@ -3,6 +3,7 @@ package br.com.fiap.techchallenge.core.usecase.impl.restaurant;
 import br.com.fiap.techchallenge.core.domain.enums.UserType;
 import br.com.fiap.techchallenge.core.domain.exception.BusinessException;
 import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
+import br.com.fiap.techchallenge.core.domain.exception.restaurant.RestaurantAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.exception.restaurant.RestaurantNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.user.UserNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Restaurant;
@@ -36,11 +37,18 @@ public class UpdateRestaurantUseCaseImpl implements UpdateRestaurantUseCase {
         Restaurant existing = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RestaurantNotFoundException(id));
 
-        // 2) Garante que o endereço existe
+        // 2) Nome deve ser único (ignorando o próprio restaurante)
+        restaurantRepository.findByName(input.getName())
+                .filter(r -> !r.getId().equals(existing.getId()))
+                .ifPresent(r -> {
+                    throw new RestaurantAlreadyExistsException(input.getName());
+                });
+
+        // 3) Garante que o endereço existe
         addressRepository.findById(input.getAddressId())
                 .orElseThrow(() -> new AddressNotFoundException(input.getAddressId()));
 
-        // 3) Garante que o owner existe e é OWNER
+        // 4) Garante que o owner existe e é OWNER
         User owner = userRepository.findById(input.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(input.getUserId()));
 
@@ -48,14 +56,14 @@ public class UpdateRestaurantUseCaseImpl implements UpdateRestaurantUseCase {
             throw new BusinessException("Only OWNER-type users can own restaurants");
         }
 
-        // 4) Garante que o endereço não está vinculado a outro restaurante
+        // 5) Garante que o endereço não está vinculado a outro restaurante
         restaurantRepository.findByAddressId(input.getAddressId())
                 .filter(r -> !r.getId().equals(existing.getId())) // ignora o próprio
                 .ifPresent(r -> {
                     throw new BusinessException("This address is already linked to another restaurant");
                 });
 
-        // 5) Monta o agregado atualizado
+        // 6) Monta o agregado atualizado
         Restaurant toSave = new Restaurant(
                 existing.getId(),             // mantém o id original
                 input.getName(),
