@@ -1,6 +1,7 @@
 package br.com.fiap.techchallenge.core.usecase.impl.user;
 
 import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
+import br.com.fiap.techchallenge.core.domain.exception.user.UserAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.model.Address;
 import br.com.fiap.techchallenge.core.domain.model.User;
 import br.com.fiap.techchallenge.core.domain.model.UserAddress;
@@ -25,6 +26,12 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
 
     @Override
     public User execute(CreateUserInput input) {
+
+        // 0. Login deve ser único
+        userRepository.findByLogin(input.login())
+                .ifPresent(existing -> {
+                    throw new UserAlreadyExistsException(input.login());
+                });
 
         // 1. VALIDATE address
         Address address = addressRepository.findById(input.addressId())

@@ -55,6 +55,12 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         repository.deleteById(id);
     }
 
+    @Override
+    public Optional<User> findByLogin(String login) {
+        return repository.findByLogin(login)
+                .map(UserMapper::toDomain);
+    }
+
 
     /**
      * Retrieves an existing MongoDB document when updating an entity

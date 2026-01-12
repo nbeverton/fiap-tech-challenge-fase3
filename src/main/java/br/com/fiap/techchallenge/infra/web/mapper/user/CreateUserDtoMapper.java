@@ -19,7 +19,7 @@ public class CreateUserDtoMapper {
                 request.login(),
                 request.password(),
                 request.addressId(),
-                AddressType.valueOf(request.addressType()),
+                AddressType.fromString(request.addressType()),
                 request.label()
         );
     }

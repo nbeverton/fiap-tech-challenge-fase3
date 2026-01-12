@@ -32,9 +32,16 @@ public class UserAddress {
         this.id = id;
         this.userId = requireNonBlank(userId, "userId");
         this.addressId = requireNonBlank(addressId, "addressId");
-        this.type = requireNonNull(type, "type");
-        this.label = requireNonBlank(label, "label");
+        this.type = requireType(type);
+        this.label = label;
         this.principal = principal;
+    }
+
+    private AddressType requireType(AddressType type) {
+        if (type == null) {
+            throw new InvalidUserAddressException("addressType must not be null");
+        }
+        return type;
     }
 
     private String requireNonBlank(String value, String fieldName) {
@@ -75,7 +82,7 @@ public class UserAddress {
     }
 
     public void updateType(AddressType type) {
-        this.type = requireNonNull(type, "type must not be null");
+        this.type = requireType(type);
     }
 
     public void updateLabel(String label) {
