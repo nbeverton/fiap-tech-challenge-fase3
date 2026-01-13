@@ -12,12 +12,11 @@ import br.com.fiap.techchallenge.infra.web.mapper.useraddress.UpdateUserAddressD
 import br.com.fiap.techchallenge.infra.web.mapper.useraddress.UserAddressDtoMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/user-addresses")
 public class UserAddressController {
 
