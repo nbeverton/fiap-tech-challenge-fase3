@@ -30,7 +30,7 @@ public class UpdateUserAddressUseCaseImpl implements UpdateUserAddressUseCase {
 
         //2. Rule: Cannot Remove Primary Address
         if(isPrincipal && !principal){
-            throw new CannotDeletePrimaryAddressException(
+            throw CannotDeletePrimaryAddressException.forUser(
                     existingUserAddress.getUserId()
             );
         }

@@ -46,7 +46,7 @@ public class UpdateUserAddressForUserUseCaseImpl implements UpdateUserAddressFor
 
         //3. Rule: Cannot Remove Primary Address
         if(isPrincipal && !principal){
-            throw new CannotDeletePrimaryAddressException(userId);
+            throw CannotDeletePrimaryAddressException.forUser(userId);
         }
 
         //4. If Setting as Primary, Uncheck the Current One

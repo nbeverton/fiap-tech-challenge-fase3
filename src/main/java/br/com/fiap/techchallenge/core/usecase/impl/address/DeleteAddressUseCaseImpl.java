@@ -39,7 +39,7 @@ public class DeleteAddressUseCaseImpl implements DeleteAddressUseCase {
                     .map(UserAddress::getUserId)
                     .toList();
 
-            throw new CannotDeletePrimaryAddressException(id, userIds);
+            throw CannotDeletePrimaryAddressException.forAddress(id,userIds);
         }
 
 
