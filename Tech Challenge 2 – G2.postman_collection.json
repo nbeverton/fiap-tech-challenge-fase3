@@ -11,128 +11,6 @@
 			"name": "00 - Setup (Happy Path)",
 			"item": [
 				{
-					"name": "Create User",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
-									"let id = null;",
-									"try {",
-									"  const j = pm.response.json();",
-									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
-									"} catch(e) {}",
-									"const loc = pm.response.headers.get('Location');",
-									"if (!id && loc) {",
-									"  const parts = loc.split('/');",
-									"  id = parts[parts.length-1];",
-									"}",
-									"if (id) {",
-									"  pm.environment.set(\"userId\", String(id));",
-									"  pm.environment.set(\"lastId\", String(id));",
-									"  console.log(\"✅ Salvou userId =\", id);",
-									"} else {",
-									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Usuário Tech\",\n  \"type\": \"OWNER\",\n  \"email\": \"user.tech@example.com\",\n  \"login\": \"user.tech\",\n  \"password\": \"SenhaForte123!\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create User (com erro tratado)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
-									"let id = null;",
-									"try {",
-									"  const j = pm.response.json();",
-									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
-									"} catch(e) {}",
-									"const loc = pm.response.headers.get('Location');",
-									"if (!id && loc) {",
-									"  const parts = loc.split('/');",
-									"  id = parts[parts.length-1];",
-									"}",
-									"if (id) {",
-									"  pm.environment.set(\"userId\", String(id));",
-									"  pm.environment.set(\"lastId\", String(id));",
-									"  console.log(\"✅ Salvou userId =\", id);",
-									"} else {",
-									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"\",\n  \"type\": \"OWNER\",\n  \"email\": \"user.tech@example.com\",\n  \"login\": \"user.tech\",\n  \"password\": \"SenhaForte123!\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Create Address",
 					"event": [
 						{
@@ -194,6 +72,67 @@
 					"response": []
 				},
 				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+									"let id = null;",
+									"try {",
+									"  const j = pm.response.json();",
+									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+									"} catch(e) {}",
+									"const loc = pm.response.headers.get('Location');",
+									"if (!id && loc) {",
+									"  const parts = loc.split('/');",
+									"  id = parts[parts.length-1];",
+									"}",
+									"if (id) {",
+									"  pm.environment.set(\"userId\", String(id));",
+									"  pm.environment.set(\"lastId\", String(id));",
+									"  console.log(\"✅ Salvou userId =\", id);",
+									"} else {",
+									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Usuário Tech\",\n  \"userType\": \"OWNER\",\n  \"email\": \"user.tech@example.com\",\n  \"login\": \"user.tech9\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Restaurant",
 					"event": [
 						{
@@ -235,7 +174,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Restaurante Exemplo\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+							"raw": "{\n  \"name\": \"Restaurante Exemplo 2\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -412,7 +351,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Restaurante Exemplo (edit)\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"userId\": \"{{userId}}\",\n  \"openingHours\": {\n    \"opens\": \"09:00\",\n    \"closes\": \"23:00\"\n  }\n}",
+							"raw": "{\n  \"name\": \"Restaurante Exemplo (edit 2)\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"userId\": \"{{userId}}\",\n  \"openingHours\": {\n    \"opens\": \"10:00\",\n    \"closes\": \"22:00\"\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -497,40 +436,6 @@
 								"restaurants",
 								"{{restaurantId}}",
 								"menus"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Menu by ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
-									"try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"restaurants",
-								"{{restaurantId}}",
-								"menus",
-								"{{menuId}}"
 							]
 						}
 					},
@@ -899,6 +804,257 @@
 				}
 			],
 			"description": "CRUD de /addresses"
+		},
+		{
+			"name": "Erros tratados",
+			"item": [
+				{
+					"name": "Create User (com erro tratado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+									"let id = null;",
+									"try {",
+									"  const j = pm.response.json();",
+									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+									"} catch(e) {}",
+									"const loc = pm.response.headers.get('Location');",
+									"if (!id && loc) {",
+									"  const parts = loc.split('/');",
+									"  id = parts[parts.length-1];",
+									"}",
+									"if (id) {",
+									"  pm.environment.set(\"userId\", String(id));",
+									"  pm.environment.set(\"lastId\", String(id));",
+									"  console.log(\"✅ Salvou userId =\", id);",
+									"} else {",
+									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"teste 12.01\",\n  \"userType\": \"outro\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech8\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"outro\",\n  \"label\": \"casa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Address (com erro tratado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+									"let id = null;",
+									"try {",
+									"  const j = pm.response.json();",
+									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+									"} catch(e) {}",
+									"const loc = pm.response.headers.get('Location');",
+									"if (!id && loc) {",
+									"  const parts = loc.split('/');",
+									"  id = parts[parts.length-1];",
+									"}",
+									"if (id) {",
+									"  pm.environment.set(\"addressId\", String(id));",
+									"  pm.environment.set(\"lastId\", String(id));",
+									"  console.log(\"✅ Salvou addressId =\", id);",
+									"} else {",
+									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"postalCode\": \"01234-567\",\n  \"streetName\": \"teste/errp 14.01\",\n  \"streetNumber\": \"\",\n  \"additionalInfo\": \"Sala 2\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/addresses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"addresses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Restaurant (Com erro tratado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+									"let id = null;",
+									"try {",
+									"  const j = pm.response.json();",
+									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+									"} catch(e) {}",
+									"const loc = pm.response.headers.get('Location');",
+									"if (!id && loc) {",
+									"  const parts = loc.split('/');",
+									"  id = parts[parts.length-1];",
+									"}",
+									"if (id) {",
+									"  pm.environment.set(\"restaurantId\", String(id));",
+									"  pm.environment.set(\"lastId\", String(id));",
+									"  console.log(\"✅ Salvou restaurantId =\", id);",
+									"} else {",
+									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Restaurante 14.01\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"30:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/restaurants",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"restaurants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Menu (for Restaurant) (com erro tratado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+									"let id = null;",
+									"try {",
+									"  const j = pm.response.json();",
+									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+									"} catch(e) {}",
+									"const loc = pm.response.headers.get('Location');",
+									"if (!id && loc) {",
+									"  const parts = loc.split('/');",
+									"  id = parts[parts.length-1];",
+									"}",
+									"if (id) {",
+									"  pm.environment.set(\"menuId\", String(id));",
+									"  pm.environment.set(\"lastId\", String(id));",
+									"  console.log(\"✅ Salvou menuId =\", id);",
+									"} else {",
+									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"prato 2\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": -10.0,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"restaurants",
+								"{{restaurantId}}",
+								"menus"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

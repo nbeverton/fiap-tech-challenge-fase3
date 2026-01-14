@@ -17,4 +17,6 @@ public interface UserRepositoryPort {
 
     Optional<User> findByLogin(String login);
 
+    Optional<User> findByEmail(String email);
+
 }

@@ -14,7 +14,7 @@ public class CreateUserDtoMapper {
 
         return new CreateUserInput(
                 request.name(),
-                UserType.valueOf(request.userType()),
+                UserType.fromString(request.userType()),
                 request.email(),
                 request.login(),
                 request.password(),

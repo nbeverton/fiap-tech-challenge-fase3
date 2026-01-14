@@ -98,12 +98,19 @@ public class UserController {
     public ResponseEntity<UserResponse> update(
             @PathVariable String id,
             @RequestBody UpdateUserRequest input
-            ){
+    ) {
+        var useCaseInput = new UpdateUserInput(
+                input.name(),
+                input.email(),
+                input.login(),
+                input.password()
+        );
 
-        User userUpdated = updateUserUseCase.execute(id, input);
+        User userUpdated = updateUserUseCase.execute(id, useCaseInput);
 
         return ResponseEntity.ok(UserDtoMapper.toResponse(userUpdated));
     }
+
 
     @PutMapping("/{userId}/addresses/{userAddressId}")
     public ResponseEntity<List<UserAddressSummaryResponse>> updateUserAddress(
