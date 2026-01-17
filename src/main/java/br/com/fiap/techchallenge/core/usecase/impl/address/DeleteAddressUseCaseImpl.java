@@ -14,44 +14,42 @@ public class DeleteAddressUseCaseImpl implements DeleteAddressUseCase {
     private final AddressRepositoryPort addressRepository;
     private final UserAddressRepositoryPort userAddressRepository;
 
-
-    public DeleteAddressUseCaseImpl(AddressRepositoryPort addressRepository, UserAddressRepositoryPort userAddressRepository){
+    public DeleteAddressUseCaseImpl(AddressRepositoryPort addressRepository,
+                                    UserAddressRepositoryPort userAddressRepository) {
         this.addressRepository = addressRepository;
         this.userAddressRepository = userAddressRepository;
     }
 
 
     @Override
-    public void execute(String id) {
+    public void execute(String addressId) {
 
-        // 1. Check if the address exists
-        addressRepository.findById(id)
-                .orElseThrow(() -> new AddressNotFoundException(id));
+        // 1. Garante que o Address existe
+        addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressNotFoundException(addressId));
 
-        // 2. Find links with users
-        List<UserAddress> principalLinks =
-                userAddressRepository.findPrincipalsByAddressId(id);
+        // 2. Verifica se há vínculos primários (endereços principais)
+        List<UserAddress> primaryLinks =
+                userAddressRepository.findPrincipalsByAddressId(addressId);
 
-        // 3. Rule: cannot delete a primary address
-        if (!principalLinks.isEmpty()) {
-
-            List<String> userIds = principalLinks.stream()
+        if (!primaryLinks.isEmpty()) {
+            List<String> userIds = primaryLinks.stream()
                     .map(UserAddress::getUserId)
                     .toList();
 
-            throw new CannotDeletePrimaryAddressException(id, userIds);
+            // Regra de negócio: não pode apagar endereço que é principal
+            throw new CannotDeletePrimaryAddressException(addressId, userIds);
         }
 
+        // 3. Remove TODOS os vínculos remanescentes (secundários)
+        List<UserAddress> allLinks =
+                userAddressRepository.findByAddressId(addressId);
 
-        // 4. Remove secondary links
-        List<UserAddress> secondaryLinks =
-                userAddressRepository.findByAddressId(id);
-
-        for (UserAddress link : secondaryLinks) {
+        for (UserAddress link : allLinks) {
             userAddressRepository.deleteById(link.getId());
         }
 
-        // 5. Delete the Address
-        addressRepository.delete(id);
+        // 4. Por fim, apaga o Address
+        addressRepository.delete(addressId);
     }
 }

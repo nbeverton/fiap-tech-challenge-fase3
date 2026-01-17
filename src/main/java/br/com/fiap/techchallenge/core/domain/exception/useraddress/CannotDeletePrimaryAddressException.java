@@ -1,8 +1,10 @@
 package br.com.fiap.techchallenge.core.domain.exception.useraddress;
 
+import br.com.fiap.techchallenge.core.domain.exception.BusinessException;
+
 import java.util.List;
 
-public class CannotDeletePrimaryAddressException extends RuntimeException {
+public class CannotDeletePrimaryAddressException extends BusinessException {
 
     public CannotDeletePrimaryAddressException(
             String userAddressId,

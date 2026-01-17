@@ -52,7 +52,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"postalCode\": \"01234-567\",\n  \"streetName\": \"Rua A\",\n  \"streetNumber\": \"123\",\n  \"additionalInfo\": \"Sala 2\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}",
+							"raw": "{\n  \"postalCode\": \"00012-345\",\n  \"streetName\": \"Av. Paulista\",\n  \"streetNumber\": \"123\",\n  \"additionalInfo\": \"Sala 1\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -113,7 +113,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Usuário Tech\",\n  \"userType\": \"OWNER\",\n  \"email\": \"user.tech@example.com\",\n  \"login\": \"user.tech9\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+							"raw": "{\n  \"name\": \"Usuário Tech Challenge\",\n  \"userType\": \"OWNER\",\n  \"email\": \"userTech.tech@example.com\",\n  \"login\": \"user.techChallenge\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -174,7 +174,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Restaurante Exemplo 2\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+							"raw": "{\n  \"name\": \"Restaurante FIAP\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -235,7 +235,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Prato Feito\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 29.90,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}\n",
+							"raw": "{\n  \"name\": \"Prato do dia - Segunda feira\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 39.90,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -351,44 +351,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Restaurante Exemplo (edit 2)\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"userId\": \"{{userId}}\",\n  \"openingHours\": {\n    \"opens\": \"10:00\",\n    \"closes\": \"22:00\"\n  }\n}",
+							"raw": "{\n  \"name\": \"Restaurante Fiap (edit 1)\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"userId\": \"{{userId}}\",\n  \"openingHours\": {\n    \"opens\": \"10:00\",\n    \"closes\": \"22:00\"\n  },\n      \"menu\": [\n        {\n            \"id\": \"5d45dde7-eeb3-439c-8a1d-ec42d9b496ee\",\n            \"name\": \"Prato do dia - Segunda feira\",\n            \"description\": \"Arroz, feijão, bife e salada\",\n            \"price\": 39.9,\n            \"dineInAvailable\": true,\n            \"imageUrl\": \"https://example.com/pf.jpg\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"restaurants",
-								"{{restaurantId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Restaurant",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
 							"host": [
@@ -467,46 +436,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Prato Feito - Segunda feira\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 25.90,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}",
+							"raw": "{\n  \"name\": \"Prato Feito - Segunda feira\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 38.90,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"restaurants",
-								"{{restaurantId}}",
-								"menus",
-								"{{menuId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Menu",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
 							"host": [
@@ -613,42 +549,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Usuário Tech (editado)\",\n  \"email\": \"user.tech@example.com\",\n  \"login\": \"user.tech\",\n  \"password\": \"SenhaForte123!\"\n}",
+							"raw": "{\n  \"name\": \"Usuário Tech (edit)\",\n  \"email\": \"userTech.tech@example.com\",\n  \"login\": \"user.techChallenge (edit)\",\n  \"password\": \"SenhaForte123!\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "{{baseUrl}}/users/{{userId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								"{{userId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete User",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/users/{{userId}}",
 							"host": [
@@ -753,42 +660,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"postalCode\": \"01234-567\",\n    \"streetName\": \"Rua A (EDITADA)\",\n    \"streetNumber\": 123,\n    \"additionalInfo\": \"Sala 2\",\n    \"neighborhood\": \"Centro\",\n    \"city\": \"São Paulo\",\n    \"stateProvince\": \"SP\",\n    \"country\": \"Brazil\"\n}",
+							"raw": "{\n    \"postalCode\": \"01234-567\",\n    \"streetName\": \"Rua A (edit)\",\n    \"streetNumber\": 123,\n    \"additionalInfo\": \"Sala 2\",\n    \"neighborhood\": \"Centro\",\n    \"city\": \"São Paulo\",\n    \"stateProvince\": \"SP\",\n    \"country\": \"Brazil\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "{{baseUrl}}/addresses/{{addressId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"addresses",
-								"{{addressId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Address",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/addresses/{{addressId}}",
 							"host": [
@@ -809,68 +687,7 @@
 			"name": "Erros tratados",
 			"item": [
 				{
-					"name": "Create User (com erro tratado)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
-									"let id = null;",
-									"try {",
-									"  const j = pm.response.json();",
-									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
-									"} catch(e) {}",
-									"const loc = pm.response.headers.get('Location');",
-									"if (!id && loc) {",
-									"  const parts = loc.split('/');",
-									"  id = parts[parts.length-1];",
-									"}",
-									"if (id) {",
-									"  pm.environment.set(\"userId\", String(id));",
-									"  pm.environment.set(\"lastId\", String(id));",
-									"  console.log(\"✅ Salvou userId =\", id);",
-									"} else {",
-									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"teste 12.01\",\n  \"userType\": \"outro\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech8\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"outro\",\n  \"label\": \"casa\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Address (com erro tratado)",
+					"name": "Create Address (com erro tratado de número)",
 					"event": [
 						{
 							"listen": "test",
@@ -931,7 +748,251 @@
 					"response": []
 				},
 				{
+					"name": "Create User (com erro tratado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+									"let id = null;",
+									"try {",
+									"  const j = pm.response.json();",
+									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+									"} catch(e) {}",
+									"const loc = pm.response.headers.get('Location');",
+									"if (!id && loc) {",
+									"  const parts = loc.split('/');",
+									"  id = parts[parts.length-1];",
+									"}",
+									"if (id) {",
+									"  pm.environment.set(\"userId\", String(id));",
+									"  pm.environment.set(\"lastId\", String(id));",
+									"  console.log(\"✅ Salvou userId =\", id);",
+									"} else {",
+									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"\",\n  \"userType\": \"OWNER\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech13\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User (com erro tratado - userType)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+									"let id = null;",
+									"try {",
+									"  const j = pm.response.json();",
+									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+									"} catch(e) {}",
+									"const loc = pm.response.headers.get('Location');",
+									"if (!id && loc) {",
+									"  const parts = loc.split('/');",
+									"  id = parts[parts.length-1];",
+									"}",
+									"if (id) {",
+									"  pm.environment.set(\"userId\", String(id));",
+									"  pm.environment.set(\"lastId\", String(id));",
+									"  console.log(\"✅ Salvou userId =\", id);",
+									"} else {",
+									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"teste 12.01\",\n  \"userType\": \"outro\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech8\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User (com erro tratado - login) Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+									"let id = null;",
+									"try {",
+									"  const j = pm.response.json();",
+									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+									"} catch(e) {}",
+									"const loc = pm.response.headers.get('Location');",
+									"if (!id && loc) {",
+									"  const parts = loc.split('/');",
+									"  id = parts[parts.length-1];",
+									"}",
+									"if (id) {",
+									"  pm.environment.set(\"userId\", String(id));",
+									"  pm.environment.set(\"lastId\", String(id));",
+									"  console.log(\"✅ Salvou userId =\", id);",
+									"} else {",
+									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"teste 12.01\",\n  \"userType\": \"OWNER\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech2\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Restaurant (Com erro tratado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+									"let id = null;",
+									"try {",
+									"  const j = pm.response.json();",
+									"  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+									"} catch(e) {}",
+									"const loc = pm.response.headers.get('Location');",
+									"if (!id && loc) {",
+									"  const parts = loc.split('/');",
+									"  id = parts[parts.length-1];",
+									"}",
+									"if (id) {",
+									"  pm.environment.set(\"restaurantId\", String(id));",
+									"  pm.environment.set(\"lastId\", String(id));",
+									"  console.log(\"✅ Salvou restaurantId =\", id);",
+									"} else {",
+									"  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/restaurants",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"restaurants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Restaurant (Com erro tratado - horário) Copy",
 					"event": [
 						{
 							"listen": "test",
@@ -992,7 +1053,7 @@
 					"response": []
 				},
 				{
-					"name": "Create Menu (for Restaurant) (com erro tratado)",
+					"name": "Create Menu (for Restaurant) (com erro tratado - preço)",
 					"event": [
 						{
 							"listen": "test",
@@ -1033,7 +1094,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"prato 2\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": -10.0,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"\"\n}\n",
+							"raw": "{\n  \"name\": \"prato 2\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": -10.0,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1049,6 +1110,133 @@
 								"restaurants",
 								"{{restaurantId}}",
 								"menus"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deletes",
+			"item": [
+				{
+					"name": "Delete Restaurant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"restaurants",
+								"{{restaurantId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Menu",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"restaurants",
+								"{{restaurantId}}",
+								"menus",
+								"{{menuId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/addresses/{{addressId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"addresses",
+								"{{addressId}}"
 							]
 						}
 					},
