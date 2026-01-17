@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1) Tudo que é "não encontrado" → 404
+    // 1) 404 – "não encontrado"
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleNotFound(NotFoundException ex) {
         ApiErrorResponse error = new ApiErrorResponse(
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    // 2) Validações de entrada → 400
+    // 2) 400 – validações de entrada/domínio
     @ExceptionHandler({
             InvalidUserException.class,
             InvalidMenuException.class,
@@ -45,13 +45,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-
-    // 3) Outras regras de negócio → 409 (duplicidade, não pode apagar, etc)
+    // 3) 409 – conflitos de negócio (duplicidade, bloqueios, etc.)
     @ExceptionHandler({
             UserAlreadyExistsException.class,
             RestaurantAlreadyExistsException.class,
             CannotDeletePrimaryAddressException.class,
-            BusinessException.class // fallback para qualquer regra de negócio não mapeada acima
+            BusinessException.class // fallback para outras BusinessException não mapeadas acima
     })
     public ResponseEntity<ApiErrorResponse> handleBusinessException(BusinessException ex) {
         ApiErrorResponse error = new ApiErrorResponse(
@@ -61,11 +60,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    // 3.5) Erros de parsing JSON / bind para objetos → tentar extrair BusinessException
+    // 3.5) 400 – erro de parsing JSON / bind para objetos
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
 
-        // Procura uma BusinessException (ou filha) na cadeia de causas
+        // Procura uma BusinessException na "causa raiz"
         Throwable cause = ex.getCause();
         BusinessException businessCause = null;
 
@@ -85,7 +84,7 @@ public class GlobalExceptionHandler {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
 
-        // Se não for BusinessException, trata como corpo malformado genérico
+        // Caso não seja uma BusinessException específica, corpo malformado genérico
         ApiErrorResponse error = new ApiErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Invalid request body"
@@ -93,8 +92,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-
-    // 4) Fallback genérico → 500 (algo escapou não mapeado)
+    // 4) 500 – fallback genérico
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGeneric(Exception ex) {
         ApiErrorResponse error = new ApiErrorResponse(
@@ -103,5 +101,4 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
-
 }

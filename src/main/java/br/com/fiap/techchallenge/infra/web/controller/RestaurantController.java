@@ -72,11 +72,31 @@ public class RestaurantController {
     public ResponseEntity<RestaurantResponse> update(
             @PathVariable String id,
             @RequestBody RestaurantRequest request) {
-        Restaurant restaurant = RestaurantMapper.toDomain(request);
-        Restaurant updated = updateRestaurantUseCase.execute(id, restaurant);
+
+        // 1) Carrega o restaurante atual do core (com menu preenchido)
+        Restaurant existing = findRestaurantByIdUseCase.execute(id);
+
+        // 2) Mapeia o DTO para domínio (sem se preocupar com o menu aqui)
+        Restaurant mapped = RestaurantMapper.toDomain(request);
+
+        // 3) Monta o agregado de entrada para o use case,
+        //    mantendo o menu que já existe no restaurante
+        Restaurant input = new Restaurant(
+                existing.getId(),            // mantém o id original
+                mapped.getName(),
+                mapped.getAddressId(),
+                mapped.getCuisineType(),
+                mapped.getOpeningHours(),
+                mapped.getUserId(),
+                existing.getMenu()           // <-- preserva o menu atual
+        );
+
+        // 4) Chama o use case normalmente
+        Restaurant updated = updateRestaurantUseCase.execute(id, input);
 
         return ResponseEntity.ok(RestaurantMapper.toResponse(updated));
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(

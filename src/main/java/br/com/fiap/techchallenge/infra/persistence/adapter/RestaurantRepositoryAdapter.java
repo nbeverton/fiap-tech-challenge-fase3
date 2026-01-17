@@ -87,6 +87,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
         List<MenuEmbedded> menuEntities = restaurant.getMenu().stream()
                 .map(this::menuToEntity)
                 .collect(Collectors.toList());
+
         entity.setMenu(menuEntities);
 
         return entity;
