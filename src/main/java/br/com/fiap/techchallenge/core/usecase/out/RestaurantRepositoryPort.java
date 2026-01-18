@@ -18,4 +18,7 @@ public interface RestaurantRepositoryPort {
     Optional<Restaurant> findByAddressId(String addressId);
 
     Optional<Restaurant> findByName(String name);
+
+    boolean existsByUserId(String userId);
+
 }

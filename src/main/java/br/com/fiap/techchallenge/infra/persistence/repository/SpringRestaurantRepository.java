@@ -12,5 +12,8 @@ public interface SpringRestaurantRepository
     Optional<RestaurantDocument> findByAddressId(String addressId);
 
     Optional<RestaurantDocument> findByName(String name);
+
+    boolean existsByUserId(String userId);
+
 }
 

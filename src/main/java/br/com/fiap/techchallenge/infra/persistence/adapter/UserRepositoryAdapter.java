@@ -61,6 +61,13 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
                 .map(UserMapper::toDomain);
     }
 
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return repository.findByEmail(email)
+                .map(UserMapper::toDomain);
+    }
+
+
 
     /**
      * Retrieves an existing MongoDB document when updating an entity

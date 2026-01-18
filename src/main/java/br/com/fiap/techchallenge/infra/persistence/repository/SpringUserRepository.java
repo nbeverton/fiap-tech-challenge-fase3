@@ -7,4 +7,7 @@ import java.util.Optional;
 
 public interface SpringUserRepository extends MongoRepository<UserDocument, String> {
     Optional<UserDocument> findByLogin(String login);
+
+    Optional<UserDocument> findByEmail(String email);
+
 }

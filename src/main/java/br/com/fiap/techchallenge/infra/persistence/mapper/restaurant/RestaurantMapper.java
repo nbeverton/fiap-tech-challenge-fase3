@@ -34,7 +34,7 @@ public class RestaurantMapper {
         return Restaurant.create(
                 request.name(),
                 request.addressId(),
-                CuisineType.valueOf(request.cuisineType()),
+                CuisineType.fromString(request.cuisineType()),
                 opening,
                 request.userId(),
                 menu

@@ -3,6 +3,7 @@ package br.com.fiap.techchallenge.infra.config;
 import br.com.fiap.techchallenge.core.usecase.impl.user.*;
 import br.com.fiap.techchallenge.core.usecase.in.user.*;
 import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserAddressRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserRepositoryPort;
 import org.springframework.context.annotation.Bean;
@@ -42,11 +43,13 @@ public class UserBeanConfig {
     @Bean
     public DeleteUserUseCase deleteUserUseCase(
             UserRepositoryPort userRepository,
-            UserAddressRepositoryPort userAddressRepository
+            UserAddressRepositoryPort userAddressRepository,
+            RestaurantRepositoryPort restaurantRepository
     ){
         return new DeleteUserUseCaseImpl(
                 userRepository,
-                userAddressRepository
+                userAddressRepository,
+                restaurantRepository
         );
     }
 }
