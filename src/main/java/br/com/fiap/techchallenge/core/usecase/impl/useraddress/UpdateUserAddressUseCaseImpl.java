@@ -47,6 +47,7 @@ public class UpdateUserAddressUseCaseImpl implements UpdateUserAddressUseCase {
         //4. Update Fields: Modify the relevant data fields of the record as required.
         existingUserAddress.updateType(type);
         existingUserAddress.updateLabel(label);
+        existingUserAddress.updatePrincipal(principal);
 
         //5. Save
         return userAddressRepository.save(existingUserAddress);
