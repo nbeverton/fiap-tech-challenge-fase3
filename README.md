@@ -1,49 +1,25 @@
-#🍽️ JavaEats
-##📌 Overview
+# 🍽️ JavaEats
+## 📌 Overview
 
 JavaEats is a shared restaurant management system designed to reduce operational costs and standardize processes across multiple establishments. The platform provides a REST API that allows restaurants to manage their data while enabling clients to access information and interact with restaurants.
-
 The system was developed following Clean Architecture principles, ensuring clear separation of concerns, maintainability, and scalability.
 
-##🏗️ Architecture
+## 🏗️ Architecture
 
-The application adopts Clean Architecture, organized into well-defined layers:
+The application adopts Clean Architecture, organized into well-defined layers: Core, Domain models, Use cases (business rules), Infrastructure (Infra), REST API controllers MongoDB persistence using Spring Data, Application configuration and observability. This approach ensures that business rules remain independent from frameworks and infrastructure details.
 
-Core
+## 🚀 Technology Stack
 
-Domain models
+- Language: Java 21
+- Framework: Spring Boot
+- Data Persistence: Spring Data
+- Database: MongoDB
+- Build Tool: Maven (JAR packaging)
+- Service Orchestration: Docker Compose
+- Observability: Spring Actuator
+- API Documentation: Swagger (OpenAPI)
 
-Use cases (business rules)
-
-Infrastructure (Infra)
-
-REST API controllers
-
-MongoDB persistence using Spring Data
-
-Application configuration and observability
-
-This approach ensures that business rules remain independent from frameworks and infrastructure details.
-
-##🚀 Technology Stack
-
-Language: Java 21
-
-Framework: Spring Boot
-
-Data Persistence: Spring Data
-
-Database: MongoDB
-
-Build Tool: Maven (JAR packaging)
-
-Service Orchestration: Docker Compose
-
-Observability: Spring Actuator
-
-API Documentation: Swagger (OpenAPI)
-
-##📦 Requirements
+## 📦 Requirements
 
 Before running the project, make sure you have the following installed:
 
@@ -53,7 +29,7 @@ Docker Compose
 
 Git (optional, to clone the repository)
 
-##▶️ How to Run the Project
+## ▶️ How to Run the Project
 
 Clone the repository:
 
@@ -77,7 +53,7 @@ Build and run the Spring Boot application
 
 Launch all services in detached mode
 
-##🌐 Application Access
+## 🌐 Application Access
 
 - REST API: http://localhost:8081
 
@@ -86,10 +62,10 @@ Launch all services in detached mode
 - Swagger UI (API Documentation):
   http://localhost:8080/swagger-ui/index.html
 
-##📚 API Documentation
+## 📚 API Documentation
 
 The API is fully documented using Swagger UI, allowing users to explore and test endpoints directly through the browser.
 
-##📝 Notes
+## 📝 Notes
 
 This project was developed for academic purposes, following software architecture best practices, REST standards, and clean code principles.
