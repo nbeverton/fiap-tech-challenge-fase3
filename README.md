@@ -60,7 +60,7 @@ Launch all services in detached mode
 - Health Check (Actuator): http://localhost:8081/actuator/health
 
 - Swagger UI (API Documentation):
-  http://localhost:8080/swagger-ui/index.html
+  http://localhost:8081/swagger-ui/index.html
 
 ## 📚 API Documentation
 
