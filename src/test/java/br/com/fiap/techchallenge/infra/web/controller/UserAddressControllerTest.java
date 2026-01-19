@@ -1,7 +1,7 @@
-package br.com.fiap.techchallenge.G13.TechChallenge2.G13.infra.web.controller;
+package br.com.fiap.techchallenge.infra.web.controller;
 
 
-import br.com.fiap.techchallenge.G13.TechChallenge2.G13.tests.ObjectFactoryController;
+import br.com.fiap.techchallenge.tests.ObjectFactoryController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

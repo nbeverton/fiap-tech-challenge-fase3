@@ -1,4 +1,4 @@
-package br.com.fiap.techchallenge.G13.TechChallenge2.G13.tests;
+package br.com.fiap.techchallenge.tests;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Assertions;
