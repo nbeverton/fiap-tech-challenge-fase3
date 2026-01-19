@@ -44,14 +44,10 @@ From the project root directory (where the docker-compose.yml file is located), 
 ```
 docker compose up -d
 ```
-
 This command will:
-
-Start the MongoDB container
-
-Build and run the Spring Boot application
-
-Launch all services in detached mode
+1. Start the MongoDB container
+2. Build and run the Spring Boot application
+3. Launch all services in detached mode
 
 To run the tests locally, execute the following command:
 ```
