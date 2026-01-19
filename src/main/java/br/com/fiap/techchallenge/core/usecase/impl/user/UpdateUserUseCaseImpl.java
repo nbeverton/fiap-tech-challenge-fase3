@@ -6,6 +6,7 @@ import br.com.fiap.techchallenge.core.domain.model.User;
 import br.com.fiap.techchallenge.core.usecase.in.user.UpdateUserInput;
 import br.com.fiap.techchallenge.core.usecase.in.user.UpdateUserUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.UserRepositoryPort;
+import br.com.fiap.techchallenge.infra.web.dto.user.UpdateUserRequest;
 
 public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
 
@@ -16,8 +17,7 @@ public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
     }
 
     @Override
-    public User execute(String id, UpdateUserInput input) {
-
+    public User execute(String id, UpdateUserRequest input) {
         // 1. Garante que o usuário existe
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
