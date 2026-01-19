@@ -53,6 +53,13 @@ Build and run the Spring Boot application
 
 Launch all services in detached mode
 
+To run the tests locally, execute the following command:
+```
+docker compose -f docker-compose-mongo.yml up
+mvn clean package
+```
+These commands are used to run only MongoDB in Docker and allow building the application via the IDE and running unit tests.
+
 ## 🌐 Application Access
 
 - REST API: http://localhost:8081
