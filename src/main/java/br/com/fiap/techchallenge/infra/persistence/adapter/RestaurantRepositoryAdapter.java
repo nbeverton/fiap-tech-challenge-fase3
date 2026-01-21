@@ -67,7 +67,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
                 .map(this::toDomain);
     }
 
-    // ---------- Conversão Domain -> Document ----------
+    // ---------- Domain -> Document conversion ----------
     private RestaurantDocument toEntity(Restaurant restaurant) {
         RestaurantDocument entity = new RestaurantDocument();
 
@@ -78,7 +78,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
 
         OpeningHours oh = restaurant.getOpeningHours();
         if (oh != null) {
-            // Convertendo OpeningHoursEntity para OpeningHoursDocument
+            // Converting OpeningHours domain object to OpeningHours document
             entity.setOpeningHours(toDocument(new OpeningHoursEmbedded(oh.getOpens(), oh.getCloses())));
         }
 
@@ -93,7 +93,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
         return entity;
     }
 
-    // ---------- Conversão Document -> Domain ----------
+    // ---------- Document -> Domain conversion ----------
     private Restaurant toDomain(RestaurantDocument entity) {
         List<Menu> menu = entity.getMenu() == null ? List.of()
                 : entity.getMenu().stream()
@@ -128,7 +128,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
                 menu);
     }
 
-    // ---------- Conversão Menu ----------
+    // ---------- Menu conversion ----------
     private MenuEmbedded menuToEntity(Menu m) {
         MenuEmbedded me = new MenuEmbedded();
         me.setId(m.getId());
@@ -150,7 +150,7 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
                 me.getImageUrl());
     }
 
-    // ---------- Conversão OpeningHours ----------
+    // ---------- OpeningHours conversion ----------
     private OpeningHoursEmbedded toDocument(OpeningHoursEmbedded entity) {
         if (entity == null)
             return null;

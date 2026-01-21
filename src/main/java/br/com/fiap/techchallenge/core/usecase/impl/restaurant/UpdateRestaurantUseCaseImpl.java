@@ -33,22 +33,22 @@ public class UpdateRestaurantUseCaseImpl implements UpdateRestaurantUseCase {
     @Override
     public Restaurant execute(String id, Restaurant input) {
 
-        // 1) Garante que o restaurante existe
+        // 1) Ensure that the restaurant exists
         Restaurant existing = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RestaurantNotFoundException(id));
 
-        // 2) Nome deve ser único (ignorando o próprio restaurante)
+        // 2) Restaurant name must be unique (ignoring the current restaurant)
         restaurantRepository.findByName(input.getName())
                 .filter(r -> !r.getId().equals(existing.getId()))
                 .ifPresent(r -> {
                     throw new RestaurantAlreadyExistsException(input.getName());
                 });
 
-        // 3) Garante que o endereço existe
+        // 3) Ensure that the address exists
         addressRepository.findById(input.getAddressId())
                 .orElseThrow(() -> new AddressNotFoundException(input.getAddressId()));
 
-        // 4) Garante que o owner existe e é OWNER
+        // 4) Ensure that the owner exists and has OWNER role
         User owner = userRepository.findById(input.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(input.getUserId()));
 
@@ -56,14 +56,14 @@ public class UpdateRestaurantUseCaseImpl implements UpdateRestaurantUseCase {
             throw new BusinessException("Only OWNER-type users can own restaurants");
         }
 
-        // 5) Garante que o endereço não está vinculado a outro restaurante
+        // 5) Ensure that the address is not linked to another restaurant
         restaurantRepository.findByAddressId(input.getAddressId())
                 .filter(r -> !r.getId().equals(existing.getId())) // ignora o próprio
                 .ifPresent(r -> {
                     throw new BusinessException("This address is already linked to another restaurant");
                 });
 
-        // 6) Monta o agregado atualizado
+        // 6) Build the updated aggregate
         Restaurant toSave = new Restaurant(
                 existing.getId(),             // mantém o id original
                 input.getName(),

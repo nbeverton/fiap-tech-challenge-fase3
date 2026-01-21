@@ -30,32 +30,32 @@ public class CreateRestaurantUseCaseImpl implements CreateRestaurantUseCase {
     @Override
     public Restaurant execute(Restaurant restaurant) {
 
-        // 0) Nome deve ser único
+        // 0) Restaurant name must be unique
         restaurantRepository.findByName(restaurant.getName())
                 .ifPresent(existing -> {
                     throw new RestaurantAlreadyExistsException(restaurant.getName());
                 });
 
-        // 1) Garante que o endereço existe
+        // 1) Ensure that the address exists
         addressRepository.findById(restaurant.getAddressId())
                 .orElseThrow(() -> new AddressNotFoundException(restaurant.getAddressId()));
 
-        // 2) Garante que o user existe
+        // 2) Ensure that the user exists
         User owner = userRepository.findById(restaurant.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(restaurant.getUserId()));
 
-        // 3) Garante que é OWNER
+        // 3) Ensure that the user has OWNER role
         if (!owner.isOwner()) {
             throw new BusinessException("Only OWNER-type users can create restaurants");
         }
 
-        // 4) Garante que o endereço não está vinculado a outro restaurante
+        // 4) Ensure that the address is not linked to another restaurant
         restaurantRepository.findByAddressId(restaurant.getAddressId())
                 .ifPresent(r -> {
                     throw new BusinessException("This address is already linked to another restaurant");
                 });
 
-        // 5) Salva
+        // 5) Persist the restaurant
         return restaurantRepository.save(restaurant);
     }
 

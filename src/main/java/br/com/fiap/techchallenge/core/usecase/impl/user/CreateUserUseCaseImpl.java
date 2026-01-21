@@ -27,7 +27,7 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
     @Override
     public User execute(CreateUserInput input) {
 
-        // 0. Login deve ser único
+        // 0. Login must be unique
         userRepository.findByLogin(input.login())
                 .ifPresent(existing -> {
                     throw new UserAlreadyExistsException(input.login());

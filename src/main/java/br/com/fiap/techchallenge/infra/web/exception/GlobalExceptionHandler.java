@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1) 404 – "não encontrado"
+    // // 1) 404 – "not found"
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleNotFound(NotFoundException ex) {
         ApiErrorResponse error = new ApiErrorResponse(
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    // 2) 400 – validações de entrada/domínio
+    // 2) 400 – input and domain validation errors
     @ExceptionHandler({
             InvalidUserException.class,
             InvalidMenuException.class,
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    // 3) 409 – conflitos de negócio (duplicidade, bloqueios, etc.)
+    // 3) 409 – business conflicts (duplicates, constraints, etc.)
     @ExceptionHandler({
             UserAlreadyExistsException.class,
             RestaurantAlreadyExistsException.class,
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    // 3.5) 400 – erro de parsing JSON / bind para objetos
+    // 3.5) 400 – JSON parsing / object binding errors
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
 
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
 
-        // Caso não seja uma BusinessException específica, corpo malformado genérico
+        // Generic malformed request body error
         ApiErrorResponse error = new ApiErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Invalid request body"
@@ -92,7 +92,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    // 4) 500 – fallback genérico
+    // 4) 500 – generic fallback
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGeneric(Exception ex) {
         ApiErrorResponse error = new ApiErrorResponse(

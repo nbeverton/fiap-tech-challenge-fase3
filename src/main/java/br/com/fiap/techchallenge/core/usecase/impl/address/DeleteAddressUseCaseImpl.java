@@ -24,11 +24,11 @@ public class DeleteAddressUseCaseImpl implements DeleteAddressUseCase {
     @Override
     public void execute(String addressId) {
 
-        // 1. Garante que o Address existe
+        // 1. Ensure that the address exists
         addressRepository.findById(addressId)
                 .orElseThrow(() -> new AddressNotFoundException(addressId));
 
-        // 2. Verifica se há vínculos primários (endereços principais)
+        // 2. Check if there are primary links (primary addresses)
         List<UserAddress> primaryLinks =
                 userAddressRepository.findPrincipalsByAddressId(addressId);
 
@@ -40,7 +40,7 @@ public class DeleteAddressUseCaseImpl implements DeleteAddressUseCase {
             throw CannotDeletePrimaryAddressException.forAddress(addressId,userIds);
         }
 
-        // 3. Remove TODOS os vínculos remanescentes (secundários)
+        // 3. Remove all remaining links (secondary addresses)
         List<UserAddress> allLinks =
                 userAddressRepository.findByAddressId(addressId);
 
@@ -48,7 +48,7 @@ public class DeleteAddressUseCaseImpl implements DeleteAddressUseCase {
             userAddressRepository.deleteById(link.getId());
         }
 
-        // 4. Por fim, apaga o Address
+        // 4. Finally, delete the address
         addressRepository.delete(addressId);
     }
 }

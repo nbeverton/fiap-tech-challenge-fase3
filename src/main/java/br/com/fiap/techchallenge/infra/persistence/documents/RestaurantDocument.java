@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
-@Document(collection = "restaurants") // garante que é a collection correta
+@Document(collection = "restaurants") // ensures the correct MongoDB collection is used
 public class RestaurantDocument {
 
     @Id
@@ -24,10 +24,10 @@ public class RestaurantDocument {
 
     private String userId;
 
-    @Field("menu") // mapeia a lista de menus no MongoDB
+    @Field("menu") // maps the menu list in MongoDB
     private List<MenuEmbedded> menu;
 
-    private String _class; // opcional, usado pelo Spring Data
+    private String _class; // optional, used internally by Spring Data
 
     public RestaurantDocument() {}
 

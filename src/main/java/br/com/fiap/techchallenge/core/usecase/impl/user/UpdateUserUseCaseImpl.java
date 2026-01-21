@@ -18,11 +18,11 @@ public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
 
     @Override
     public User execute(String id, UpdateUserRequest input) {
-        // 1. Garante que o usuário existe
+        // 1. Ensure that the user exists
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        // 2. Validar LOGIN único (se foi alterado)
+        // 2. Validate unique LOGIN (if it has been changed)
         if (input.login() != null && !input.login().equals(existingUser.getLogin())) {
             userRepository.findByLogin(input.login())
                     .filter(other -> !other.getId().equals(id)) // ignora o próprio
@@ -33,7 +33,7 @@ public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
                     });
         }
 
-        // 3. Validar EMAIL único (se foi alterado)
+        // 3. Validate unique EMAIL (if it has been changed)
         if (input.email() != null && !input.email().equals(existingUser.getEmail())) {
             userRepository.findByEmail(input.email())
                     .filter(other -> !other.getId().equals(id))
@@ -44,7 +44,8 @@ public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
                     });
         }
 
-        // 4. Aplicar alterações no agregado (domínio valida formato, null/blank, etc.)
+        // 4. Apply changes to the aggregate
+        //    (domain layer validates format, null/blank values, etc.)
         if (input.name() != null) {
             existingUser.updateName(input.name());
         }
@@ -58,7 +59,7 @@ public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
             existingUser.updatePassword(input.password());
         }
 
-        // 5. Persistir
+        // 5. Persist changes
         return userRepository.save(existingUser);
     }
 }

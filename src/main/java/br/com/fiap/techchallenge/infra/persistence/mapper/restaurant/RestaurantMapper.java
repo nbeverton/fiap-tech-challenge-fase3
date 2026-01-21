@@ -68,7 +68,7 @@ public class RestaurantMapper {
     }
 
     /* ======================
-       MENU (INTERNO)
+       MENU (INTERNAL)
        ====================== */
 
     private static Menu toMenuDomain(RestaurantRequest.MenuRequest dto) {
