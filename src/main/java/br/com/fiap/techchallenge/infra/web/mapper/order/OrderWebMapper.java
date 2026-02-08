@@ -1,7 +1,5 @@
 package br.com.fiap.techchallenge.infra.web.mapper.order;
 
-import br.com.fiap.techchallenge.core.domain.enums.OrderStatus;
-import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderCommand;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderRequest;
 
