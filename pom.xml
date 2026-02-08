@@ -10,10 +10,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>br.com.fiap.techchallenge.G13</groupId>
-	<artifactId>TechChallenge2.G13</artifactId>
+	<groupId>br.com.fiap.techchallenge.G29</groupId>
+	<artifactId>TechChallenge3.G29</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>TechChallenge2.G13</name>
+	<name>TechChallenge3.G29</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>

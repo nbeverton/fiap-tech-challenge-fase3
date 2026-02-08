@@ -24,7 +24,7 @@ services:
   # Spring Boot App
   app:
     build: .
-    container_name: fiap-tech-challenge
+    container_name: fiap-tech-challenge-fase3
     ports:
       - "8081:8080"
     networks:
