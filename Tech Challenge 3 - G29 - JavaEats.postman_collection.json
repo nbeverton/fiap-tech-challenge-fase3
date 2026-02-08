@@ -1,58 +1,133 @@
 {
   "info": {
-    "name": "Order API - Clean Architecture",
-    "_postman_id": "c1d2e3f4-g5h6-7890-abcd-1234567890ef",
-    "description": "Coleção para testar OrderController com CRUD",
+    "name": "Tech Challenge 3 - G29 - JavaEats - Auto",
+    "_postman_id": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
+    "description": "CRUD operations for Orders with auto orderId and response validations",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Create Order (POST)",
+      "name": "Create Order",
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Content-Type", "value": "application/json" }
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-User-Id", "value": "user-123" }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"restaurantId\": \"rest1\",\n  \"userId\": \"user1\",\n  \"courierId\": \"courier1\",\n  \"deliveryAddress\": \"Rua A, 123\",\n  \"description\": \"Pizza e Refrigerante\",\n  \"totalAmount\": 59.90,\n  \"orderTaxes\": 5.0\n}"
+          "raw": "{\n  \"restaurantId\": \"rest-001\",\n  \"courierId\": \"courier-001\",\n  \"deliveryAddress\": \"123 Main St\",\n  \"description\": \"Order description\",\n  \"totalAmount\": 100.50,\n  \"orderTaxes\": 10.50\n}"
         },
-        "url": { "raw": "http://localhost:8080/orders", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["orders"] }
+        "url": {
+          "raw": "{{baseUrl}}/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders"]
+        }
       },
-      "response": []
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// Capture orderId and save as collection variable",
+              "var jsonData = pm.response.json();",
+              "pm.collectionVariables.set(\"orderId\", jsonData.id);",
+              "console.log('Saved orderId: ' + jsonData.id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
     },
     {
-      "name": "List Orders (GET)",
+      "name": "List Orders",
       "request": {
         "method": "GET",
         "header": [],
-        "url": { "raw": "http://localhost:8080/orders", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["orders"] }
+        "url": {
+          "raw": "{{baseUrl}}/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders"]
+        }
       },
-      "response": []
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
     },
     {
-      "name": "Update Order (PUT)",
+      "name": "Update Order",
       "request": {
         "method": "PUT",
         "header": [
-          { "key": "Content-Type", "value": "application/json" }
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-User-Id", "value": "user-123" }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"restaurantId\": \"rest1\",\n  \"userId\": \"user1\",\n  \"courierId\": \"courier2\",\n  \"deliveryAddress\": \"Rua B, 456\",\n  \"description\": \"Burger e Suco\",\n  \"totalAmount\": 49.90,\n  \"orderTaxes\": 4.5\n}"
+          "raw": "{\n  \"restaurantId\": \"rest-001\",\n  \"courierId\": \"courier-002\",\n  \"deliveryAddress\": \"456 Updated St\",\n  \"description\": \"Updated description\",\n  \"totalAmount\": 120.00,\n  \"orderTaxes\": 12.00\n}"
         },
-        "url": { "raw": "http://localhost:8080/orders/:orderId", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["orders", ":orderId"] }
+        "url": {
+          "raw": "{{baseUrl}}/orders/{{orderId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders", "{{orderId}}"]
+        }
       },
-      "response": []
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
     },
     {
-      "name": "Delete Order (DELETE)",
+      "name": "Delete Order",
       "request": {
         "method": "DELETE",
         "header": [],
-        "url": { "raw": "http://localhost:8080/orders/:orderId", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["orders", ":orderId"] }
+        "url": {
+          "raw": "{{baseUrl}}/orders/{{orderId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders", "{{orderId}}"]
+        }
       },
-      "response": []
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204 or 200\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
     }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "orderId", "value": "" }
   ]
 }
