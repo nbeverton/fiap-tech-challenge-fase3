@@ -3,72 +3,52 @@ package br.com.fiap.techchallenge.infra.persistence.adapter;
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.infra.persistence.documents.OrderDocument;
+import br.com.fiap.techchallenge.infra.persistence.mapper.order.OrderPersistenceMapper;
 import br.com.fiap.techchallenge.infra.persistence.repository.SpringOrderRepository;
-import org.springframework.stereotype.Repository;
 
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Repository
+@Component
 public class OrderRepositoryAdapter implements OrderRepositoryPort {
 
-    private final SpringOrderRepository springOrderRepository;
+    private final SpringOrderRepository repository;
 
-    public OrderRepositoryAdapter(SpringOrderRepository springOrderRepository) {
-        this.springOrderRepository = springOrderRepository;
+    public OrderRepositoryAdapter(SpringOrderRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public Order save(Order order) {
-
-        OrderDocument document = toDocument(order);
-
-        OrderDocument saved = springOrderRepository.save(document);
-
-        return toDomain(saved);
+        OrderDocument doc = OrderPersistenceMapper.toDocument(order);
+        OrderDocument saved = repository.save(doc);
+        return OrderPersistenceMapper.toDomain(saved);
     }
 
     @Override
     public Optional<Order> findById(String id) {
-
-        return springOrderRepository
-                .findById(id)
-                .map(this::toDomain);
+        return repository.findById(id)
+                         .map(OrderPersistenceMapper::toDomain);
     }
 
-    private OrderDocument toDocument(Order order) {
-
-        OrderDocument document = new OrderDocument();
-
-        document.setId(order.getId());
-        document.setRestaurantId(order.getRestaurantId());
-        document.setUserId(order.getUserId());
-        document.setCourierId(order.getCourierId());
-        document.setDeliveryAddress(order.getDeliveryAddress());
-        document.setDescription(order.getDescription());
-        document.setOrderStatus(order.getOrderStatus());
-        document.setTotalAmount(order.getTotalAmount());
-        document.setOrderTaxes(order.getOrderTaxes());
-        document.setCreatedAt(order.getCreatedAt());
-        document.setUpdatedAt(order.getUpdatedAt());
-
-        return document;
+    @Override
+    public List<Order> findAll() {
+        return repository.findAll()
+                         .stream()
+                         .map(OrderPersistenceMapper::toDomain)
+                         .collect(Collectors.toList());
     }
 
-    private Order toDomain(OrderDocument d) {
+    @Override
+    public void deleteById(String id) {
+        repository.deleteById(id);
+    }
 
-        return new Order(
-                d.getId(),
-                d.getRestaurantId(),
-                d.getUserId(),
-                d.getCourierId(),
-                d.getDeliveryAddress(),
-                d.getDescription(),
-                d.getOrderStatus(),
-                d.getTotalAmount(),
-                d.getOrderTaxes(),
-                d.getCreatedAt(),
-                d.getUpdatedAt()
-        );
+    @Override
+    public boolean existsById(String id) {
+        return repository.existsById(id);
     }
 }
-

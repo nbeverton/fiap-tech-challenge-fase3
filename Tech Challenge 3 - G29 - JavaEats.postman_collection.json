@@ -1,0 +1,58 @@
+{
+  "info": {
+    "name": "Order API - Clean Architecture",
+    "_postman_id": "c1d2e3f4-g5h6-7890-abcd-1234567890ef",
+    "description": "Coleção para testar OrderController com CRUD",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Order (POST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"restaurantId\": \"rest1\",\n  \"userId\": \"user1\",\n  \"courierId\": \"courier1\",\n  \"deliveryAddress\": \"Rua A, 123\",\n  \"description\": \"Pizza e Refrigerante\",\n  \"totalAmount\": 59.90,\n  \"orderTaxes\": 5.0\n}"
+        },
+        "url": { "raw": "http://localhost:8080/orders", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["orders"] }
+      },
+      "response": []
+    },
+    {
+      "name": "List Orders (GET)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/orders", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["orders"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Order (PUT)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"restaurantId\": \"rest1\",\n  \"userId\": \"user1\",\n  \"courierId\": \"courier2\",\n  \"deliveryAddress\": \"Rua B, 456\",\n  \"description\": \"Burger e Suco\",\n  \"totalAmount\": 49.90,\n  \"orderTaxes\": 4.5\n}"
+        },
+        "url": { "raw": "http://localhost:8080/orders/:orderId", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["orders", ":orderId"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Order (DELETE)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": { "raw": "http://localhost:8080/orders/:orderId", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["orders", ":orderId"] }
+      },
+      "response": []
+    }
+  ]
+}
