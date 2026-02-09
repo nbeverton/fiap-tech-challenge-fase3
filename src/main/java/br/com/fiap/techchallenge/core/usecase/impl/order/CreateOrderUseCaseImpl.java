@@ -16,7 +16,7 @@ public class CreateOrderUseCaseImpl implements CreateOrderUseCase {
     public CreateOrderUseCaseImpl(OrderRepositoryPort OrderRepositoryPort) {
         this.orderRepositoryPort = OrderRepositoryPort;
     }
-    
+
     @Override
     public Order create(CreateOrderCommand command) {
 
@@ -24,12 +24,11 @@ public class CreateOrderUseCaseImpl implements CreateOrderUseCase {
                 UUID.randomUUID().toString(),
                 command.restaurantId(),
                 command.userId(),
-                command.courierId(),
+                command.userAddressId(),
                 command.deliveryAddress(),
-                command.description(),
-                OrderStatus.PENDING,
+                command.items(),
                 command.totalAmount(),
-                command.orderTaxes(),
+                OrderStatus.CREATED,
                 Instant.now(),
                 Instant.now()
         );

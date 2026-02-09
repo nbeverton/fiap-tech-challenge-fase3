@@ -5,6 +5,7 @@ import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderCommand;
 import br.com.fiap.techchallenge.core.usecase.impl.order.OrderManagementUseCase;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderResponseDTO;
+import br.com.fiap.techchallenge.infra.web.dto.order.UpdateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderResponseMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderWebMapper;
 import org.springframework.http.ResponseEntity;
@@ -45,14 +46,12 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    // --- UPDATE ---
     @PutMapping("/{orderId}")
     public ResponseEntity<CreateOrderResponseDTO> update(
-            @RequestHeader("X-User-Id") String userId,
             @PathVariable String orderId,
-            @RequestBody CreateOrderRequest request) {
+            @RequestBody UpdateOrderRequest request) {
 
-        CreateOrderCommand command = OrderWebMapper.toCommand(userId, request);
+        var command = OrderWebMapper.toUpdateCommand(request);
         Order updated = orderManagementUseCase.update(orderId, command);
 
         return ResponseEntity.ok(OrderResponseMapper.from(updated));

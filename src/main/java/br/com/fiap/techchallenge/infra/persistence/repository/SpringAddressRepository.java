@@ -6,7 +6,4 @@ import java.util.Optional;
 
 public interface SpringAddressRepository
         extends MongoRepository<AddressDocument, String> {
-
-    Optional<AddressDocument> findByRestaurantId(String restaurantId);
-
 }

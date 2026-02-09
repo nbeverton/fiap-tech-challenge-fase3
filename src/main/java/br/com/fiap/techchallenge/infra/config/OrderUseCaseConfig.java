@@ -1,31 +1,32 @@
 package br.com.fiap.techchallenge.infra.config;
 
+import br.com.fiap.techchallenge.core.usecase.impl.order.AcceptOrderUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.order.OrderManagementUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.AcceptOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.UserAddressRepositoryPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import br.com.fiap.techchallenge.core.usecase.in.order.AcceptOrderUseCase;
-import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderUseCase;
-import br.com.fiap.techchallenge.core.usecase.impl.order.AcceptOrderUseCaseImpl;
-import br.com.fiap.techchallenge.core.usecase.impl.order.CreateOrderUseCaseImpl;
-import br.com.fiap.techchallenge.core.usecase.impl.order.OrderManagementUseCase;
-import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 
 @Configuration
 public class OrderUseCaseConfig {
 
     @Bean
-    public OrderManagementUseCase orderManagementUseCase(OrderRepositoryPort orderRepositoryPort) {
-        return new OrderManagementUseCase(orderRepositoryPort);
+    public OrderManagementUseCase orderManagementUseCase(
+            OrderRepositoryPort orderRepositoryPort,
+            UserAddressRepositoryPort userAddressRepositoryPort,
+            AddressRepositoryPort addressRepositoryPort
+    ) {
+        return new OrderManagementUseCase(
+                orderRepositoryPort,
+                userAddressRepositoryPort,
+                addressRepositoryPort
+        );
     }
 
     @Bean
-    public CreateOrderUseCase createOrderUseCase(
-            OrderRepositoryPort orderRepositoryPort) {
-        return new CreateOrderUseCaseImpl(orderRepositoryPort);
-    }
-
-    @Bean
-    public AcceptOrderUseCase acceptOrderUseCase(
-            OrderRepositoryPort orderRepositoryPort) {
+    public AcceptOrderUseCase acceptOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
         return new AcceptOrderUseCaseImpl(orderRepositoryPort);
     }
 }
