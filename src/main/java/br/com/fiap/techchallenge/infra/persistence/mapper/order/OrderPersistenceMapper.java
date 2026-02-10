@@ -10,12 +10,15 @@ public class OrderPersistenceMapper {
         doc.setId(order.getId());
         doc.setRestaurantId(order.getRestaurantId());
         doc.setUserId(order.getUserId());
-        doc.setCourierId(order.getCourierId());
+
+        doc.setUserAddressId(order.getUserAddressId());
+
         doc.setDeliveryAddress(order.getDeliveryAddress());
-        doc.setDescription(order.getDescription());
+
+        doc.setItems(order.getItems());
+
         doc.setOrderStatus(order.getOrderStatus());
         doc.setTotalAmount(order.getTotalAmount());
-        doc.setOrderTaxes(order.getOrderTaxes());
         doc.setCreatedAt(order.getCreatedAt());
         doc.setUpdatedAt(order.getUpdatedAt());
         return doc;
@@ -23,18 +26,16 @@ public class OrderPersistenceMapper {
 
     public static Order toDomain(OrderDocument doc) {
         return new Order(
-            doc.getId(),
-            doc.getRestaurantId(),
-            doc.getUserId(),
-            doc.getCourierId(),
-            doc.getDeliveryAddress(),
-            doc.getDescription(),
-            doc.getOrderStatus(),
-            doc.getTotalAmount(),
-            doc.getOrderTaxes(),
-            doc.getCreatedAt(),
-            doc.getUpdatedAt()
+                doc.getId(),
+                doc.getRestaurantId(),
+                doc.getUserId(),
+                doc.getUserAddressId(),
+                doc.getDeliveryAddress(),
+                doc.getItems(),
+                doc.getTotalAmount(),
+                doc.getOrderStatus(),
+                doc.getCreatedAt(),
+                doc.getUpdatedAt()
         );
     }
 }
-

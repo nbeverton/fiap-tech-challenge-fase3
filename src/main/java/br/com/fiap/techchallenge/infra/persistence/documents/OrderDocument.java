@@ -1,11 +1,14 @@
 package br.com.fiap.techchallenge.infra.persistence.documents;
 
 import br.com.fiap.techchallenge.core.domain.enums.OrderStatus;
-import java.math.BigDecimal;
-import java.time.Instant;
-
+import br.com.fiap.techchallenge.core.domain.valueobjects.DeliveryAddressSnapshot;
+import br.com.fiap.techchallenge.core.domain.valueobjects.OrderItem;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
 
 @Document(collection = "orders")
 public class OrderDocument {
@@ -15,15 +18,16 @@ public class OrderDocument {
 
     private String restaurantId;
     private String userId;
-    private String courierId;
 
-    private String deliveryAddress;
-    private String description;
+    private String userAddressId;
+
+    private DeliveryAddressSnapshot deliveryAddress;
+
+    private List<OrderItem> items;
 
     private OrderStatus orderStatus;
 
     private BigDecimal totalAmount;
-    private BigDecimal orderTaxes;
 
     private Instant createdAt;
     private Instant updatedAt;
@@ -56,28 +60,28 @@ public class OrderDocument {
         this.userId = userId;
     }
 
-    public String getCourierId() {
-        return courierId;
+    public String getUserAddressId() {
+        return userAddressId;
     }
 
-    public void setCourierId(String courierId) {
-        this.courierId = courierId;
+    public void setUserAddressId(String userAddressId) {
+        this.userAddressId = userAddressId;
     }
 
-    public String getDeliveryAddress() {
+    public DeliveryAddressSnapshot getDeliveryAddress() {
         return deliveryAddress;
     }
 
-    public void setDeliveryAddress(String deliveryAddress) {
+    public void setDeliveryAddress(DeliveryAddressSnapshot deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
 
-    public String getDescription() {
-        return description;
+    public List<OrderItem> getItems() {
+        return items;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
     }
 
     public OrderStatus getOrderStatus() {
@@ -94,14 +98,6 @@ public class OrderDocument {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
-    }
-
-    public BigDecimal getOrderTaxes() {
-        return orderTaxes;
-    }
-
-    public void setOrderTaxes(BigDecimal orderTaxes) {
-        this.orderTaxes = orderTaxes;
     }
 
     public Instant getCreatedAt() {

@@ -19,7 +19,7 @@ public class AcceptOrderUseCaseImpl implements AcceptOrderUseCase {
 
         Order order = orderFinder.findById(orderId);
 
-        order.accept();
+        order.awaitPayment();
 
         orderRepositoryPort.save(order);
     }

@@ -2,8 +2,6 @@ package br.com.fiap.techchallenge.infra.web.dto.order;
 
 import java.util.List;
 
-public record CreateOrderRequest(
-        String restaurantId,
-        String userAddressId,
+public record UpdateOrderRequest(
         List<CreateOrderItemRequest> items
 ) {}

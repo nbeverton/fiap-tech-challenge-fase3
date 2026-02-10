@@ -2,9 +2,11 @@ package br.com.fiap.techchallenge.infra.web.controller;
 
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderCommand;
+import br.com.fiap.techchallenge.core.usecase.in.order.UpdateOrderCommand;
 import br.com.fiap.techchallenge.core.usecase.impl.order.OrderManagementUseCase;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderResponseDTO;
+import br.com.fiap.techchallenge.infra.web.dto.order.UpdateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderResponseMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderWebMapper;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +27,9 @@ public class OrderController {
 
     // --- CREATE ---
     @PostMapping
-    public ResponseEntity<CreateOrderResponseDTO> create(
-            @RequestHeader("X-User-Id") String userId,
-            @RequestBody CreateOrderRequest request) {
+    public ResponseEntity<CreateOrderResponseDTO> create(@RequestBody CreateOrderRequest request) {
 
-        CreateOrderCommand command = OrderWebMapper.toCommand(userId, request);
+        CreateOrderCommand command = OrderWebMapper.toCommand(request);
         Order created = orderManagementUseCase.create(command);
 
         return ResponseEntity.ok(OrderResponseMapper.from(created));
@@ -48,11 +48,10 @@ public class OrderController {
     // --- UPDATE ---
     @PutMapping("/{orderId}")
     public ResponseEntity<CreateOrderResponseDTO> update(
-            @RequestHeader("X-User-Id") String userId,
             @PathVariable String orderId,
-            @RequestBody CreateOrderRequest request) {
+            @RequestBody UpdateOrderRequest request) {
 
-        CreateOrderCommand command = OrderWebMapper.toCommand(userId, request);
+        UpdateOrderCommand command = OrderWebMapper.toUpdateCommand(request);
         Order updated = orderManagementUseCase.update(orderId, command);
 
         return ResponseEntity.ok(OrderResponseMapper.from(updated));

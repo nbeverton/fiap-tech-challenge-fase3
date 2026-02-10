@@ -2,158 +2,153 @@ package br.com.fiap.techchallenge.core.domain.model;
 
 import br.com.fiap.techchallenge.core.domain.enums.OrderStatus;
 import br.com.fiap.techchallenge.core.domain.exception.order.InvalidOrderStatusException;
+import br.com.fiap.techchallenge.core.domain.valueobjects.DeliveryAddressSnapshot;
+import br.com.fiap.techchallenge.core.domain.valueobjects.OrderItem;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Order {
 
-    private String id;
+    private final String id;
+    private final String restaurantId;
+    private final String userId;
+    private final String userAddressId;
 
-    private String restaurantId;
-    private String userId;
-    private String courierId;
-
-    private String deliveryAddress;
-    private String description;
-
+    private DeliveryAddressSnapshot deliveryAddress;
+    private List<OrderItem> items;
+    private BigDecimal totalAmount;
     private OrderStatus orderStatus;
 
-    private BigDecimal totalAmount;
-    private BigDecimal orderTaxes;
-
-    private Instant createdAt;
+    private final Instant createdAt;
     private Instant updatedAt;
 
-    public Order(
-            String id,
-            String restaurantId,
-            String userId,
-            String courierId,
-            String deliveryAddress,
-            String description,
-            OrderStatus orderStatus,
-            BigDecimal totalAmount,
-            BigDecimal orderTaxes,
-            Instant createdAt,
-            Instant updatedAt
-    ) {
+    public Order(String id,
+                 String restaurantId,
+                 String userId,
+                 String userAddressId,
+                 DeliveryAddressSnapshot deliveryAddress,
+                 List<OrderItem> items,
+                 BigDecimal totalAmount,
+                 OrderStatus orderStatus,
+                 Instant createdAt,
+                 Instant updatedAt)
+    {
         this.id = id;
         this.restaurantId = restaurantId;
         this.userId = userId;
-        this.courierId = courierId;
+        this.userAddressId = userAddressId;
+
         this.deliveryAddress = deliveryAddress;
-        this.description = description;
-        this.orderStatus = orderStatus;
-        this.totalAmount = totalAmount;
-        this.orderTaxes = orderTaxes;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+
+        this.items = (items != null) ? new ArrayList<>(items) : new ArrayList<>();
+
+        this.totalAmount = (totalAmount != null) ? totalAmount : BigDecimal.ZERO;
+
+        this.orderStatus = (orderStatus != null) ? orderStatus : OrderStatus.CREATED;
+
+        this.createdAt = (createdAt != null) ? createdAt : Instant.now();
+
+        this.updatedAt = (updatedAt != null) ? updatedAt : this.createdAt;
     }
+
 
     // ============================
     // Regras de negócio
     // ============================
 
-    public void accept() {
-        if (this.orderStatus != OrderStatus.PENDING) {
-            throw new InvalidOrderStatusException(
-                    "Order can only be accepted when status is PENDING."
-            );
-        }
-        this.orderStatus = OrderStatus.ACCEPTED;
+    /**
+     * CREATED -> AWAITING_PAYMENT
+     */
+    public void awaitPayment() {
+        requireStatus(OrderStatus.CREATED, "Order can only await payment when status is CREATED.");
+        this.orderStatus = OrderStatus.AWAITING_PAYMENT;
         touch();
     }
 
-    public void reject() {
-        if (this.orderStatus != OrderStatus.PENDING) {
-            throw new InvalidOrderStatusException(
-                    "Order can only be rejected when status is PENDING."
-            );
-        }
-        this.orderStatus = OrderStatus.REJECTED;
+    /**
+     * AWAITING_PAYMENT -> PAID
+     */
+    public void markAsPaid() {
+        requireStatus(OrderStatus.AWAITING_PAYMENT, "Order can only be marked as PAID when status is AWAITING_PAYMENT.");
+        this.orderStatus = OrderStatus.PAID;
         touch();
     }
 
+    /**
+     * PAID -> PREPARING
+     */
     public void startPreparing() {
-        if (this.orderStatus != OrderStatus.ACCEPTED) {
-            throw new InvalidOrderStatusException(
-                    "Order can only start preparing when status is ACCEPTED."
-            );
-        }
+        requireStatus(OrderStatus.PAID, "Order can only start preparing when status is PAID.");
         this.orderStatus = OrderStatus.PREPARING;
         touch();
     }
 
+    /**
+     * PREPARING -> OUT_FOR_DELIVERY
+     */
     public void outForDelivery() {
-        if (this.orderStatus != OrderStatus.PREPARING) {
-            throw new InvalidOrderStatusException(
-                    "Order can only go out for delivery when status is PREPARING."
-            );
-        }
+        requireStatus(OrderStatus.PREPARING, "Order can only go out for delivery when status is PREPARING.");
         this.orderStatus = OrderStatus.OUT_FOR_DELIVERY;
         touch();
     }
 
+    /**
+     * OUT_FOR_DELIVERY -> DELIVERED
+     */
     public void deliver() {
-        if (this.orderStatus != OrderStatus.OUT_FOR_DELIVERY) {
-            throw new InvalidOrderStatusException(
-                    "Order can only be delivered when status is OUT_FOR_DELIVERY."
-            );
-        }
+        requireStatus(OrderStatus.OUT_FOR_DELIVERY, "Order can only be delivered when status is OUT_FOR_DELIVERY.");
         this.orderStatus = OrderStatus.DELIVERED;
         touch();
+    }
+
+    /**
+     * Cancellation allowed at early stages
+     */
+    public void cancel() {
+        if (this.orderStatus == OrderStatus.DELIVERED) {
+            throw new InvalidOrderStatusException("Order cannot be canceled when status is DELIVERED.");
+        }
+
+        if (this.orderStatus == OrderStatus.CANCELED) {
+            return; // idempotente
+        }
+
+        this.orderStatus = OrderStatus.CANCELED;
+        touch();
+    }
+
+    private void requireStatus(OrderStatus expected, String messageIfInvalid) {
+        if (this.orderStatus != expected) {
+            throw new InvalidOrderStatusException(messageIfInvalid);
+        }
     }
 
     private void touch() {
         this.updatedAt = Instant.now();
     }
 
+
     // ============================
-    // Getters
+    // Getters (útil p/ UseCases, mappers, presenters)
     // ============================
 
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public String getRestaurantId() { return restaurantId; }
+    public String getUserId() { return userId; }
+    public String getUserAddressId() { return userAddressId; }
 
-    public String getRestaurantId() {
-        return restaurantId;
-    }
+    public DeliveryAddressSnapshot getDeliveryAddress() { return deliveryAddress; }
 
-    public String getUserId() {
-        return userId;
-    }
+    // evita alguém alterar a lista diretamente
+    public List<OrderItem> getItems() { return Collections.unmodifiableList(items); }
 
-    public String getCourierId() {
-        return courierId;
-    }
+    public BigDecimal getTotalAmount() { return totalAmount; }
+    public OrderStatus getOrderStatus() { return orderStatus; }
 
-    public String getDeliveryAddress() {
-        return deliveryAddress;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public BigDecimal getOrderTaxes() {
-        return orderTaxes;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
+    public Instant getCreatedAt() { return createdAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
 }
