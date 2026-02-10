@@ -5,6 +5,7 @@ import br.com.fiap.techchallenge.core.usecase.impl.order.OrderManagementUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.AcceptOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserAddressRepositoryPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +17,17 @@ public class OrderUseCaseConfig {
     public OrderManagementUseCase orderManagementUseCase(
             OrderRepositoryPort orderRepositoryPort,
             UserAddressRepositoryPort userAddressRepositoryPort,
-            AddressRepositoryPort addressRepositoryPort
+            AddressRepositoryPort addressRepositoryPort,
+            RestaurantRepositoryPort restaurantRepositoryPort
     ) {
         return new OrderManagementUseCase(
                 orderRepositoryPort,
                 userAddressRepositoryPort,
-                addressRepositoryPort
+                addressRepositoryPort,
+                restaurantRepositoryPort
         );
     }
+
 
     @Bean
     public AcceptOrderUseCase acceptOrderUseCase(OrderRepositoryPort orderRepositoryPort) {

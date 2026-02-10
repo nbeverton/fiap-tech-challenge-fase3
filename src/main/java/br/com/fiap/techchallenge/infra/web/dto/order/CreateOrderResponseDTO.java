@@ -7,8 +7,10 @@ public record CreateOrderResponseDTO(
         String id,
         String restaurantId,
         String userId,
+        String userAddressId,
         String status,
         BigDecimal totalAmount,
         List<OrderItemResponseDTO> items
 ) { }
+
 

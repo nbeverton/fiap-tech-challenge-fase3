@@ -20,6 +20,7 @@ public class OrderResponseMapper {
                 order.getId(),
                 order.getRestaurantId(),
                 order.getUserId(),
+                order.getUserAddressId(),
                 order.getOrderStatus().name(),
                 order.getTotalAmount(),
                 items

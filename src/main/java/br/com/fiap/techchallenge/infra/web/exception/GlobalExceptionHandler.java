@@ -5,6 +5,10 @@ import br.com.fiap.techchallenge.core.domain.exception.NotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.address.InvalidAddressException;
 import br.com.fiap.techchallenge.core.domain.exception.menu.InvalidMenuException;
 import br.com.fiap.techchallenge.core.domain.exception.openinghours.InvalidOpeningHoursException;
+import br.com.fiap.techchallenge.core.domain.exception.order.EmptyOrderItemsException;
+import br.com.fiap.techchallenge.core.domain.exception.order.InvalidOrderItemQuantityException;
+import br.com.fiap.techchallenge.core.domain.exception.order.MenuDoesNotBelongToRestaurantException;
+import br.com.fiap.techchallenge.core.domain.exception.order.MissingMenuIdException;
 import br.com.fiap.techchallenge.core.domain.exception.restaurant.RestaurantAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.exception.user.InvalidUserException;
 import br.com.fiap.techchallenge.core.domain.exception.user.UserAlreadyExistsException;
@@ -35,7 +39,11 @@ public class GlobalExceptionHandler {
             InvalidMenuException.class,
             InvalidUserAddressException.class,
             InvalidAddressException.class,
-            InvalidOpeningHoursException.class
+            InvalidOpeningHoursException.class,
+            EmptyOrderItemsException.class,
+            InvalidOrderItemQuantityException.class,
+            MissingMenuIdException.class,
+            MenuDoesNotBelongToRestaurantException.class
     })
     public ResponseEntity<ApiErrorResponse> handleInvalidInput(BusinessException ex) {
         ApiErrorResponse error = new ApiErrorResponse(

@@ -1,6 +1,8 @@
 package br.com.fiap.techchallenge.core.domain.exception.order;
 
-public class OrderNotFoundException extends RuntimeException {
+import br.com.fiap.techchallenge.core.domain.exception.NotFoundException;
+
+public class OrderNotFoundException extends NotFoundException {
 
     public OrderNotFoundException(String orderId) {
         super("Order not found: " + orderId);

@@ -2,9 +2,7 @@ package br.com.fiap.techchallenge.core.usecase.in.order;
 
 import br.com.fiap.techchallenge.core.domain.model.Order;
 
-public interface CreateOrderUseCase {
+public interface MarkAsPaidOrderUseCase {
 
-    Order create(CreateOrderCommand command);
-
+    public void markAsPaid(String orderId);
 }
-
