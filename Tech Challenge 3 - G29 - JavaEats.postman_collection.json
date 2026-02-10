@@ -1,133 +1,1630 @@
 {
   "info": {
-    "name": "Tech Challenge 3 - G29 - JavaEats - Auto",
-    "_postman_id": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
-    "description": "CRUD operations for Orders with auto orderId and response validations",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "_postman_id": "70fa52ca-4ee2-40f3-9ec6-3e022a44c818",
+    "name": "Tech Challenge 2 – G2 - JavaEats",
+    "description": "Coleção baseada nos controllers fornecidos:\n\n- Restaurant: /api/v1/restaurants\n    \n- Menu: /api/v1/restaurants/{restaurantId}/menus\n    \n- User: /users\n    \n- Address: /addresses\n    \n\nImportante: RestaurantDocument é persistência. O contrato real de POST/PUT é definido pelos DTOs (RestaurantRequest etc.).  \nOs bodies aqui são exemplos; ajuste conforme validações (@NotNull/@NotBlank) e estrutura do OpeningHours.\n\nFluxo feliz:\n\n1) Create User -> {{userId}}  \n2) Create Address -> {{addressId}}  \n3) Create Restaurant -> {{restaurantId}}  \n4) Create Menu -> {{menuId}}",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48649452",
+    "_collection_link": "https://go.postman.co/collection/48649452-70fa52ca-4ee2-40f3-9ec6-3e022a44c818?source=collection_link"
   },
   "item": [
     {
-      "name": "Create Order",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "X-User-Id", "value": "user-123" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"restaurantId\": \"rest-001\",\n  \"courierId\": \"courier-001\",\n  \"deliveryAddress\": \"123 Main St\",\n  \"description\": \"Order description\",\n  \"totalAmount\": 100.50,\n  \"orderTaxes\": 10.50\n}"
+      "name": "00 - Setup (Create)",
+      "item": [
+        {
+          "name": "Create Address",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"addressId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou addressId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postalCode\": \"00012-345\",\n  \"streetName\": \"Av. Paulista\",\n  \"streetNumber\": \"123\",\n  \"additionalInfo\": \"Sala 1\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses"
+              ]
+            }
+          },
+          "response": []
         },
-        "url": {
-          "raw": "{{baseUrl}}/orders",
-          "host": ["{{baseUrl}}"],
-          "path": ["orders"]
-        }
-      },
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "// Capture orderId and save as collection variable",
-              "var jsonData = pm.response.json();",
-              "pm.collectionVariables.set(\"orderId\", jsonData.id);",
-              "console.log('Saved orderId: ' + jsonData.id);"
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"userId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou userId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
-            "type": "text/javascript"
-          }
-        }
-      ]
-    },
-    {
-      "name": "List Orders",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/orders",
-          "host": ["{{baseUrl}}"],
-          "path": ["orders"]
-        }
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Update Order",
-      "request": {
-        "method": "PUT",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "X-User-Id", "value": "user-123" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"restaurantId\": \"rest-001\",\n  \"courierId\": \"courier-002\",\n  \"deliveryAddress\": \"456 Updated St\",\n  \"description\": \"Updated description\",\n  \"totalAmount\": 120.00,\n  \"orderTaxes\": 12.00\n}"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Usuário Tech Challenge\",\n  \"userType\": \"OWNER\",\n  \"email\": \"userTech.tech@example.com\",\n  \"login\": \"user.techChallenge\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
         },
-        "url": {
-          "raw": "{{baseUrl}}/orders/{{orderId}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["orders", "{{orderId}}"]
-        }
-      },
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});"
+          "name": "Create Restaurant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"restaurantId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou restaurantId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
-            "type": "text/javascript"
-          }
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Restaurante FIAP\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Menu (for Restaurant)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"menuId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou menuId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Prato do dia - Segunda feira\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 39.90,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants",
+                "{{restaurantId}}",
+                "menus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"restaurantId\": \"26d816c7-a18f-498e-a1fe-45a34264e831\",\r\n  \"userAddressId\": \"698a79d7458f11258f1a1d63\",\r\n  \"items\": [\r\n    { \"menuId\": \"5c9685b4-6b04-4e91-b3e1-ba083a91e096\", \"quantity\": 2 }\r\n  ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Rode nesta ordem pra preencher IDs automaticamente."
+    },
+    {
+      "name": "Restaurants",
+      "item": [
+        {
+          "name": "List Restaurants",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 2xx\", ()=>pm.expect(pm.response.code).to.be.within(200,299));",
+                  "try{pm.response.json(); pm.test(\"JSON válido (se houver body)\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/restaurants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Restaurant by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                  "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants",
+                "{{restaurantId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Restaurant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                  "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Restaurante Fiap (edit 1)\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"userId\": \"{{userId}}\",\n  \"openingHours\": {\n    \"opens\": \"10:00\",\n    \"closes\": \"22:00\"\n  },\n      \"menu\": [\n        {\n            \"id\": \"5d45dde7-eeb3-439c-8a1d-ec42d9b496ee\",\n            \"name\": \"Prato do dia - Segunda feira\",\n            \"description\": \"Arroz, feijão, bife e salada\",\n            \"price\": 39.9,\n            \"dineInAvailable\": true,\n            \"imageUrl\": \"https://example.com/pf.jpg\"\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants",
+                "{{restaurantId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "CRUD de /api/v1/restaurants"
+    },
+    {
+      "name": "Menus (by Restaurant)",
+      "item": [
+        {
+          "name": "List Menus",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 2xx\", ()=>pm.expect(pm.response.code).to.be.within(200,299));",
+                  "try{pm.response.json(); pm.test(\"JSON válido (se houver body)\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants",
+                "{{restaurantId}}",
+                "menus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Menu",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                  "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Prato Feito - Segunda feira\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 38.90,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants",
+                "{{restaurantId}}",
+                "menus",
+                "{{menuId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Rotas de /api/v1/restaurants/{restaurantId}/menus"
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create Address To User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"addressId\": \"{{addressId}}\",\r\n    \"addressType\": \"WORK\", //HOME, WORK or OTHER\r\n    \"label\": \"Minha casa\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 2xx\", ()=>pm.expect(pm.response.code).to.be.within(200,299));",
+                  "try{pm.response.json(); pm.test(\"JSON válido (se houver body)\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Addresses by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/queries/users/{{userId}}/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "users",
+                "{{userId}}",
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                  "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                  "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Usuário Tech (edit)\",\n  \"email\": \"userTech.tech@example.com\",\n  \"login\": \"user.techChallenge (edit)\",\n  \"password\": \"SenhaForte123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "CRUD de /users"
+    },
+    {
+      "name": "Addresses",
+      "item": [
+        {
+          "name": "List Addresses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 2xx\", ()=>pm.expect(pm.response.code).to.be.within(200,299));",
+                  "try{pm.response.json(); pm.test(\"JSON válido (se houver body)\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Users by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/queries/addresses/{{addressId}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "addresses",
+                "{{addressId}}",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Address by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                  "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/addresses/{{addressId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses",
+                "{{addressId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Address",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                  "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"postalCode\": \"01234-567\",\n    \"streetName\": \"Rua A (edit)\",\n    \"streetNumber\": 123,\n    \"additionalInfo\": \"Sala 2\",\n    \"neighborhood\": \"Centro\",\n    \"city\": \"São Paulo\",\n    \"stateProvince\": \"SP\",\n    \"country\": \"Brazil\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/addresses/{{addressId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses",
+                "{{addressId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "CRUD de /addresses"
+    },
+    {
+      "name": "UserAddres (Vinculo Usuário e Endereço)",
+      "item": [
+        {
+          "name": "createUserAddress",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userId\": \"\",\r\n  \"addressId\": \"\",\r\n  \"type\": \"HOME\",\r\n  \"label\": \"Casa\",\r\n  \"principal\": true\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/user-addresses",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "user-addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Todas Relações",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user-addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user-addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Address From User",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"type\": \"OTHER\",\r\n  \"label\": \"Parque\",\r\n  \"principal\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/addresses/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "addresses",
+                "{{id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateUserAddress",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"type\": \"OTHER\",\r\n  \"label\": \"Parque\",\r\n  \"principal\": true\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/user-addresses/694b66f6ca09b3913cc5726f",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "user-addresses",
+                "694b66f6ca09b3913cc5726f"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
     {
-      "name": "Delete Order",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/orders/{{orderId}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["orders", "{{orderId}}"]
-        }
-      },
-      "event": [
+      "name": "Erros tratados",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 204 or 200\", function () {",
-              "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-              "});"
+          "name": "Create Address (com erro tratado de número)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"addressId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou addressId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
-            "type": "text/javascript"
-          }
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postalCode\": \"01234-567\",\n  \"streetName\": \"teste/errp 14.01\",\n  \"streetNumber\": \"\",\n  \"additionalInfo\": \"Sala 2\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Address (deletar endereço principal de um Usuário)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/addresses/{{addressId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses",
+                "{{addressId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User (com erro tratado)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"userId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou userId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"userType\": \"OWNER\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech13\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User (com erro tratado - userType)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"userId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou userId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"teste 12.01\",\n  \"userType\": \"outro\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech8\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User (com erro tratado - login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"userId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou userId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"teste 12.01\",\n  \"userType\": \"OWNER\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech2\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Restaurant (Com erro tratado)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"restaurantId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou restaurantId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Restaurant (Com erro tratado - Criar com Usuário tipo cliente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"restaurantId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou restaurantId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Restaurante FIAP\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Restaurant (Com erro tratado - horário)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"restaurantId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou restaurantId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Restaurante 14.01\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"30:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Menu (for Restaurant) (com erro tratado - preço)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                  "let id = null;",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                  "} catch(e) {}",
+                  "const loc = pm.response.headers.get('Location');",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split('/');",
+                  "  id = parts[parts.length-1];",
+                  "}",
+                  "if (id) {",
+                  "  pm.environment.set(\"menuId\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou menuId =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"prato 2\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": -10.0,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants",
+                "{{restaurantId}}",
+                "menus"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Deletes",
+      "item": [
+        {
+          "name": "Delete Restaurant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants",
+                "{{restaurantId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Menu",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants",
+                "{{restaurantId}}",
+                "menus",
+                "{{menuId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Address",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/addresses/{{addressId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses",
+                "{{addressId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteUserAddress",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userId\": \"6941aeb8f0e9d239c3f1354c\",\r\n  \"addressId\": \"694770137554fbaff90caa2b\",\r\n  \"type\": \"HOME\",\r\n  \"label\": \"Casa\",\r\n  \"principal\": true\r\n}\r\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user-addresses/{{id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user-addresses",
+                "{{id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteOrder",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/caef54d6-d7e2-4a46-9a42-b752815077c1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "caef54d6-d7e2-4a46-9a42-b752815077c1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"items\": [\r\n    { \"menuId\": \"5c9685b4-6b04-4e91-b3e1-ba083a91e096\", \"quantity\": 1 }\r\n  ]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/caef54d6-d7e2-4a46-9a42-b752815077c1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "caef54d6-d7e2-4a46-9a42-b752815077c1"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }
-  ],
-  "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080" },
-    { "key": "orderId", "value": "" }
   ]
 }
