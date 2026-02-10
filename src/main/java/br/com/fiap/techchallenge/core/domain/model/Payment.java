@@ -83,4 +83,51 @@ public class Payment {
         }
         return value;
     }
+
+    // ============================
+    // Getters
+    // ============================
+    public String getId() {
+        return id;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public PaymentMethod getMethod() {
+        return method;
+    }
+
+    public PaymentStatus getStatus() {
+        return status;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public Instant getPaidAt() {
+        return paidAt;
+    }
+
+    public Instant getFailedAt() {
+        return failedAt;
+    }
+
+    public Instant getRefundedAt() {
+        return refundedAt;
+    }
 }
