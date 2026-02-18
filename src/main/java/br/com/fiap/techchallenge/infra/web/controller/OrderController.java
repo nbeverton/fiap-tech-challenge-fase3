@@ -8,8 +8,12 @@ import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderResponseDTO;
 import br.com.fiap.techchallenge.infra.web.dto.order.UpdateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderResponseMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderWebMapper;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +28,9 @@ public class OrderController {
     private final UpdateOrderUseCase updateOrderUseCase;
     private final DeleteOrderUseCase deleteOrderUseCase;
 
-    public OrderController(CreateOrderUseCase createOrderUseCase, GetOrderByIdUseCase getOrderByIdUseCase, ListOrdersUseCase listOrdersUseCase, UpdateOrderUseCase updateOrderUseCase, DeleteOrderUseCase deleteOrderUseCase) {
+    public OrderController(CreateOrderUseCase createOrderUseCase, GetOrderByIdUseCase getOrderByIdUseCase,
+            ListOrdersUseCase listOrdersUseCase, UpdateOrderUseCase updateOrderUseCase,
+            DeleteOrderUseCase deleteOrderUseCase) {
         this.createOrderUseCase = createOrderUseCase;
         this.getOrderByIdUseCase = getOrderByIdUseCase;
         this.listOrdersUseCase = listOrdersUseCase;
@@ -35,9 +41,14 @@ public class OrderController {
 
     // --- CREATE ---
     @PostMapping
-    public ResponseEntity<CreateOrderResponseDTO> create(@RequestBody CreateOrderRequest request) {
+    public ResponseEntity<CreateOrderResponseDTO> create(
+            @RequestBody CreateOrderRequest request,
+            Authentication authentication) {
 
-        CreateOrderCommand command = OrderWebMapper.toCommand(request);
+        String clientId = (String) authentication.getPrincipal();
+
+        CreateOrderCommand command = OrderWebMapper.toCommand(request, clientId);
+
         Order created = createOrderUseCase.execute(command);
 
         return ResponseEntity.ok(OrderResponseMapper.from(created));
@@ -50,8 +61,7 @@ public class OrderController {
         Order order = getOrderByIdUseCase.execute(orderId);
 
         return ResponseEntity.ok(
-                OrderResponseMapper.from(order)
-        );
+                OrderResponseMapper.from(order));
     }
 
     // --- LIST ALL ---

@@ -10,13 +10,20 @@ import java.util.List;
 
 public class OrderWebMapper {
 
-    public static CreateOrderCommand toCommand(CreateOrderRequest request) {
+    public static CreateOrderCommand toCommand(
+            CreateOrderRequest request,
+            String clientId
+    ) {
 
         List<CreateOrderItemCommand> items = request.items().stream()
-                .map(i -> new CreateOrderItemCommand(i.menuId(), i.quantity()))
+                .map(i -> new CreateOrderItemCommand(
+                        i.menuId(),
+                        i.quantity()
+                ))
                 .toList();
 
         return new CreateOrderCommand(
+                clientId,                 // 👈 vem do JWT
                 request.restaurantId(),
                 request.userAddressId(),
                 items
@@ -26,7 +33,10 @@ public class OrderWebMapper {
     public static UpdateOrderCommand toUpdateCommand(UpdateOrderRequest request) {
 
         List<CreateOrderItemCommand> items = request.items().stream()
-                .map(i -> new CreateOrderItemCommand(i.menuId(), i.quantity()))
+                .map(i -> new CreateOrderItemCommand(
+                        i.menuId(),
+                        i.quantity()
+                ))
                 .toList();
 
         return new UpdateOrderCommand(items);

@@ -1,0 +1,216 @@
+{
+  "info": {
+    "name": "Tech Challenge 3 - Fluxo completo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1 - Criar Address",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/addresses",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"postalCode\": \"00012-345\",\n  \"streetName\": \"Av. Paulista\",\n  \"streetNumber\": 123,\n  \"additionalInfo\": \"Sala 1\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}"
+        },
+        "header": [{ "key": "Content-Type", "value": "application/json" }]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": ["pm.environment.set('addressId', pm.response.json().id);"]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "2 - Criar User",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/users",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Usuário Tech Challenge\",\n  \"userType\": \"OWNER\",\n  \"email\": \"user.techChallenge@example.com\",\n  \"login\": \"user.tech\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}"
+        },
+        "header": [{ "key": "Content-Type", "value": "application/json" }]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": ["pm.environment.set('userId', pm.response.json().id);"]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "3 - Login (Autenticação)",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"user.tech\",\n  \"password\": \"SenhaForte123!\"\n}"
+        },
+        "header": [{ "key": "Content-Type", "value": "application/json" }]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": ["pm.environment.set('token', pm.response.json().token);"]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "4 - Criar Restaurante",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/restaurants",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Restaurante FIAP\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.environment.set('restaurantId', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "5 - Criar Menu",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Prato do dia\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 39.9,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const r = pm.response.json();",
+              "const last = r.menu[r.menu.length - 1];",
+              "pm.environment.set('menuId', last.id);"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "6 - Criar Pedido",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/orders",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"items\": [\n    {\n      \"menuId\": \"{{menuId}}\",\n      \"quantity\": 2\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": ["pm.environment.set('orderId', pm.response.json().id);"]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "PUT - Atualizar Restaurante",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/restaurants/{{restaurantId}}",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Restaurante FIAP Atualizado\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"09:00\",\n    \"closes\": \"23:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}"
+        }
+      }
+    },
+
+    {
+      "name": "PUT - Atualizar Menu",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Prato do dia atualizado\",\n  \"description\": \"Novo prato\",\n  \"price\": 45.0,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf2.jpg\"\n}"
+        }
+      }
+    },
+
+    {
+      "name": "DELETE - Pedido",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/orders/{{orderId}}",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+      }
+    },
+
+    {
+      "name": "DELETE - Menu",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+      }
+    },
+
+    {
+      "name": "DELETE - Restaurante",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/restaurants/{{restaurantId}}",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+      }
+    },
+
+    {
+      "name": "DELETE - User",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/users/{{userId}}",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+      }
+    }
+  ]
+}
