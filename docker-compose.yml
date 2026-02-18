@@ -16,7 +16,8 @@ services:
     volumes:
       - mongodb_data:/data/db
     healthcheck:
-      test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\" || exit 1"]
+      test:
+        ["CMD-SHELL", 'mongosh --eval "db.adminCommand(''ping'')" || exit 1']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -35,8 +36,10 @@ services:
     environment:
       #SPRING_PROFILES_ACTIVE: prod
       SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/techchallenge?retryWrites=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=5000
+      SECURITY_JWT_SECRET: techchallenge-fiap-2026-super-secret-key-123456
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
