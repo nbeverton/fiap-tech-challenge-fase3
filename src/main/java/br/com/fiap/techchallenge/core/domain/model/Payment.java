@@ -52,7 +52,7 @@ public class Payment {
 
 
     // ============================
-    // Regras de negócio
+    // Business role
     // ============================
     private String requireNonBlank(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
