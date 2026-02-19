@@ -3,6 +3,8 @@ package br.com.fiap.techchallenge.core.usecase.impl.payment;
 import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.InvalidPaymentException;
+import br.com.fiap.techchallenge.core.domain.exception.payment.OverpaymentException;
+import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.CreatePaymentCommand;
@@ -10,7 +12,9 @@ import br.com.fiap.techchallenge.core.usecase.in.payment.dto.PaymentView;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
@@ -40,8 +44,10 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
             throw new InvalidPaymentException("amount must not be null");
         }
 
-        orderRepository.findById(command.orderId())
+        Order order = orderRepository.findById(command.orderId())
                 .orElseThrow(() -> new OrderNotFoundException(command.orderId()));
+
+        doesPaymentExceedBalance(order,command.amount());
 
         Payment payment = new Payment(
                 UUID.randomUUID().toString(),
@@ -72,5 +78,20 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
                 payment.getFailedAt(),
                 payment.getRefundedAt()
         );
+    }
+
+    private void doesPaymentExceedBalance(Order order, BigDecimal amount){
+
+        List<Payment> payments = paymentRepository.findByOrderId(order.getId());
+
+        BigDecimal totalPaid = payments.stream()
+                .map(Payment::getAmount)
+                .reduce(BigDecimal.ZERO,BigDecimal::add);
+
+        BigDecimal remaining = order.getTotalAmount().subtract(totalPaid);
+
+        if(remaining.compareTo(amount) < 0){
+            throw  new OverpaymentException("Payment exceeds remaining balance. Remaining amount: " + remaining);
+        }
     }
 }
