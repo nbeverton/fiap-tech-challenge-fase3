@@ -127,14 +127,17 @@ public class Payment {
         return refundedAt;
     }
 
+
     // ============================
     // Update Status
     // ============================
-    public void updateStatus(PaymentStatus status) {
-        this.status = status;
+    public void markAsPaid(){
+        this.status = PaymentStatus.PAID;
+        this.paidAt = Instant.now();
     }
 
-    public void insertTimePaid(Instant paidAt) {
-        this.paidAt = paidAt;
+    public void markAsFailed() {
+        this.status = PaymentStatus.FAILED;
+        this.failedAt = Instant.now();
     }
 }

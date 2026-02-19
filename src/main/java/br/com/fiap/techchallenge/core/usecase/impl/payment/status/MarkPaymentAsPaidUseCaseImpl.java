@@ -3,7 +3,7 @@ package br.com.fiap.techchallenge.core.usecase.impl.payment.status;
 import br.com.fiap.techchallenge.core.domain.enums.OrderStatus;
 import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
-import br.com.fiap.techchallenge.core.domain.exception.payment.OverpaymentException;
+import br.com.fiap.techchallenge.core.domain.exception.payment.InvalidPaymentStatusException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.PaymentNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.PaymentOrderMismatchException;
 import br.com.fiap.techchallenge.core.domain.model.Order;
@@ -38,11 +38,10 @@ public class MarkPaymentAsPaidUseCaseImpl implements MarkPaymentAsPaidUseCase {
         }
 
         if(payment.getStatus() != PaymentStatus.PENDING){
-            throw new OverpaymentException("Only PENDING payments can be marked as PAID");
+            throw new InvalidPaymentStatusException("Only PENDING payments can be marked as PAID");
         }
 
-        payment.updateStatus(PaymentStatus.PAID);
-        payment.insertTimePaid(Instant.now());
+        payment.markAsPaid();
 
         paymentRepository.save(payment);
 

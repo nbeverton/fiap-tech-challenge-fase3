@@ -85,6 +85,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
         List<Payment> payments = paymentRepository.findByOrderId(order.getId());
 
         BigDecimal totalPaid = payments.stream()
+                .filter(p -> p.getStatus() == PaymentStatus.PENDING || p.getStatus() == PaymentStatus.PAID)
                 .map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
 
