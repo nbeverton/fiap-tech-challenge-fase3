@@ -3,6 +3,7 @@ package br.com.fiap.techchallenge.infra.web.controller;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.GetPaymentByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.ListPaymentsByOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
 import br.com.fiap.techchallenge.infra.web.dto.payment.CreatePaymentRequest;
 import br.com.fiap.techchallenge.infra.web.dto.payment.PaymentResponse;
 import br.com.fiap.techchallenge.infra.web.mapper.payment.PaymentRequestMapper;
@@ -19,11 +20,13 @@ public class PaymentController {
     private final CreatePaymentUseCase createPaymentUseCase;
     private final GetPaymentByIdUseCase getPaymentByIdUseCase;
     private final ListPaymentsByOrderUseCase listPaymentsByOrderUseCase;
+    private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
 
-    public PaymentController(CreatePaymentUseCase createPaymentUseCase, GetPaymentByIdUseCase getPaymentByIdUseCase, ListPaymentsByOrderUseCase listPaymentsByOrderUseCase) {
+    public PaymentController(CreatePaymentUseCase createPaymentUseCase, GetPaymentByIdUseCase getPaymentByIdUseCase, ListPaymentsByOrderUseCase listPaymentsByOrderUseCase, MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase) {
         this.createPaymentUseCase = createPaymentUseCase;
         this.getPaymentByIdUseCase = getPaymentByIdUseCase;
         this.listPaymentsByOrderUseCase = listPaymentsByOrderUseCase;
+        this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
     }
 
 
@@ -72,5 +75,15 @@ public class PaymentController {
                         .toList();
 
         return ResponseEntity.ok(responses);
+    }
+
+
+    @PatchMapping("/{paymentId}/paid")
+    public ResponseEntity<Void> markAsPaid(
+            @PathVariable String orderId,
+            @PathVariable String paymentId
+    ){
+        markPaymentAsPaidUseCase.execute(orderId, paymentId);
+        return ResponseEntity.noContent().build();
     }
 }

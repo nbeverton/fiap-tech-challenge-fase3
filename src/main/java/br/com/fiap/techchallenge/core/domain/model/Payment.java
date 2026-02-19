@@ -126,4 +126,15 @@ public class Payment {
     public Instant getRefundedAt() {
         return refundedAt;
     }
+
+    // ============================
+    // Update Status
+    // ============================
+    public void updateStatus(PaymentStatus status) {
+        this.status = status;
+    }
+
+    public void insertTimePaid(Instant paidAt) {
+        this.paidAt = paidAt;
+    }
 }
