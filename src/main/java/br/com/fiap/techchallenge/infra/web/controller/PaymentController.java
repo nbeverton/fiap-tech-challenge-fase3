@@ -3,6 +3,9 @@ package br.com.fiap.techchallenge.infra.web.controller;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.GetPaymentByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.ListPaymentsByOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsFailedUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsRefundedUseCase;
 import br.com.fiap.techchallenge.infra.web.dto.payment.CreatePaymentRequest;
 import br.com.fiap.techchallenge.infra.web.dto.payment.PaymentResponse;
 import br.com.fiap.techchallenge.infra.web.mapper.payment.PaymentRequestMapper;
@@ -20,10 +23,17 @@ public class PaymentController {
     private final GetPaymentByIdUseCase getPaymentByIdUseCase;
     private final ListPaymentsByOrderUseCase listPaymentsByOrderUseCase;
 
-    public PaymentController(CreatePaymentUseCase createPaymentUseCase, GetPaymentByIdUseCase getPaymentByIdUseCase, ListPaymentsByOrderUseCase listPaymentsByOrderUseCase) {
+    private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
+    private final MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase;
+    private final MarkPaymentAsRefundedUseCase markPaymentAsRefundedUseCase;
+
+    public PaymentController(CreatePaymentUseCase createPaymentUseCase, GetPaymentByIdUseCase getPaymentByIdUseCase, ListPaymentsByOrderUseCase listPaymentsByOrderUseCase, MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase, MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase, MarkPaymentAsRefundedUseCase markPaymentAsRefundedUseCase) {
         this.createPaymentUseCase = createPaymentUseCase;
         this.getPaymentByIdUseCase = getPaymentByIdUseCase;
         this.listPaymentsByOrderUseCase = listPaymentsByOrderUseCase;
+        this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
+        this.markPaymentAsFailedUseCase = markPaymentAsFailedUseCase;
+        this.markPaymentAsRefundedUseCase = markPaymentAsRefundedUseCase;
     }
 
 
@@ -51,7 +61,7 @@ public class PaymentController {
 
         PaymentResponse response = PaymentResponseMapper.toResponse(
 
-                getPaymentByIdUseCase.execute(paymentId)
+                getPaymentByIdUseCase.execute(orderId, paymentId)
 
         );
 
@@ -72,5 +82,35 @@ public class PaymentController {
                         .toList();
 
         return ResponseEntity.ok(responses);
+    }
+
+
+    @PatchMapping("/{paymentId}/paid")
+    public ResponseEntity<Void> markAsPaid(
+            @PathVariable String orderId,
+            @PathVariable String paymentId
+    ){
+        markPaymentAsPaidUseCase.execute(orderId, paymentId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @PatchMapping("/{paymentId}/failed")
+    public ResponseEntity<Void> markAsFailed(
+            @PathVariable String orderId,
+            @PathVariable String paymentId
+    ){
+        markPaymentAsFailedUseCase.execute(orderId,paymentId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @PatchMapping("/{paymentId}/refunded")
+    public ResponseEntity<Void> markAsRefunded(
+            @PathVariable String orderId,
+            @PathVariable String paymentId
+    ){
+        markPaymentAsRefundedUseCase.execute(orderId,paymentId);
+        return ResponseEntity.noContent().build();
     }
 }

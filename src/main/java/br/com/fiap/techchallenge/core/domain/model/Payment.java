@@ -126,4 +126,23 @@ public class Payment {
     public Instant getRefundedAt() {
         return refundedAt;
     }
+
+
+    // ============================
+    // Update Status
+    // ============================
+    public void markAsPaid(){
+        this.status = PaymentStatus.PAID;
+        this.paidAt = Instant.now();
+    }
+
+    public void markAsFailed() {
+        this.status = PaymentStatus.FAILED;
+        this.failedAt = Instant.now();
+    }
+
+    public void markAsRefunded() {
+        this.status = PaymentStatus.REFUNDED;
+        this.refundedAt = Instant.now();
+    }
 }

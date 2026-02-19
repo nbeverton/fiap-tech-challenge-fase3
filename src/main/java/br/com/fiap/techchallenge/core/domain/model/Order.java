@@ -151,4 +151,11 @@ public class Order {
 
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+
+    // ============================
+    // Update Status
+    // ============================
+    public void updateStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 }
