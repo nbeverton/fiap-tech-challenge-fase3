@@ -1,6 +1,9 @@
 package br.com.fiap.techchallenge.core.usecase.impl.payment;
 
+import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
+import br.com.fiap.techchallenge.core.domain.exception.payment.OverpaymentException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.PaymentNotFoundException;
+import br.com.fiap.techchallenge.core.domain.exception.payment.PaymentOrderMismatchException;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
 import br.com.fiap.techchallenge.core.usecase.in.payment.GetPaymentByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.PaymentView;
@@ -15,10 +18,14 @@ public class GetPaymentByIdUseCaseImpl implements GetPaymentByIdUseCase {
     }
 
     @Override
-    public PaymentView execute(String paymentId) {
+    public PaymentView execute(String orderId, String paymentId) {
 
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new PaymentNotFoundException(paymentId));
+
+        if(!payment.getOrderId().equals(orderId)){
+            throw new PaymentOrderMismatchException("Payment does not belong to this order");
+        }
 
         return new PaymentView(
                 payment.getId(),

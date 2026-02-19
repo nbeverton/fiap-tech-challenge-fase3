@@ -54,7 +54,7 @@ public class PaymentController {
 
         PaymentResponse response = PaymentResponseMapper.toResponse(
 
-                getPaymentByIdUseCase.execute(paymentId)
+                getPaymentByIdUseCase.execute(orderId, paymentId)
 
         );
 
