@@ -10,60 +10,65 @@ import br.com.fiap.techchallenge.core.usecase.in.user.CreateUserUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserAddressRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.security.PasswordEncoderPort;
 
 public class CreateUserUseCaseImpl implements CreateUserUseCase {
 
-    private final UserRepositoryPort userRepository;
-    private final UserAddressRepositoryPort userAddressRepository;
-    private final AddressRepositoryPort addressRepository;
+        private final UserRepositoryPort userRepository;
+        private final UserAddressRepositoryPort userAddressRepository;
+        private final AddressRepositoryPort addressRepository;
+        private final PasswordEncoderPort passwordEncoder;
 
-    public CreateUserUseCaseImpl(UserRepositoryPort userRepositoryPort, UserAddressRepositoryPort userAddressRepositoryPort, AddressRepositoryPort addressRepositoryPort) {
-        this.userRepository = userRepositoryPort;
-        this.userAddressRepository = userAddressRepositoryPort;
-        this.addressRepository = addressRepositoryPort;
-    }
+        public CreateUserUseCaseImpl(
+                        UserRepositoryPort userRepositoryPort,
+                        UserAddressRepositoryPort userAddressRepositoryPort,
+                        AddressRepositoryPort addressRepositoryPort,
+                        PasswordEncoderPort passwordEncoder) {
+                this.userRepository = userRepositoryPort;
+                this.userAddressRepository = userAddressRepositoryPort;
+                this.addressRepository = addressRepositoryPort;
+                this.passwordEncoder = passwordEncoder;
+        }
 
+        @Override
+        public User execute(CreateUserInput input) {
 
-    @Override
-    public User execute(CreateUserInput input) {
+                // 0. Login must be unique
+                userRepository.findByLogin(input.login())
+                                .ifPresent(existing -> {
+                                        throw new UserAlreadyExistsException(input.login());
+                                });
 
-        // 0. Login must be unique
-        userRepository.findByLogin(input.login())
-                .ifPresent(existing -> {
-                    throw new UserAlreadyExistsException(input.login());
-                });
+                // 1. VALIDATE address
+                Address address = addressRepository.findById(input.addressId())
+                                .orElseThrow(() -> new AddressNotFoundException(input.addressId()));
 
-        // 1. VALIDATE address
-        Address address = addressRepository.findById(input.addressId())
-                .orElseThrow(() ->
-                        new AddressNotFoundException(input.addressId())
-                );
+                // 2. Create User
+                String encodedPassword = passwordEncoder.encode(input.password());
 
-        // 2. Create User
-        User user = new User(
-                input.name(),
-                input.userType(),
-                input.email(),
-                input.login(),
-                input.password()
-        ) {};
+                User user = new User(
+                                input.name(),
+                                input.userType(),
+                                input.email(),
+                                input.login(),
+                                encodedPassword) {
+                };
 
-        // 3. Persist User
-        User savedUser = userRepository.save(user);
+                // 3. Persist User
+                User savedUser = userRepository.save(user);
 
-        //4. Creates the UserAddress link (first address is always main/primary)
-        UserAddress userAddress = new UserAddress(
-                savedUser.getId(),
-                input.addressId(),
-                input.addressType(),
-                input.label(),
-                true
-        );
+                // 4. Creates the UserAddress link (first address is always main/primary)
+                UserAddress userAddress = new UserAddress(
+                                savedUser.getId(),
+                                input.addressId(),
+                                input.addressType(),
+                                input.label(),
+                                true);
 
-        //5. Persists the link
-        userAddressRepository.save(userAddress);
+                // 5. Persists the link
+                userAddressRepository.save(userAddress);
 
-        //6. Returns the created user
-        return savedUser;
-    }
+                // 6. Returns the created user
+                return savedUser;
+        }
 }
