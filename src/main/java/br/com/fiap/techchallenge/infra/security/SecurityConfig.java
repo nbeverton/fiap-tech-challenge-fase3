@@ -21,6 +21,10 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
+    // =====================================================
+    // 🔐 MODO SEGURANÇA (JWT ATIVO) - CÓDIGO LUIS
+    // Para usar: DESCOMENTE este bloco e COMENTE o "MODO TESTE"
+    // =====================================================
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -49,4 +53,25 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    // =====================================================
+    // 🔓 MODO TESTE (LIBERA TUDO)
+    // Para usar: DESCOMENTE este bloco e COMENTE o "MODO SEGURANÇA"
+    // =====================================================
+    /*
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                );
+
+        return http.build();
+    }
+    */
 }
