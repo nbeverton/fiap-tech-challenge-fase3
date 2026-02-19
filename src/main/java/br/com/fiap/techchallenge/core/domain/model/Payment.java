@@ -36,12 +36,14 @@ public class Payment {
                    Instant failedAt,
                    Instant refundedAt) {
 
+        this.createdAt =                        createdAt;
+
         this.id =                               requireNonBlank(id, "id");
         this.orderId =                          requireNonBlank(orderId, "orderId");
-        this.createdAt =                        requirePastOrPresent(createdAt, "createdAt");
         this.amount =                           requirePositive(amount, "amount");
-        this.method = method =                  PaymentMethod.valueOf(requireNonBlank(method.toString(), "method"));
-        this.status = status =                  PaymentStatus.valueOf(requireNonBlank(status.toString(), "status"));
+
+        this.method =                           requireNonNull(method, "method");
+        this.status =                           requireNonNull(status, "status");
 
         this.transactionId = transactionId;     // opcional
         this.provider = provider;               // opcional
@@ -52,7 +54,7 @@ public class Payment {
 
 
     // ============================
-    // Regras de negócio
+    // Business role
     // ============================
     private String requireNonBlank(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
@@ -61,16 +63,10 @@ public class Payment {
         return value;
     }
 
-    private Instant requirePastOrPresent(Instant value, String fieldName) {
+    private <T> T requireNonNull(T value, String fieldName) {
         if (value == null) {
             throw new InvalidPaymentException(fieldName + " must not be null");
         }
-
-        Instant now = Instant.now();
-        if (value.isAfter(now)) {
-            throw new InvalidPaymentException(fieldName + " must not be in the future");
-        }
-
         return value;
     }
 
