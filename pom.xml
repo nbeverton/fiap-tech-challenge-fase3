@@ -18,7 +18,7 @@
 
 	<properties>
 		<java.version>21</java.version>
-		<lombok.version>1.18.26</lombok.version>
+		<lombok.version>1.18.32</lombok.version>
         <swagger-annotations.version>2.2.32</swagger-annotations.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
         <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
@@ -87,6 +87,32 @@
             <artifactId>commons-codec</artifactId>
             <version>1.16.0</version>
         </dependency>
+
+		<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
