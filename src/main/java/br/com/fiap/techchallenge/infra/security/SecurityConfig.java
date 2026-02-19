@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/restaurants/*/menus").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/restaurants/*/menus/*").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/restaurants/*/menus/*").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                         // 🔐 somente pedido exige JWT
                         .requestMatchers(HttpMethod.POST, "/orders").authenticated()
