@@ -1,6 +1,7 @@
 {
   "info": {
-    "name": "Tech Challenge 3 - Fluxo completo",
+    "name": "FIAP Tech Challenge - Fluxo Completo",
+    "_postman_id": "fiap-techchallenge-collection",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -8,74 +9,93 @@
       "name": "1 - Criar Address",
       "request": {
         "method": "POST",
-        "url": "{{baseUrl}}/addresses",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/addresses",
+          "host": ["{{baseUrl}}"],
+          "path": ["addresses"]
+        },
         "body": {
           "mode": "raw",
           "raw": "{\n  \"postalCode\": \"00012-345\",\n  \"streetName\": \"Av. Paulista\",\n  \"streetNumber\": 123,\n  \"additionalInfo\": \"Sala 1\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}"
-        },
-        "header": [{ "key": "Content-Type", "value": "application/json" }]
+        }
       },
       "event": [
         {
           "listen": "test",
           "script": {
-            "exec": ["pm.environment.set('addressId', pm.response.json().id);"]
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set(\"addressId\", json.id);"
+            ]
           }
         }
       ]
     },
-
     {
       "name": "2 - Criar User",
       "request": {
         "method": "POST",
-        "url": "{{baseUrl}}/users",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["users"]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Usuário Tech Challenge\",\n  \"userType\": \"OWNER\",\n  \"email\": \"user.techChallenge@example.com\",\n  \"login\": \"user.tech\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}"
-        },
-        "header": [{ "key": "Content-Type", "value": "application/json" }]
+          "raw": "{\n  \"name\": \"Usuário Tech Challenge\",\n  \"userType\": \"CLIENT\",\n  \"email\": \"client.tc@example.com\",\n  \"login\": \"client.tc\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}"
+        }
       },
       "event": [
         {
           "listen": "test",
           "script": {
-            "exec": ["pm.environment.set('userId', pm.response.json().id);"]
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set(\"userId\", json.id);"
+            ]
           }
         }
       ]
     },
-
     {
-      "name": "3 - Login (Autenticação)",
+      "name": "3 - Autenticar Client",
       "request": {
         "method": "POST",
-        "url": "{{baseUrl}}/auth/login",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "login"]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"login\": \"user.tech\",\n  \"password\": \"SenhaForte123!\"\n}"
-        },
-        "header": [{ "key": "Content-Type", "value": "application/json" }]
+          "raw": "{\n  \"login\": \"client.tc\",\n  \"password\": \"SenhaForte123!\"\n}"
+        }
       },
       "event": [
         {
           "listen": "test",
           "script": {
-            "exec": ["pm.environment.set('token', pm.response.json().token);"]
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set(\"token\", json.token);"
+            ]
           }
         }
       ]
     },
-
     {
       "name": "4 - Criar Restaurante",
       "request": {
         "method": "POST",
-        "url": "{{baseUrl}}/restaurants",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{token}}" }
-        ],
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/restaurants",
+          "host": ["{{baseUrl}}"],
+          "path": ["restaurants"]
+        },
         "body": {
           "mode": "raw",
           "raw": "{\n  \"name\": \"Restaurante FIAP\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}"
@@ -86,25 +106,26 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.environment.set('restaurantId', pm.response.json().id);"
+              "var json = pm.response.json();",
+              "pm.environment.set(\"restaurantId\", json.id);"
             ]
           }
         }
       ]
     },
-
     {
       "name": "5 - Criar Menu",
       "request": {
         "method": "POST",
-        "url": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{token}}" }
-        ],
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
+          "host": ["{{baseUrl}}"],
+          "path": ["restaurants", "{{restaurantId}}", "menus"]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Prato do dia\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 39.9,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}"
+          "raw": "{\n  \"name\": \"Prato do dia\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 39.90,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}"
         }
       },
       "event": [
@@ -112,9 +133,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "const r = pm.response.json();",
-              "const last = r.menu[r.menu.length - 1];",
-              "pm.environment.set('menuId', last.id);"
+              "var json = pm.response.json();",
+              "pm.environment.set(\"menuId\", json.id);"
             ]
           }
         }
@@ -122,94 +142,65 @@
     },
 
     {
-      "name": "6 - Criar Pedido",
+      "name": "6 - Criar Pedido (JWT)",
       "request": {
         "method": "POST",
-        "url": "{{baseUrl}}/orders",
         "header": [
           { "key": "Content-Type", "value": "application/json" },
           { "key": "Authorization", "value": "Bearer {{token}}" }
         ],
+        "url": {
+          "raw": "{{baseUrl}}/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders"]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"items\": [\n    {\n      \"menuId\": \"{{menuId}}\",\n      \"quantity\": 2\n    }\n  ]\n}"
+          "raw": "{\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"userAddressId\": \"{{userAddressIdManual}}\",\n  \"items\": [\n    {\n      \"menuId\": \"{{menuId}}\",\n      \"quantity\": 1\n    }\n  ]\n}"
         }
       },
       "event": [
         {
           "listen": "test",
           "script": {
-            "exec": ["pm.environment.set('orderId', pm.response.json().id);"]
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set(\"orderId\", json.id);"
+            ]
           }
         }
       ]
     },
 
     {
-      "name": "PUT - Atualizar Restaurante",
+      "name": "7 - Atualizar Pedido (PUT)",
       "request": {
         "method": "PUT",
-        "url": "{{baseUrl}}/restaurants/{{restaurantId}}",
         "header": [
           { "key": "Content-Type", "value": "application/json" },
           { "key": "Authorization", "value": "Bearer {{token}}" }
         ],
+        "url": {
+          "raw": "{{baseUrl}}/orders/{{orderId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders", "{{orderId}}"]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Restaurante FIAP Atualizado\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"09:00\",\n    \"closes\": \"23:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}"
+          "raw": "{\n  \"items\": [\n    {\n      \"menuItemId\": \"{{menuId}}\",\n      \"quantity\": 2\n    }\n  ]\n}"
         }
       }
     },
-
     {
-      "name": "PUT - Atualizar Menu",
+      "name": "8 - Deletar Pedido (DELETE)",
       "request": {
-        "method": "PUT",
-        "url": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{token}}" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Prato do dia atualizado\",\n  \"description\": \"Novo prato\",\n  \"price\": 45.0,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf2.jpg\"\n}"
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/orders/{{orderId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders", "{{orderId}}"]
         }
-      }
-    },
-
-    {
-      "name": "DELETE - Pedido",
-      "request": {
-        "method": "DELETE",
-        "url": "{{baseUrl}}/orders/{{orderId}}",
-        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
-      }
-    },
-
-    {
-      "name": "DELETE - Menu",
-      "request": {
-        "method": "DELETE",
-        "url": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
-        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
-      }
-    },
-
-    {
-      "name": "DELETE - Restaurante",
-      "request": {
-        "method": "DELETE",
-        "url": "{{baseUrl}}/restaurants/{{restaurantId}}",
-        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
-      }
-    },
-
-    {
-      "name": "DELETE - User",
-      "request": {
-        "method": "DELETE",
-        "url": "{{baseUrl}}/users/{{userId}}",
-        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
       }
     }
   ]

@@ -6,6 +6,8 @@ import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserAddressRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.security.PasswordEncoderPort;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,27 +18,27 @@ public class UserBeanConfig {
     public CreateUserUseCase createUserUseCase(
             UserRepositoryPort userRepository,
             AddressRepositoryPort addressRepository,
-            UserAddressRepositoryPort userAddressRepository
-    ){
+            UserAddressRepositoryPort userAddressRepository,
+            PasswordEncoderPort passwordEncoder) {
         return new CreateUserUseCaseImpl(
                 userRepository,
                 userAddressRepository,
-                addressRepository
-        );
+                addressRepository,
+                passwordEncoder);
     }
 
     @Bean
-    public FindUserByIdUseCase findUserByIdUseCase(UserRepositoryPort repository){
+    public FindUserByIdUseCase findUserByIdUseCase(UserRepositoryPort repository) {
         return new FindUserByIdUseCaseImpl(repository);
     }
 
     @Bean
-    public FindAllUsersUseCase findAllUsersUseCase(UserRepositoryPort repository){
+    public FindAllUsersUseCase findAllUsersUseCase(UserRepositoryPort repository) {
         return new FindAllUsersUseCaseImpl(repository);
     }
 
     @Bean
-    public UpdateUserUseCase updateUserUseCase(UserRepositoryPort repository){
+    public UpdateUserUseCase updateUserUseCase(UserRepositoryPort repository) {
         return new UpdateUserUseCaseImpl(repository);
     }
 
@@ -44,12 +46,10 @@ public class UserBeanConfig {
     public DeleteUserUseCase deleteUserUseCase(
             UserRepositoryPort userRepository,
             UserAddressRepositoryPort userAddressRepository,
-            RestaurantRepositoryPort restaurantRepository
-    ){
+            RestaurantRepositoryPort restaurantRepository) {
         return new DeleteUserUseCaseImpl(
                 userRepository,
                 userAddressRepository,
-                restaurantRepository
-        );
+                restaurantRepository);
     }
 }

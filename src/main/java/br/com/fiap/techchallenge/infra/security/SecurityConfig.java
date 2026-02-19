@@ -33,7 +33,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/addresses").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/restaurants").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/menus").permitAll()
+
+                        // ✅ MENU (controlado pelo restaurante)
+                        .requestMatchers(HttpMethod.POST, "/restaurants/*/menus").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/restaurants/*/menus").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/restaurants/*/menus/*").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/restaurants/*/menus/*").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                         // 🔐 somente pedido exige JWT
                         .requestMatchers(HttpMethod.POST, "/orders").authenticated()
