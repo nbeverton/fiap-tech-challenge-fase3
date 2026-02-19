@@ -9,6 +9,7 @@ import br.com.fiap.techchallenge.core.domain.exception.order.EmptyOrderItemsExce
 import br.com.fiap.techchallenge.core.domain.exception.order.InvalidOrderItemQuantityException;
 import br.com.fiap.techchallenge.core.domain.exception.order.MenuDoesNotBelongToRestaurantException;
 import br.com.fiap.techchallenge.core.domain.exception.order.MissingMenuIdException;
+import br.com.fiap.techchallenge.core.domain.exception.payment.InvalidPaymentException;
 import br.com.fiap.techchallenge.core.domain.exception.restaurant.RestaurantAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.exception.user.InvalidUserException;
 import br.com.fiap.techchallenge.core.domain.exception.user.UserAlreadyExistsException;
@@ -43,7 +44,8 @@ public class GlobalExceptionHandler {
             EmptyOrderItemsException.class,
             InvalidOrderItemQuantityException.class,
             MissingMenuIdException.class,
-            MenuDoesNotBelongToRestaurantException.class
+            MenuDoesNotBelongToRestaurantException.class,
+            InvalidPaymentException.class
     })
     public ResponseEntity<ApiErrorResponse> handleInvalidInput(BusinessException ex) {
         ApiErrorResponse error = new ApiErrorResponse(

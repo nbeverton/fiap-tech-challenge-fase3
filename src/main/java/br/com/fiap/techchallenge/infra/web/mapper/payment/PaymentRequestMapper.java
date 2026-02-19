@@ -12,7 +12,8 @@ public class PaymentRequestMapper {
         return new CreatePaymentCommand(
                 orderId,
                 request.amount(),
-                PaymentMethod.valueOf(request.method())
+                PaymentMethod.fromString(request.method())
+
         );
     }
 }
