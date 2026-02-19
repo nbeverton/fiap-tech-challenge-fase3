@@ -5,11 +5,13 @@ import br.com.fiap.techchallenge.core.usecase.impl.payment.GetPaymentByIdUseCase
 import br.com.fiap.techchallenge.core.usecase.impl.payment.ListPaymentsByOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.payment.status.MarkPaymentAsFailedUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.payment.status.MarkPaymentAsPaidUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.payment.status.MarkPaymentAsRefundedUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.GetPaymentByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.ListPaymentsByOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsFailedUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsRefundedUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
 import org.springframework.context.annotation.Bean;
@@ -46,5 +48,11 @@ public class PaymentBeanConfig {
     public MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase(PaymentRepositoryPort paymentRepositoryPort){
 
         return new MarkPaymentAsFailedUseCaseImpl(paymentRepositoryPort);
+    }
+
+    @Bean
+    public MarkPaymentAsRefundedUseCase markPaymentAsRefundedUseCase(PaymentRepositoryPort paymentRepositoryPort, OrderRepositoryPort orderRepositoryPort){
+
+        return new MarkPaymentAsRefundedUseCaseImpl(paymentRepositoryPort, orderRepositoryPort);
     }
 }

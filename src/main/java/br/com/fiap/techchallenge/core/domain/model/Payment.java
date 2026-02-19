@@ -140,4 +140,9 @@ public class Payment {
         this.status = PaymentStatus.FAILED;
         this.failedAt = Instant.now();
     }
+
+    public void markAsRefunded() {
+        this.status = PaymentStatus.REFUNDED;
+        this.refundedAt = Instant.now();
+    }
 }

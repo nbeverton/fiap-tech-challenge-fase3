@@ -5,6 +5,7 @@ import br.com.fiap.techchallenge.core.usecase.in.payment.GetPaymentByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.ListPaymentsByOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsFailedUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsRefundedUseCase;
 import br.com.fiap.techchallenge.infra.web.dto.payment.CreatePaymentRequest;
 import br.com.fiap.techchallenge.infra.web.dto.payment.PaymentResponse;
 import br.com.fiap.techchallenge.infra.web.mapper.payment.PaymentRequestMapper;
@@ -24,13 +25,15 @@ public class PaymentController {
 
     private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
     private final MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase;
+    private final MarkPaymentAsRefundedUseCase markPaymentAsRefundedUseCase;
 
-    public PaymentController(CreatePaymentUseCase createPaymentUseCase, GetPaymentByIdUseCase getPaymentByIdUseCase, ListPaymentsByOrderUseCase listPaymentsByOrderUseCase, MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase, MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase) {
+    public PaymentController(CreatePaymentUseCase createPaymentUseCase, GetPaymentByIdUseCase getPaymentByIdUseCase, ListPaymentsByOrderUseCase listPaymentsByOrderUseCase, MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase, MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase, MarkPaymentAsRefundedUseCase markPaymentAsRefundedUseCase) {
         this.createPaymentUseCase = createPaymentUseCase;
         this.getPaymentByIdUseCase = getPaymentByIdUseCase;
         this.listPaymentsByOrderUseCase = listPaymentsByOrderUseCase;
         this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
         this.markPaymentAsFailedUseCase = markPaymentAsFailedUseCase;
+        this.markPaymentAsRefundedUseCase = markPaymentAsRefundedUseCase;
     }
 
 
@@ -98,6 +101,16 @@ public class PaymentController {
             @PathVariable String paymentId
     ){
         markPaymentAsFailedUseCase.execute(orderId,paymentId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @PatchMapping("/{paymentId}/refunded")
+    public ResponseEntity<Void> markAsRefunded(
+            @PathVariable String orderId,
+            @PathVariable String paymentId
+    ){
+        markPaymentAsRefundedUseCase.execute(orderId,paymentId);
         return ResponseEntity.noContent().build();
     }
 }
