@@ -14,6 +14,7 @@ public class PaymentPersistenceMapper {
 
                 document.setId(domain.getId());
                 document.setOrderId(domain.getOrderId());
+                document.setCreatedAt(domain.getCreatedAt());
                 document.setAmount(domain.getAmount());
                 document.setMethod(domain.getMethod().name());
                 document.setStatus(domain.getStatus().name());

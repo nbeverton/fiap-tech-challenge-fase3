@@ -21,7 +21,6 @@ public class PaymentDocument {
     private String transactionId;
     private String provider;
 
-    @CreatedDate
     private Instant createdAt;
 
     @LastModifiedDate
