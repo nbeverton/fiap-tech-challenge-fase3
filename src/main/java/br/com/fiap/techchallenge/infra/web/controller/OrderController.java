@@ -2,9 +2,9 @@ package br.com.fiap.techchallenge.infra.web.controller;
 
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.usecase.in.order.*;
-//import br.com.fiap.techchallenge.core.usecase.impl.order.OrderManagementUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.dto.CreateOrderCommand;
 import br.com.fiap.techchallenge.core.usecase.in.order.dto.UpdateOrderCommand;
+import br.com.fiap.techchallenge.core.usecase.in.order.status.*;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderResponseDTO;
 import br.com.fiap.techchallenge.infra.web.dto.order.UpdateOrderRequest;
@@ -27,15 +27,34 @@ public class OrderController {
     private final UpdateOrderUseCase updateOrderUseCase;
     private final DeleteOrderUseCase deleteOrderUseCase;
 
-    public OrderController(CreateOrderUseCase createOrderUseCase, GetOrderByIdUseCase getOrderByIdUseCase,
-            ListOrdersUseCase listOrdersUseCase, UpdateOrderUseCase updateOrderUseCase,
-            DeleteOrderUseCase deleteOrderUseCase) {
+    private final AcceptOrderUseCase acceptOrderUseCase;
+    private final DeliverOrderUseCase deliverOrderUseCase;
+    private final OutForDeliveryOrderUseCase outForDeliveryOrderUseCase;
+    private final RejectOrderUseCase rejectOrderUseCase;
+    private final StartPreparingOrderUseCase startPreparingOrderUseCase;
+
+    public OrderController(CreateOrderUseCase createOrderUseCase,
+                           GetOrderByIdUseCase getOrderByIdUseCase,
+                           ListOrdersUseCase listOrdersUseCase,
+                           UpdateOrderUseCase updateOrderUseCase,
+                           DeleteOrderUseCase deleteOrderUseCase,
+                           AcceptOrderUseCase acceptOrderUseCase,
+                           DeliverOrderUseCase deliverOrderUseCase,
+                           OutForDeliveryOrderUseCase outForDeliveryOrderUseCase,
+                           RejectOrderUseCase rejectOrderUseCase,
+                           StartPreparingOrderUseCase startPreparingOrderUseCase) {
+
         this.createOrderUseCase = createOrderUseCase;
         this.getOrderByIdUseCase = getOrderByIdUseCase;
         this.listOrdersUseCase = listOrdersUseCase;
         this.updateOrderUseCase = updateOrderUseCase;
         this.deleteOrderUseCase = deleteOrderUseCase;
 
+        this.acceptOrderUseCase = acceptOrderUseCase;
+        this.deliverOrderUseCase = deliverOrderUseCase;
+        this.outForDeliveryOrderUseCase = outForDeliveryOrderUseCase;
+        this.rejectOrderUseCase = rejectOrderUseCase;
+        this.startPreparingOrderUseCase = startPreparingOrderUseCase;
     }
 
     // --- CREATE ---
@@ -91,6 +110,49 @@ public class OrderController {
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> delete(@PathVariable String orderId) {
         deleteOrderUseCase.execute(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ---------------------------
+    // Change Status Endpoints
+    // ---------------------------
+    @PatchMapping("/{orderId}/accept")
+    public ResponseEntity<Void> accept(
+            @PathVariable String orderId
+    ){
+        acceptOrderUseCase.accept(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{orderId}/reject")
+    public ResponseEntity<Void> reject(
+            @PathVariable String orderId
+    ){
+        rejectOrderUseCase.reject(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{orderId}/preparing")
+    public ResponseEntity<Void> starPreparing(
+            @PathVariable String orderId
+    ){
+        startPreparingOrderUseCase.startPreparing(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{orderId}/out-for-delivery")
+    public ResponseEntity<Void> outForDelivery(
+            @PathVariable String orderId
+    ){
+        outForDeliveryOrderUseCase.outForDelivery(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{orderId}/deliver")
+    public ResponseEntity<Void> deliver(
+            @PathVariable String orderId
+    ){
+        deliverOrderUseCase.deliver(orderId);
         return ResponseEntity.noContent().build();
     }
 }
