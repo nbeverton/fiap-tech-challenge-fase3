@@ -1,4 +1,4 @@
-package br.com.fiap.techchallenge.core.usecase.impl.order.status;
+package br.com.fiap.techchallenge.core.usecase.impl.order;
 
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersUseCase;

@@ -4,7 +4,7 @@ import br.com.fiap.techchallenge.core.usecase.impl.order.status.AcceptOrderUseCa
 import br.com.fiap.techchallenge.core.usecase.impl.order.CreateOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.DeleteOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.GetOrderByIdUseCaseImpl;
-import br.com.fiap.techchallenge.core.usecase.impl.order.status.ListOrdersUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.order.ListOrdersUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.UpdateOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.in.order.status.AcceptOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderUseCase;
