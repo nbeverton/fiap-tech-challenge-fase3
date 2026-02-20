@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.core.usecase.impl.order.status;
 
+import br.com.fiap.techchallenge.core.domain.enums.OrderStatus;
 import br.com.fiap.techchallenge.core.usecase.in.order.status.AcceptOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.domain.model.Order;
@@ -19,8 +20,16 @@ public class AcceptOrderUseCaseImpl implements AcceptOrderUseCase {
 
         Order order = orderFinder.findById(orderId);
 
-        order.markOrderAsAwaitPayment();
+        if(order.getOrderStatus() == OrderStatus.CREATED){
 
-        orderRepositoryPort.save(order);
+            order.markOrderAsAwaitPayment();
+            orderRepositoryPort.save(order);
+        }
+
+        else if(order.getOrderStatus() == OrderStatus.PAYMENT_CONFIRMED){
+
+            order.markOrderAsPaid();
+            orderRepositoryPort.save(order);
+        }
     }
 }

@@ -80,31 +80,61 @@ public class Order {
     // Update Status
     // ============================
     public void markOrderAsAwaitPayment() {
-        requireStatus(Set.of(OrderStatus.CREATED, OrderStatus.PAID), "Order can only await payment when status is CREATED or PAID.");
+        requireStatus(
+                Set.of(OrderStatus.CREATED, OrderStatus.PAYMENT_CONFIRMED),
+                "Order can only await payment when status is CREATED or PAYMENT_CONFIRMED."
+        );
+
         this.orderStatus = OrderStatus.AWAITING_PAYMENT;
         touch();
     }
 
+    public void markPaymentAsConfirmed() {
+        requireStatus(
+                Set.of(OrderStatus.CREATED),
+                "Payment can only be confirmed when order is CREATED."
+        );
+
+        this.orderStatus = OrderStatus.PAYMENT_CONFIRMED;
+        touch();
+    }
+
     public void markOrderAsPaid() {
-        requireStatus(Set.of(OrderStatus.AWAITING_PAYMENT), "Order can only be marked as PAID when status is AWAITING_PAYMENT.");
+        requireStatus(
+                Set.of(OrderStatus.AWAITING_PAYMENT),
+                "Order can only be marked as PAID when status is AWAITING_PAYMENT."
+        );
+
         this.orderStatus = OrderStatus.PAID;
         touch();
     }
 
     public void markOrderAsStartPreparing() {
-        requireStatus(Set.of(OrderStatus.PAID), "Order can only start preparing when status is PAID.");
+        requireStatus(
+                Set.of(OrderStatus.PAID),
+                "Order can only start preparing when status is PAID."
+        );
+
         this.orderStatus = OrderStatus.PREPARING;
         touch();
     }
 
     public void markOrderAsOutForDelivery() {
-        requireStatus(Set.of(OrderStatus.PREPARING), "Order can only go out for delivery when status is PREPARING.");
+        requireStatus(
+                Set.of(OrderStatus.PREPARING),
+                "Order can only go out for delivery when status is PREPARING."
+        );
+
         this.orderStatus = OrderStatus.OUT_FOR_DELIVERY;
         touch();
     }
 
     public void markOrderAsDeliver() {
-        requireStatus(Set.of(OrderStatus.OUT_FOR_DELIVERY), "Order can only be delivered when status is OUT_FOR_DELIVERY.");
+        requireStatus(
+                Set.of(OrderStatus.OUT_FOR_DELIVERY),
+                "Order can only be delivered when status is OUT_FOR_DELIVERY."
+        );
+
         this.orderStatus = OrderStatus.DELIVERED;
         touch();
     }
