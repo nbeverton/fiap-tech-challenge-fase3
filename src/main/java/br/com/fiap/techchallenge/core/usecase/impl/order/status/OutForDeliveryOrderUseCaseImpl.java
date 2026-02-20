@@ -20,7 +20,7 @@ public class OutForDeliveryOrderUseCaseImpl implements OutForDeliveryOrderUseCas
 
         Order order = orderFinder.findById(orderId);
 
-        order.outForDelivery();
+        order.markOrderAsOutForDelivery();
 
         orderRepositoryPort.save(order);
     }

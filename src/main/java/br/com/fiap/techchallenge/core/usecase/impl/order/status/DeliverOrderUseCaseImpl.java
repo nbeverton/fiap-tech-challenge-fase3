@@ -19,7 +19,7 @@ public class DeliverOrderUseCaseImpl implements DeliverOrderUseCase {
 
         Order order = orderFinder.findById(orderId);
 
-        order.deliver();
+        order.markOrderAsDeliver();
 
         orderRepositoryPort.save(order);
     }

@@ -19,7 +19,7 @@ public class RejectOrderUseCaseImpl implements RejectOrderUseCase {
 
         Order order = orderFinder.findById(orderId);
 
-        order.cancel();
+        order.markOrderAsCancel();
 
         orderRepositoryPort.save(order);
     }

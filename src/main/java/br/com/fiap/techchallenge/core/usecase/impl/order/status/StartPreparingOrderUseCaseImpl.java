@@ -19,7 +19,7 @@ public class StartPreparingOrderUseCaseImpl implements StartPreparingOrderUseCas
 
         Order order = orderFinder.findById(orderId);
 
-        order.startPreparing();
+        order.markOrderAsStartPreparing();
 
         orderRepositoryPort.save(order);
     }

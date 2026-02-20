@@ -46,7 +46,7 @@ public class MarkPaymentAsRefundedUseCaseImpl implements MarkPaymentAsRefundedUs
 
         if(order.getOrderStatus() == OrderStatus.PAID){
 
-            order.updateStatus(OrderStatus.AWAITING_PAYMENT);
+            order.markOrderAsAwaitPayment();
             orderRepository.save(order);
         }
     }
