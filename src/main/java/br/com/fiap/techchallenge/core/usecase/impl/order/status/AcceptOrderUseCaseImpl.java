@@ -1,6 +1,6 @@
-package br.com.fiap.techchallenge.core.usecase.impl.order;
+package br.com.fiap.techchallenge.core.usecase.impl.order.status;
 
-import br.com.fiap.techchallenge.core.usecase.in.order.AcceptOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.status.AcceptOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.domain.model.Order;
 

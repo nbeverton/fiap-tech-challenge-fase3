@@ -1,8 +1,8 @@
 package br.com.fiap.techchallenge.infra.web.mapper.order;
 
-import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderCommand;
-import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderItemCommand;
-import br.com.fiap.techchallenge.core.usecase.in.order.UpdateOrderCommand;
+import br.com.fiap.techchallenge.core.usecase.in.order.dto.CreateOrderCommand;
+import br.com.fiap.techchallenge.core.usecase.in.order.dto.CreateOrderItemCommand;
+import br.com.fiap.techchallenge.core.usecase.in.order.dto.UpdateOrderCommand;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.dto.order.UpdateOrderRequest;
 

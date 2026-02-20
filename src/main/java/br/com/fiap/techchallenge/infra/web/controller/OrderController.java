@@ -3,6 +3,8 @@ package br.com.fiap.techchallenge.infra.web.controller;
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.usecase.in.order.*;
 //import br.com.fiap.techchallenge.core.usecase.impl.order.OrderManagementUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.dto.CreateOrderCommand;
+import br.com.fiap.techchallenge.core.usecase.in.order.dto.UpdateOrderCommand;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.dto.order.CreateOrderResponseDTO;
 import br.com.fiap.techchallenge.infra.web.dto.order.UpdateOrderRequest;
@@ -12,10 +14,8 @@ import br.com.fiap.techchallenge.infra.web.mapper.order.OrderWebMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/orders")

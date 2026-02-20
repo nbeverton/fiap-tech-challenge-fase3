@@ -1,4 +1,4 @@
-package br.com.fiap.techchallenge.core.usecase.in.order;
+package br.com.fiap.techchallenge.core.usecase.in.order.dto;
 
 import java.util.List;
 

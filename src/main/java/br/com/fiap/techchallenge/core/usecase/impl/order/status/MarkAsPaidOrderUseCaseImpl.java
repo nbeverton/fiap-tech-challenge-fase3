@@ -1,8 +1,8 @@
-package br.com.fiap.techchallenge.core.usecase.impl.order;
+package br.com.fiap.techchallenge.core.usecase.impl.order.status;
 
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Order;
-import br.com.fiap.techchallenge.core.usecase.in.order.MarkAsPaidOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.status.MarkAsPaidOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 
 public class MarkAsPaidOrderUseCaseImpl implements MarkAsPaidOrderUseCase {
