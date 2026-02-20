@@ -1,6 +1,7 @@
 package br.com.fiap.techchallenge.core.usecase.impl.order.status;
 
 import br.com.fiap.techchallenge.core.domain.enums.OrderStatus;
+import br.com.fiap.techchallenge.core.domain.exception.order.InvalidOrderStatusException;
 import br.com.fiap.techchallenge.core.usecase.in.order.status.AcceptOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.domain.model.Order;
@@ -30,6 +31,12 @@ public class AcceptOrderUseCaseImpl implements AcceptOrderUseCase {
 
             order.markOrderAsPaid();
             orderRepositoryPort.save(order);
+        }
+
+        else {
+            throw new InvalidOrderStatusException(
+                    "Order can only be accepted when status is CREATED or PAYMENT_CONFIRMED."
+            );
         }
     }
 }

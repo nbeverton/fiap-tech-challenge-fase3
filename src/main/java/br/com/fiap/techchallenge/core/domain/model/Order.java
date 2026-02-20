@@ -81,7 +81,7 @@ public class Order {
     // ============================
     public void markOrderAsAwaitPayment() {
         requireStatus(
-                Set.of(OrderStatus.CREATED, OrderStatus.PAYMENT_CONFIRMED),
+                Set.of(OrderStatus.CREATED),
                 "Order can only await payment when status is CREATED or PAYMENT_CONFIRMED."
         );
 
@@ -101,7 +101,7 @@ public class Order {
 
     public void markOrderAsPaid() {
         requireStatus(
-                Set.of(OrderStatus.AWAITING_PAYMENT),
+                Set.of(OrderStatus.AWAITING_PAYMENT, OrderStatus.PAYMENT_CONFIRMED),
                 "Order can only be marked as PAID when status is AWAITING_PAYMENT."
         );
 
