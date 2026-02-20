@@ -1,12 +1,12 @@
 package br.com.fiap.techchallenge.infra.config;
 
-import br.com.fiap.techchallenge.core.usecase.impl.order.status.AcceptOrderUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.order.status.*;
 import br.com.fiap.techchallenge.core.usecase.impl.order.CreateOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.DeleteOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.GetOrderByIdUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.ListOrdersUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.UpdateOrderUseCaseImpl;
-import br.com.fiap.techchallenge.core.usecase.in.order.status.AcceptOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.status.*;
 import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.DeleteOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.GetOrderByIdUseCase;
@@ -63,5 +63,25 @@ public class OrderUseCaseConfig {
     @Bean
     public AcceptOrderUseCase acceptOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
         return new AcceptOrderUseCaseImpl(orderRepositoryPort);
+    }
+
+    @Bean
+    public DeliverOrderUseCase deliverOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+        return new DeliverOrderUseCaseImpl(orderRepositoryPort);
+    }
+
+    @Bean
+    public OutForDeliveryOrderUseCase outForDeliveryOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+        return new OutForDeliveryOrderUseCaseImpl(orderRepositoryPort);
+    }
+
+    @Bean
+    public RejectOrderUseCase rejectOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+        return new RejectOrderUseCaseImpl(orderRepositoryPort);
+    }
+
+    @Bean
+    public StartPreparingOrderUseCase startPreparingOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+        return new StartPreparingOrderUseCaseImpl(orderRepositoryPort);
     }
 }
