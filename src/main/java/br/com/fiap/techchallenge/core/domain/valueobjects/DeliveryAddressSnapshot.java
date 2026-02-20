@@ -28,4 +28,33 @@ public class DeliveryAddressSnapshot {
         this.postalCode = postalCode;
         this.additionalInfo = additionalInfo;
     }
+
+
+    public String getStreetName() {
+        return streetName;
+    }
+
+    public int getStreetNumber() {
+        return streetNumber;
+    }
+
+    public String getNeighborhood() {
+        return neighborhood;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getStateProvince() {
+        return stateProvince;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public String getAdditionalInfo() {
+        return additionalInfo;
+    }
 }
