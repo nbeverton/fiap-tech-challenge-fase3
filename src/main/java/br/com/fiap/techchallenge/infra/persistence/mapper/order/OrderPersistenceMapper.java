@@ -91,7 +91,7 @@ public class OrderPersistenceMapper {
 
     private static OrderItem toDomain(OrderItemEmbedded embedded) {
         return new OrderItem(
-                embedded.getMenuId(),
+                embedded.getMenuItemId(),
                 embedded.getName(),
                 embedded.getQuantity(),
                 embedded.getPrice()

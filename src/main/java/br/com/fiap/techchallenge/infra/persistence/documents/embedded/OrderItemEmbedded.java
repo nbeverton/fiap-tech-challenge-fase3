@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class OrderItemEmbedded {
 
-    private String menuId;
+    private String menuItemId;
     private String name;
     private Integer quantity;
     private BigDecimal price;
@@ -14,19 +14,19 @@ public class OrderItemEmbedded {
     }
 
     public OrderItemEmbedded(String menuId, String name, Integer quantity, BigDecimal price) {
-        this.menuId = menuId;
+        this.menuItemId = menuId;
         this.name = name;
         this.quantity = quantity;
         this.price = price;
     }
 
 
-    public String getMenuId() {
-        return menuId;
+    public String getMenuItemId() {
+        return menuItemId;
     }
 
-    public void setMenuId(String menuId) {
-        this.menuId = menuId;
+    public void setMenuItemId(String menuItemId) {
+        this.menuItemId = menuItemId;
     }
 
     public String getName() {
