@@ -59,8 +59,18 @@ public class MarkPaymentAsPaidUseCaseImpl implements MarkPaymentAsPaidUseCase {
         BigDecimal remaining = order.getTotalAmount().subtract(totalPaid);
 
         if(remaining.compareTo(BigDecimal.ZERO) <= 0){
-            order.updateStatus(OrderStatus.PAID);
-            orderRepository.save(order);
+
+            if(order.getOrderStatus() == OrderStatus.AWAITING_PAYMENT){
+
+                order.markOrderAsPaid();
+                orderRepository.save(order);
+            }
+
+            else if(order.getOrderStatus() == OrderStatus.CREATED){
+
+                order.markPaymentAsConfirmed();
+                orderRepository.save(order);
+            }
         }
     }
 }

@@ -1,8 +1,8 @@
 package br.com.fiap.techchallenge.infra.persistence.documents;
 
 import br.com.fiap.techchallenge.core.domain.enums.OrderStatus;
-import br.com.fiap.techchallenge.core.domain.valueobjects.DeliveryAddressSnapshot;
-import br.com.fiap.techchallenge.core.domain.valueobjects.OrderItem;
+import br.com.fiap.techchallenge.infra.persistence.documents.embedded.DeliveryAddressSnapshotEmbedded;
+import br.com.fiap.techchallenge.infra.persistence.documents.embedded.OrderItemEmbedded;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,11 +21,11 @@ public class OrderDocument {
 
     private String userAddressId;
 
-    private DeliveryAddressSnapshot deliveryAddress;
+    private DeliveryAddressSnapshotEmbedded deliveryAddress;
 
-    private List<OrderItem> items;
+    private List<OrderItemEmbedded> items;
 
-    private OrderStatus orderStatus;
+    private String orderStatus;
 
     private BigDecimal totalAmount;
 
@@ -68,27 +68,27 @@ public class OrderDocument {
         this.userAddressId = userAddressId;
     }
 
-    public DeliveryAddressSnapshot getDeliveryAddress() {
+    public DeliveryAddressSnapshotEmbedded getDeliveryAddress() {
         return deliveryAddress;
     }
 
-    public void setDeliveryAddress(DeliveryAddressSnapshot deliveryAddress) {
+    public void setDeliveryAddress(DeliveryAddressSnapshotEmbedded deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
 
-    public List<OrderItem> getItems() {
+    public List<OrderItemEmbedded> getItems() {
         return items;
     }
 
-    public void setItems(List<OrderItem> items) {
+    public void setItems(List<OrderItemEmbedded> items) {
         this.items = items;
     }
 
-    public OrderStatus getOrderStatus() {
+    public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
+    public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
     }
 

@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class Order {
 
@@ -55,85 +56,8 @@ public class Order {
         this.updatedAt = (updatedAt != null) ? updatedAt : this.createdAt;
     }
 
-
     // ============================
-    // Regras de negócio
-    // ============================
-
-    /**
-     * CREATED -> AWAITING_PAYMENT
-     */
-    public void awaitPayment() {
-        requireStatus(OrderStatus.CREATED, "Order can only await payment when status is CREATED.");
-        this.orderStatus = OrderStatus.AWAITING_PAYMENT;
-        touch();
-    }
-
-    /**
-     * AWAITING_PAYMENT -> PAID
-     */
-    public void markAsPaid() {
-        requireStatus(OrderStatus.AWAITING_PAYMENT, "Order can only be marked as PAID when status is AWAITING_PAYMENT.");
-        this.orderStatus = OrderStatus.PAID;
-        touch();
-    }
-
-    /**
-     * PAID -> PREPARING
-     */
-    public void startPreparing() {
-        requireStatus(OrderStatus.PAID, "Order can only start preparing when status is PAID.");
-        this.orderStatus = OrderStatus.PREPARING;
-        touch();
-    }
-
-    /**
-     * PREPARING -> OUT_FOR_DELIVERY
-     */
-    public void outForDelivery() {
-        requireStatus(OrderStatus.PREPARING, "Order can only go out for delivery when status is PREPARING.");
-        this.orderStatus = OrderStatus.OUT_FOR_DELIVERY;
-        touch();
-    }
-
-    /**
-     * OUT_FOR_DELIVERY -> DELIVERED
-     */
-    public void deliver() {
-        requireStatus(OrderStatus.OUT_FOR_DELIVERY, "Order can only be delivered when status is OUT_FOR_DELIVERY.");
-        this.orderStatus = OrderStatus.DELIVERED;
-        touch();
-    }
-
-    /**
-     * Cancellation allowed at early stages
-     */
-    public void cancel() {
-        if (this.orderStatus == OrderStatus.DELIVERED) {
-            throw new InvalidOrderStatusException("Order cannot be canceled when status is DELIVERED.");
-        }
-
-        if (this.orderStatus == OrderStatus.CANCELED) {
-            return; // idempotente
-        }
-
-        this.orderStatus = OrderStatus.CANCELED;
-        touch();
-    }
-
-    private void requireStatus(OrderStatus expected, String messageIfInvalid) {
-        if (this.orderStatus != expected) {
-            throw new InvalidOrderStatusException(messageIfInvalid);
-        }
-    }
-
-    private void touch() {
-        this.updatedAt = Instant.now();
-    }
-
-
-    // ============================
-    // Getters (útil p/ UseCases, mappers, presenters)
+    // Getters
     // ============================
 
     public String getId() { return id; }
@@ -155,7 +79,89 @@ public class Order {
     // ============================
     // Update Status
     // ============================
-    public void updateStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void markOrderAsAwaitPayment() {
+        requireStatus(
+                Set.of(OrderStatus.CREATED),
+                "Order can only await payment when status is CREATED or PAYMENT_CONFIRMED."
+        );
+
+        this.orderStatus = OrderStatus.AWAITING_PAYMENT;
+        touch();
+    }
+
+    public void markPaymentAsConfirmed() {
+        requireStatus(
+                Set.of(OrderStatus.CREATED),
+                "Payment can only be confirmed when order is CREATED."
+        );
+
+        this.orderStatus = OrderStatus.PAYMENT_CONFIRMED;
+        touch();
+    }
+
+    public void markOrderAsPaid() {
+        requireStatus(
+                Set.of(OrderStatus.AWAITING_PAYMENT, OrderStatus.PAYMENT_CONFIRMED),
+                "Order can only be marked as PAID when status is AWAITING_PAYMENT."
+        );
+
+        this.orderStatus = OrderStatus.PAID;
+        touch();
+    }
+
+    public void markOrderAsStartPreparing() {
+        requireStatus(
+                Set.of(OrderStatus.PAID),
+                "Order can only start preparing when status is PAID."
+        );
+
+        this.orderStatus = OrderStatus.PREPARING;
+        touch();
+    }
+
+    public void markOrderAsOutForDelivery() {
+        requireStatus(
+                Set.of(OrderStatus.PREPARING),
+                "Order can only go out for delivery when status is PREPARING."
+        );
+
+        this.orderStatus = OrderStatus.OUT_FOR_DELIVERY;
+        touch();
+    }
+
+    public void markOrderAsDeliver() {
+        requireStatus(
+                Set.of(OrderStatus.OUT_FOR_DELIVERY),
+                "Order can only be delivered when status is OUT_FOR_DELIVERY."
+        );
+
+        this.orderStatus = OrderStatus.DELIVERED;
+        touch();
+    }
+
+    public void markOrderAsCancel() {
+        if (this.orderStatus == OrderStatus.DELIVERED) {
+            throw new InvalidOrderStatusException("Order cannot be canceled when status is DELIVERED.");
+        }
+
+        if (this.orderStatus == OrderStatus.CANCELED) {
+            return; // idempotente
+        }
+
+        this.orderStatus = OrderStatus.CANCELED;
+        touch();
+    }
+
+    // ============================
+    // Helpers
+    // ============================
+    private void requireStatus(Set<OrderStatus> allowed, String messageIfInvalid) {
+        if (!allowed.contains(this.orderStatus)) {
+            throw new InvalidOrderStatusException(messageIfInvalid);
+        }
+    }
+
+    private void touch() {
+        this.updatedAt = Instant.now();
     }
 }
