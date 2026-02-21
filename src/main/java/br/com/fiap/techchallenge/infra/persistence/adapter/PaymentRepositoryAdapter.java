@@ -46,6 +46,16 @@ public class PaymentRepositoryAdapter implements PaymentRepositoryPort {
     }
 
     @Override
+    public void saveAll(List<Payment> payments) {
+
+        var entities = payments.stream()
+                .map(PaymentPersistenceMapper::toDocument)
+                .toList();
+
+        repository.saveAll(entities);
+    }
+
+    @Override
     public void updateStatusAndProviderData(
 
             String paymentId,

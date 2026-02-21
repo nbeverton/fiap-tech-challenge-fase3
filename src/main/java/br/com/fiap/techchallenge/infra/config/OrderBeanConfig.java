@@ -12,15 +12,12 @@ import br.com.fiap.techchallenge.core.usecase.in.order.DeleteOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.GetOrderByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.UpdateOrderUseCase;
-import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
-import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
-import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
-import br.com.fiap.techchallenge.core.usecase.out.UserAddressRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OrderUseCaseConfig {
+public class OrderBeanConfig {
 
     @Bean
     public CreateOrderUseCase createOrderUseCase(
@@ -76,8 +73,16 @@ public class OrderUseCaseConfig {
     }
 
     @Bean
-    public RejectOrderUseCase rejectOrderUseCase(OrderRepositoryPort orderRepositoryPort){
-        return new RejectOrderUseCaseImpl(orderRepositoryPort);
+    public RejectOrderUseCase rejectOrderUseCase(
+            OrderRepositoryPort orderRepositoryPort,
+            UserRepositoryPort userRepositoryPort,
+            PaymentRepositoryPort paymentRepositoryPort
+    ){
+        return new RejectOrderUseCaseImpl(
+                orderRepositoryPort,
+                userRepositoryPort,
+                paymentRepositoryPort
+        );
     }
 
     @Bean

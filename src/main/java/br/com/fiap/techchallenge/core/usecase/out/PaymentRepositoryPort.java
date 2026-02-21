@@ -15,6 +15,8 @@ public interface PaymentRepositoryPort {
 
     List<Payment> findByOrderId(String orderId);
 
+    void saveAll(List<Payment> payments);
+
     void updateStatusAndProviderData(
             String paymentId,
             PaymentStatus status,
