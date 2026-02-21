@@ -12,6 +12,7 @@ import br.com.fiap.techchallenge.core.usecase.in.order.DeleteOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.GetOrderByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.UpdateOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.status.MarkOrderAsAcceptedUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,27 +59,27 @@ public class OrderBeanConfig {
     }
 
     @Bean
-    public AcceptOrderUseCase acceptOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
-        return new AcceptOrderUseCaseImpl(orderRepositoryPort);
+    public MarkOrderAsAcceptedUseCase acceptOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
+        return new br.com.fiap.techchallenge.core.usecase.impl.order.status.MarkOrderAsAcceptedUseCaseImpl(orderRepositoryPort);
     }
 
     @Bean
-    public DeliverOrderUseCase deliverOrderUseCase(OrderRepositoryPort orderRepositoryPort){
-        return new DeliverOrderUseCaseImpl(orderRepositoryPort);
+    public MarkOrderAsDeliveredUseCase deliverOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+        return new MarkOrderAsDeliveredUseCaseImpl(orderRepositoryPort);
     }
 
     @Bean
-    public OutForDeliveryOrderUseCase outForDeliveryOrderUseCase(OrderRepositoryPort orderRepositoryPort){
-        return new OutForDeliveryOrderUseCaseImpl(orderRepositoryPort);
+    public MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+        return new MarkOrderAsOutForDeliveryUseCaseImpl(orderRepositoryPort);
     }
 
     @Bean
-    public RejectOrderUseCase rejectOrderUseCase(
+    public MarkOrderAsRejectedUseCase rejectOrderUseCase(
             OrderRepositoryPort orderRepositoryPort,
             UserRepositoryPort userRepositoryPort,
             PaymentRepositoryPort paymentRepositoryPort
     ){
-        return new RejectOrderUseCaseImpl(
+        return new MarkOrderAsRejectedUseCaseImpl(
                 orderRepositoryPort,
                 userRepositoryPort,
                 paymentRepositoryPort
@@ -86,7 +87,7 @@ public class OrderBeanConfig {
     }
 
     @Bean
-    public StartPreparingOrderUseCase startPreparingOrderUseCase(OrderRepositoryPort orderRepositoryPort){
-        return new StartPreparingOrderUseCaseImpl(orderRepositoryPort);
+    public MarkOrderAsPreparingUseCase startPreparingOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+        return new MarkOrderAsPreparingUseCaseImpl(orderRepositoryPort);
     }
 }

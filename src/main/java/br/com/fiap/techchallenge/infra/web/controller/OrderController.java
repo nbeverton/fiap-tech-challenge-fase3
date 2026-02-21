@@ -27,22 +27,22 @@ public class OrderController {
     private final UpdateOrderUseCase updateOrderUseCase;
     private final DeleteOrderUseCase deleteOrderUseCase;
 
-    private final AcceptOrderUseCase acceptOrderUseCase;
-    private final DeliverOrderUseCase deliverOrderUseCase;
-    private final OutForDeliveryOrderUseCase outForDeliveryOrderUseCase;
-    private final RejectOrderUseCase rejectOrderUseCase;
-    private final StartPreparingOrderUseCase startPreparingOrderUseCase;
+    private final MarkOrderAsAcceptedUseCase acceptOrderUseCase;
+    private final MarkOrderAsDeliveredUseCase deliverOrderUseCase;
+    private final MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase;
+    private final MarkOrderAsRejectedUseCase rejectOrderUseCase;
+    private final MarkOrderAsPreparingUseCase startPreparingOrderUseCase;
 
     public OrderController(CreateOrderUseCase createOrderUseCase,
                            GetOrderByIdUseCase getOrderByIdUseCase,
                            ListOrdersUseCase listOrdersUseCase,
                            UpdateOrderUseCase updateOrderUseCase,
                            DeleteOrderUseCase deleteOrderUseCase,
-                           AcceptOrderUseCase acceptOrderUseCase,
-                           DeliverOrderUseCase deliverOrderUseCase,
-                           OutForDeliveryOrderUseCase outForDeliveryOrderUseCase,
-                           RejectOrderUseCase rejectOrderUseCase,
-                           StartPreparingOrderUseCase startPreparingOrderUseCase) {
+                           MarkOrderAsAcceptedUseCase acceptOrderUseCase,
+                           MarkOrderAsDeliveredUseCase deliverOrderUseCase,
+                           MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase,
+                           MarkOrderAsRejectedUseCase rejectOrderUseCase,
+                           MarkOrderAsPreparingUseCase startPreparingOrderUseCase) {
 
         this.createOrderUseCase = createOrderUseCase;
         this.getOrderByIdUseCase = getOrderByIdUseCase;

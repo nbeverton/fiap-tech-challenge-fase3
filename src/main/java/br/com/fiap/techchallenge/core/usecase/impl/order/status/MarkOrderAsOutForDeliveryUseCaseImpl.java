@@ -1,16 +1,16 @@
 package br.com.fiap.techchallenge.core.usecase.impl.order.status;
 
 import br.com.fiap.techchallenge.core.domain.model.Order;
-import br.com.fiap.techchallenge.core.usecase.in.order.status.OutForDeliveryOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.status.MarkOrderAsOutForDeliveryUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 
 
-public class OutForDeliveryOrderUseCaseImpl implements OutForDeliveryOrderUseCase {
+public class MarkOrderAsOutForDeliveryUseCaseImpl implements MarkOrderAsOutForDeliveryUseCase {
 
     private final OrderRepositoryPort orderRepositoryPort;
     private final OrderFinder orderFinder;
 
-    public OutForDeliveryOrderUseCaseImpl(OrderRepositoryPort orderRepositoryPort) {
+    public MarkOrderAsOutForDeliveryUseCaseImpl(OrderRepositoryPort orderRepositoryPort) {
         this.orderRepositoryPort = orderRepositoryPort;
         this.orderFinder = new OrderFinder(orderRepositoryPort);
     }

@@ -1,6 +1,6 @@
 package br.com.fiap.techchallenge.core.usecase.in.order.status;
 
-public interface OutForDeliveryOrderUseCase {
+public interface MarkOrderAsOutForDeliveryUseCase {
     
     void outForDelivery(String orderId);
 }

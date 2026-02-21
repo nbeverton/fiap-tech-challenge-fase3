@@ -38,7 +38,7 @@ class AcceptOrderUseCaseImplTest {
         OrderRepositoryPort repo = mock(OrderRepositoryPort.class);
         when(repo.findById("order-1")).thenReturn(Optional.of(orderWithStatus(OrderStatus.CREATED)));
 
-        AcceptOrderUseCaseImpl useCase = new AcceptOrderUseCaseImpl(repo);
+        MarkOrderAsAcceptedUseCaseImpl useCase = new MarkOrderAsAcceptedUseCaseImpl(repo);
         useCase.accept("order-1");
 
         ArgumentCaptor<Order> captor = ArgumentCaptor.forClass(Order.class);
@@ -53,7 +53,7 @@ class AcceptOrderUseCaseImplTest {
         OrderRepositoryPort repo = mock(OrderRepositoryPort.class);
         when(repo.findById("order-1")).thenReturn(Optional.of(orderWithStatus(OrderStatus.PAYMENT_CONFIRMED)));
 
-        AcceptOrderUseCaseImpl useCase = new AcceptOrderUseCaseImpl(repo);
+        MarkOrderAsAcceptedUseCaseImpl useCase = new MarkOrderAsAcceptedUseCaseImpl(repo);
 
         try {
             useCase.accept("order-1");

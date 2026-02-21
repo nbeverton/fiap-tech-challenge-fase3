@@ -7,7 +7,7 @@ import br.com.fiap.techchallenge.core.domain.exception.user.UserNotFoundExceptio
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
 import br.com.fiap.techchallenge.core.domain.model.User;
-import br.com.fiap.techchallenge.core.usecase.in.order.status.RejectOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.status.MarkOrderAsRejectedUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserRepositoryPort;
@@ -15,14 +15,14 @@ import br.com.fiap.techchallenge.core.usecase.out.UserRepositoryPort;
 import java.util.List;
 import java.util.Set;
 
-public class RejectOrderUseCaseImpl implements RejectOrderUseCase {
+public class MarkOrderAsRejectedUseCaseImpl implements MarkOrderAsRejectedUseCase {
 
     private final OrderRepositoryPort orderRepositoryPort;
     private final OrderFinder orderFinder;
     private final UserRepositoryPort userRepositoryPort;
     private final PaymentRepositoryPort paymentRepositoryPort;
 
-    public RejectOrderUseCaseImpl(OrderRepositoryPort orderRepositoryPort, UserRepositoryPort userRepositoryPort, PaymentRepositoryPort paymentRepositoryPort) {
+    public MarkOrderAsRejectedUseCaseImpl(OrderRepositoryPort orderRepositoryPort, UserRepositoryPort userRepositoryPort, PaymentRepositoryPort paymentRepositoryPort) {
         this.orderRepositoryPort = orderRepositoryPort;
         this.orderFinder = new OrderFinder(orderRepositoryPort);
         this.userRepositoryPort = userRepositoryPort;
