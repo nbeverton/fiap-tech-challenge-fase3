@@ -1,6 +1,6 @@
 package br.com.fiap.techchallenge.core.usecase.in.order.status;
 
-public interface StartPreparingOrderUseCase {
+public interface MarkOrderAsPreparingUseCase {
     
     void startPreparing(String orderId);
 }
