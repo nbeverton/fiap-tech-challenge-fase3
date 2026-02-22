@@ -17,6 +17,7 @@ public class OrderDocument {
     private String id;
 
     private String restaurantId;
+    
     private String userId;
 
     private String userAddressId;

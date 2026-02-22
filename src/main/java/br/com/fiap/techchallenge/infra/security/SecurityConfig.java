@@ -58,6 +58,9 @@ public class SecurityConfig {
                                                 .requestMatchers(HttpMethod.POST, "/orders")
                                                 .hasRole("CLIENT")
 
+                                                // 🔐 SOMENTE CLIENT pode listar seus pedidos com autenticação
+                                                .requestMatchers(HttpMethod.GET, "/orders/me").hasRole("CLIENT")
+
                                                 // (se quiser liberar outras operações de order, deixe só para elas)
                                                 .requestMatchers(HttpMethod.GET, "/orders/**").permitAll()
                                                 .requestMatchers(HttpMethod.PATCH, "/orders/**").permitAll()

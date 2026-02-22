@@ -35,6 +35,8 @@ public class OrderController {
     private final MarkOrderAsRejectedUseCase rejectOrderUseCase;
     private final MarkOrderAsPreparingUseCase startPreparingOrderUseCase;
 
+    private final ListOrdersByClientUseCase listOrdersByClientUseCase;
+
     public OrderController(CreateOrderUseCase createOrderUseCase,
             GetOrderByIdUseCase getOrderByIdUseCase,
             ListOrdersUseCase listOrdersUseCase,
@@ -44,7 +46,8 @@ public class OrderController {
             MarkOrderAsDeliveredUseCase deliverOrderUseCase,
             MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase,
             MarkOrderAsRejectedUseCase rejectOrderUseCase,
-            MarkOrderAsPreparingUseCase startPreparingOrderUseCase) {
+            MarkOrderAsPreparingUseCase startPreparingOrderUseCase,
+            ListOrdersByClientUseCase listOrdersByClientUseCase) {
 
         this.createOrderUseCase = createOrderUseCase;
         this.getOrderByIdUseCase = getOrderByIdUseCase;
@@ -57,6 +60,8 @@ public class OrderController {
         this.outForDeliveryOrderUseCase = outForDeliveryOrderUseCase;
         this.rejectOrderUseCase = rejectOrderUseCase;
         this.startPreparingOrderUseCase = startPreparingOrderUseCase;
+
+        this.listOrdersByClientUseCase = listOrdersByClientUseCase;
     }
 
     // --- CREATE ---
@@ -88,6 +93,22 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<List<CreateOrderResponseDTO>> list() {
         List<Order> orders = listOrdersUseCase.execute();
+
+        List<CreateOrderResponseDTO> response = orders.stream()
+                .map(OrderResponseMapper::from)
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+    // --- LIST BY CLIENT ---
+    @GetMapping("/me")
+    public ResponseEntity<List<CreateOrderResponseDTO>> listMyOrders(
+            Authentication authentication) {
+
+        String clientId = authentication.getPrincipal().toString();
+
+        List<Order> orders = listOrdersByClientUseCase.execute(clientId);
 
         List<CreateOrderResponseDTO> response = orders.stream()
                 .map(OrderResponseMapper::from)

@@ -31,15 +31,15 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
     @Override
     public Optional<Order> findById(String id) {
         return repository.findById(id)
-                         .map(OrderPersistenceMapper::toDomain);
+                .map(OrderPersistenceMapper::toDomain);
     }
 
     @Override
     public List<Order> findAll() {
         return repository.findAll()
-                         .stream()
-                         .map(OrderPersistenceMapper::toDomain)
-                         .collect(Collectors.toList());
+                .stream()
+                .map(OrderPersistenceMapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -50,5 +50,13 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
     @Override
     public boolean existsById(String id) {
         return repository.existsById(id);
+    }
+
+        @Override
+    public List<Order> findByUserId(String userId) {
+        return repository.findByUserId(userId)
+                .stream()
+                .map(OrderPersistenceMapper::toDomain)
+                .collect(Collectors.toList());
     }
 }

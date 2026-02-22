@@ -21,4 +21,7 @@ public interface OrderRepositoryPort {
 
     // Verificar existência
     boolean existsById(String id);
+
+    // Listar por usuário
+    List<Order> findByUserId(String userId);
 }

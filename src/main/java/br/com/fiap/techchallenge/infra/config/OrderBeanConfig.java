@@ -4,15 +4,16 @@ import br.com.fiap.techchallenge.core.usecase.impl.order.status.*;
 import br.com.fiap.techchallenge.core.usecase.impl.order.CreateOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.DeleteOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.GetOrderByIdUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.order.ListOrdersByClientUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.ListOrdersUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.UpdateOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.in.order.status.*;
 import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.DeleteOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.GetOrderByIdUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersByClientUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.UpdateOrderUseCase;
-import br.com.fiap.techchallenge.core.usecase.in.order.status.MarkOrderAsAcceptedUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,14 +26,12 @@ public class OrderBeanConfig {
             OrderRepositoryPort orderRepositoryPort,
             UserAddressRepositoryPort userAddressRepositoryPort,
             AddressRepositoryPort addressRepositoryPort,
-            RestaurantRepositoryPort restaurantRepositoryPort
-    ) {
+            RestaurantRepositoryPort restaurantRepositoryPort) {
         return new CreateOrderUseCaseImpl(
                 orderRepositoryPort,
                 userAddressRepositoryPort,
                 addressRepositoryPort,
-                restaurantRepositoryPort
-        );
+                restaurantRepositoryPort);
     }
 
     @Bean
@@ -48,8 +47,7 @@ public class OrderBeanConfig {
     @Bean
     public UpdateOrderUseCase updateOrderUseCase(
             OrderRepositoryPort orderRepositoryPort,
-            RestaurantRepositoryPort restaurantRepositoryPort
-    ) {
+            RestaurantRepositoryPort restaurantRepositoryPort) {
         return new UpdateOrderUseCaseImpl(orderRepositoryPort, restaurantRepositoryPort);
     }
 
@@ -60,16 +58,17 @@ public class OrderBeanConfig {
 
     @Bean
     public MarkOrderAsAcceptedUseCase acceptOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
-        return new br.com.fiap.techchallenge.core.usecase.impl.order.status.MarkOrderAsAcceptedUseCaseImpl(orderRepositoryPort);
+        return new br.com.fiap.techchallenge.core.usecase.impl.order.status.MarkOrderAsAcceptedUseCaseImpl(
+                orderRepositoryPort);
     }
 
     @Bean
-    public MarkOrderAsDeliveredUseCase deliverOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+    public MarkOrderAsDeliveredUseCase deliverOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
         return new MarkOrderAsDeliveredUseCaseImpl(orderRepositoryPort);
     }
 
     @Bean
-    public MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+    public MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
         return new MarkOrderAsOutForDeliveryUseCaseImpl(orderRepositoryPort);
     }
 
@@ -77,17 +76,21 @@ public class OrderBeanConfig {
     public MarkOrderAsRejectedUseCase rejectOrderUseCase(
             OrderRepositoryPort orderRepositoryPort,
             UserRepositoryPort userRepositoryPort,
-            PaymentRepositoryPort paymentRepositoryPort
-    ){
+            PaymentRepositoryPort paymentRepositoryPort) {
         return new MarkOrderAsRejectedUseCaseImpl(
                 orderRepositoryPort,
                 userRepositoryPort,
-                paymentRepositoryPort
-        );
+                paymentRepositoryPort);
     }
 
     @Bean
-    public MarkOrderAsPreparingUseCase startPreparingOrderUseCase(OrderRepositoryPort orderRepositoryPort){
+    public MarkOrderAsPreparingUseCase startPreparingOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
         return new MarkOrderAsPreparingUseCaseImpl(orderRepositoryPort);
+    }
+
+    @Bean
+    public ListOrdersByClientUseCase listOrdersByClientUseCase(
+            OrderRepositoryPort orderRepositoryPort) {
+        return new ListOrdersByClientUseCaseImpl(orderRepositoryPort);
     }
 }
