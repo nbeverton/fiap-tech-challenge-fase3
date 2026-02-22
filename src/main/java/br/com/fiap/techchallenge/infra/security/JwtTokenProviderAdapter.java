@@ -24,7 +24,7 @@ public class JwtTokenProviderAdapter implements TokenProviderPort {
 
         return Jwts.builder()
                 .setSubject(userId)
-                .claim("type", userType)
+                .claim("role", userType)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)

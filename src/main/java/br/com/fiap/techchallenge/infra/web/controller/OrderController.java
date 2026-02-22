@@ -11,8 +11,10 @@ import br.com.fiap.techchallenge.infra.web.dto.order.UpdateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderResponseMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderWebMapper;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
@@ -34,15 +36,15 @@ public class OrderController {
     private final MarkOrderAsPreparingUseCase startPreparingOrderUseCase;
 
     public OrderController(CreateOrderUseCase createOrderUseCase,
-                           GetOrderByIdUseCase getOrderByIdUseCase,
-                           ListOrdersUseCase listOrdersUseCase,
-                           UpdateOrderUseCase updateOrderUseCase,
-                           DeleteOrderUseCase deleteOrderUseCase,
-                           MarkOrderAsAcceptedUseCase acceptOrderUseCase,
-                           MarkOrderAsDeliveredUseCase deliverOrderUseCase,
-                           MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase,
-                           MarkOrderAsRejectedUseCase rejectOrderUseCase,
-                           MarkOrderAsPreparingUseCase startPreparingOrderUseCase) {
+            GetOrderByIdUseCase getOrderByIdUseCase,
+            ListOrdersUseCase listOrdersUseCase,
+            UpdateOrderUseCase updateOrderUseCase,
+            DeleteOrderUseCase deleteOrderUseCase,
+            MarkOrderAsAcceptedUseCase acceptOrderUseCase,
+            MarkOrderAsDeliveredUseCase deliverOrderUseCase,
+            MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase,
+            MarkOrderAsRejectedUseCase rejectOrderUseCase,
+            MarkOrderAsPreparingUseCase startPreparingOrderUseCase) {
 
         this.createOrderUseCase = createOrderUseCase;
         this.getOrderByIdUseCase = getOrderByIdUseCase;
@@ -118,40 +120,35 @@ public class OrderController {
     // ---------------------------
     @PatchMapping("/{orderId}/accept")
     public ResponseEntity<Void> accept(
-            @PathVariable String orderId
-    ){
+            @PathVariable String orderId) {
         acceptOrderUseCase.accept(orderId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{orderId}/reject")
     public ResponseEntity<Void> reject(
-            @PathVariable String orderId
-    ){
+            @PathVariable String orderId) {
         rejectOrderUseCase.reject(orderId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{orderId}/preparing")
     public ResponseEntity<Void> starPreparing(
-            @PathVariable String orderId
-    ){
+            @PathVariable String orderId) {
         startPreparingOrderUseCase.startPreparing(orderId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{orderId}/out-for-delivery")
     public ResponseEntity<Void> outForDelivery(
-            @PathVariable String orderId
-    ){
+            @PathVariable String orderId) {
         outForDeliveryOrderUseCase.outForDelivery(orderId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{orderId}/deliver")
     public ResponseEntity<Void> deliver(
-            @PathVariable String orderId
-    ){
+            @PathVariable String orderId) {
         deliverOrderUseCase.deliver(orderId);
         return ResponseEntity.noContent().build();
     }

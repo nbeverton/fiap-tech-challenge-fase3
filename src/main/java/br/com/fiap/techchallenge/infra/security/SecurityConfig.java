@@ -15,63 +15,93 @@ import br.com.fiap.techchallenge.infra.security.filter.JwtAuthenticationFilter;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
+        public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+                this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        }
 
-    // =====================================================
-    // 🔐 MODO SEGURANÇA (JWT ATIVO) - CÓDIGO LUIS
-    // Para usar: DESCOMENTE este bloco e COMENTE o "MODO TESTE"
-    // =====================================================
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // =====================================================
+        // 🔐 MODO SEGURANÇA (JWT ATIVO) - CÓDIGO LUIS
+        // Para usar: DESCOMENTE este bloco e COMENTE o "MODO TESTE"
+        // =====================================================
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
+                http
+                                .csrf(csrf -> csrf.disable())
+                                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/addresses").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/restaurants").permitAll()
+                                .exceptionHandling(ex -> ex
+                                                .authenticationEntryPoint((request, response, authException) -> {
+                                                        response.setStatus(401);
+                                                        response.setContentType("application/json");
+                                                        response.getWriter().write(
+                                                                        "{\"message\":\"Client não possui token para criar o pedido\"}");
+                                                })
+                                                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                                        response.setStatus(403);
+                                                        response.setContentType("application/json");
+                                                        response.getWriter().write(
+                                                                        "{\"message\":\"Client não possui permissão para criar o pedido\"}");
+                                                }))
+                                .authorizeHttpRequests(auth -> auth
 
-                        // ✅ MENU (controlado pelo restaurante)
-                        .requestMatchers(HttpMethod.POST, "/restaurants/*/menus").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/restaurants/*/menus").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/restaurants/*/menus/*").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/restaurants/*/menus/*").permitAll()
-                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                                .requestMatchers("/auth/**").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/addresses").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/restaurants").permitAll()
 
-                        // 🔐 somente pedido exige JWT
-                        .requestMatchers(HttpMethod.POST, "/orders").authenticated()
+                                                // ============================
+                                                // 🔐 SOMENTE CLIENT pode criar pedido com autenticação
+                                                // ============================
+                                                .requestMatchers(HttpMethod.POST, "/orders")
+                                                .hasRole("CLIENT")
 
-                        .anyRequest().authenticated())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                                // (se quiser liberar outras operações de order, deixe só para elas)
+                                                .requestMatchers(HttpMethod.GET, "/orders/**").permitAll()
+                                                .requestMatchers(HttpMethod.PATCH, "/orders/**").permitAll()
 
-        return http.build();
-    }
+                                                // PAYMENT continua livre (se existir no seu projeto)
+                                                .requestMatchers("/payments/**").permitAll()
 
-    // =====================================================
-    // 🔓 MODO TESTE (LIBERA TUDO)
-    // Para usar: DESCOMENTE este bloco e COMENTE o "MODO SEGURANÇA"
-    // =====================================================
-    /*
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                                                // MENU
+                                                .requestMatchers(HttpMethod.POST, "/restaurants/*/menus").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/restaurants/*/menus").permitAll()
+                                                .requestMatchers(HttpMethod.PUT, "/restaurants/*/menus/*").permitAll()
+                                                .requestMatchers(HttpMethod.DELETE, "/restaurants/*/menus/*")
+                                                .permitAll()
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                );
+                                                .requestMatchers(
+                                                                "/swagger-ui.html",
+                                                                "/swagger-ui/**",
+                                                                "/v3/api-docs/**")
+                                                .permitAll()
 
-        return http.build();
-    }
-    */
+                                                .anyRequest().authenticated())
+                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+                return http.build();
+        }
+
+        // =====================================================
+        // 🔓 MODO TESTE (LIBERA TUDO)
+        // Para usar: DESCOMENTE este bloco e COMENTE o "MODO SEGURANÇA"
+        // =====================================================
+        /*
+         * @Bean
+         * public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+         * 
+         * http
+         * .csrf(csrf -> csrf.disable())
+         * .sessionManagement(session ->
+         * session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+         * )
+         * .authorizeHttpRequests(auth -> auth
+         * .anyRequest().permitAll()
+         * );
+         * 
+         * return http.build();
+         * }
+         */
 }

@@ -21,5 +21,16 @@ public class JwtService {
                 .getBody()
                 .getSubject();
     }
+
+    // ✅ NOVO MÉTODO
+    public String extractRole(String token) {
+
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
+    }
 }
 
