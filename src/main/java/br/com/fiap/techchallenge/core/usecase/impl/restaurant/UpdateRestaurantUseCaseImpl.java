@@ -3,15 +3,21 @@ package br.com.fiap.techchallenge.core.usecase.impl.restaurant;
 import br.com.fiap.techchallenge.core.domain.enums.UserType;
 import br.com.fiap.techchallenge.core.domain.exception.BusinessException;
 import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
+import br.com.fiap.techchallenge.core.domain.exception.order.OrderUserMismatchException;
 import br.com.fiap.techchallenge.core.domain.exception.restaurant.RestaurantAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.exception.restaurant.RestaurantNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.user.UserNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Restaurant;
 import br.com.fiap.techchallenge.core.domain.model.User;
+import br.com.fiap.techchallenge.core.domain.security.ForbiddenException;
+import br.com.fiap.techchallenge.core.domain.security.UnauthorizedException;
 import br.com.fiap.techchallenge.core.usecase.in.restaurant.UpdateRestaurantUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserRepositoryPort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class UpdateRestaurantUseCaseImpl implements UpdateRestaurantUseCase {
 
@@ -36,6 +42,24 @@ public class UpdateRestaurantUseCaseImpl implements UpdateRestaurantUseCase {
         // 1) Ensure that the restaurant exists
         Restaurant existing = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RestaurantNotFoundException(id));
+
+        // 1.1) Garantir que o restaurant pertence ao usuário autenticado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getPrincipal() == null) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+
+        String requesterUserId = auth.getPrincipal().toString();
+
+        boolean isAdmin = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(a -> a.equals("ROLE_ADMIN"));
+
+        boolean isOwnerOfRestaurant = existing.getUserId() != null && existing.getUserId().equals(requesterUserId);
+
+        if (!isAdmin && !isOwnerOfRestaurant) {
+            throw new ForbiddenException("Forbidden: you cannot update another user's restaurant");
+        }
 
         // 2) Restaurant name must be unique (ignoring the current restaurant)
         restaurantRepository.findByName(input.getName())
@@ -70,7 +94,7 @@ public class UpdateRestaurantUseCaseImpl implements UpdateRestaurantUseCase {
                 input.getAddressId(),
                 input.getCuisineType(),
                 input.getOpeningHours(),
-                input.getUserId(),
+                existing.getUserId(),
                 input.getMenu()                 // ou existing.getMenu(), dependendo da regra de negócio
         );
 
