@@ -1,6 +1,6 @@
 package br.com.fiap.techchallenge.core.domain.exception.order;
 
-import br.com.fiap.techchallenge.core.domain.security.ForbiddenException;
+import br.com.fiap.techchallenge.core.domain.exception.security.ForbiddenException;
 
 public class OrderAccessDeniedException extends ForbiddenException {
 

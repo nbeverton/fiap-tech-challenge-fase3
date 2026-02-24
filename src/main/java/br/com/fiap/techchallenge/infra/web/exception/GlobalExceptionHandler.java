@@ -15,8 +15,8 @@ import br.com.fiap.techchallenge.core.domain.exception.user.InvalidUserException
 import br.com.fiap.techchallenge.core.domain.exception.user.UserAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.exception.useraddress.CannotDeletePrimaryAddressException;
 import br.com.fiap.techchallenge.core.domain.exception.useraddress.InvalidUserAddressException;
-import br.com.fiap.techchallenge.core.domain.security.ForbiddenException;
-import br.com.fiap.techchallenge.core.domain.security.UnauthorizedException;
+import br.com.fiap.techchallenge.core.domain.exception.security.ForbiddenException;
+import br.com.fiap.techchallenge.core.domain.exception.security.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
