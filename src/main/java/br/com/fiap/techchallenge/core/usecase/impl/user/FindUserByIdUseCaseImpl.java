@@ -2,8 +2,8 @@ package br.com.fiap.techchallenge.core.usecase.impl.user;
 
 import br.com.fiap.techchallenge.core.domain.exception.user.UserNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.User;
-import br.com.fiap.techchallenge.core.domain.security.ForbiddenException;
-import br.com.fiap.techchallenge.core.domain.security.UnauthorizedException;
+import br.com.fiap.techchallenge.core.domain.exception.security.ForbiddenException;
+import br.com.fiap.techchallenge.core.domain.exception.security.UnauthorizedException;
 import br.com.fiap.techchallenge.core.usecase.in.user.FindUserByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.UserRepositoryPort;
 import org.springframework.security.core.Authentication;
