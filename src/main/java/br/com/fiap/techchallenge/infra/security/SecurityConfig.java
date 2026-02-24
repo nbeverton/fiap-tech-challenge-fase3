@@ -94,15 +94,19 @@ public class SecurityConfig {
                                 // ORDERS
                                 .requestMatchers(HttpMethod.POST, "/orders").hasRole("CLIENT")
                                 .requestMatchers(HttpMethod.GET, "/orders/me").hasRole("CLIENT")
-
-                                // GET /orders/{id} -> precisa ser autenticado e a regra "admin OU dono" fica no service
                                 .requestMatchers(HttpMethod.GET, "/orders/**").authenticated()
 
-                                // PATCH /orders/**: //TODO
-                                // .requestMatchers(HttpMethod.PATCH, "/orders/**").authenticated()
+                                // ORDERS -> STATUS
+                                .requestMatchers(HttpMethod.PATCH, "/orders/*/accept").hasAnyRole("OWNER","ADMIN")
+                                .requestMatchers(HttpMethod.PATCH, "/orders/*/preparing").hasAnyRole("OWNER","ADMIN")
+                                .requestMatchers(HttpMethod.PATCH, "/orders/*/out-for-delivery").hasAnyRole("OWNER","ADMIN")
+                                .requestMatchers(HttpMethod.PATCH, "/orders/*/deliver").hasAnyRole("OWNER","ADMIN")
+                                .requestMatchers(HttpMethod.PATCH, "/orders/*/reject").hasAnyRole("CLIENT","OWNER","ADMIN")
 
-                                // PAYMENTS //TODO
-                                .requestMatchers("/payments/**").authenticated()
+                                // PAYMENTS
+                                .requestMatchers(HttpMethod.PATCH, "/orders/*/payments/*/paid").hasAnyRole("OWNER","ADMIN")
+                                .requestMatchers(HttpMethod.PATCH, "/orders/*/payments/*/failed").hasAnyRole("OWNER","ADMIN")
+                                .requestMatchers(HttpMethod.PATCH, "/orders/*/payments/*/refunded").hasAnyRole("OWNER","ADMIN")
 
                                 .anyRequest().authenticated()
                         )

@@ -57,35 +57,58 @@ public class OrderBeanConfig {
     }
 
     @Bean
-    public MarkOrderAsAcceptedUseCase acceptOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
+    public MarkOrderAsAcceptedUseCase acceptOrderUseCase(
+            OrderRepositoryPort orderRepositoryPort,
+            RestaurantRepositoryPort restaurantRepositoryPort) {
+
         return new br.com.fiap.techchallenge.core.usecase.impl.order.status.MarkOrderAsAcceptedUseCaseImpl(
-                orderRepositoryPort);
+                orderRepositoryPort,
+                restaurantRepositoryPort
+        );
     }
 
     @Bean
-    public MarkOrderAsDeliveredUseCase deliverOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
-        return new MarkOrderAsDeliveredUseCaseImpl(orderRepositoryPort);
+    public MarkOrderAsDeliveredUseCase deliverOrderUseCase(
+            OrderRepositoryPort orderRepositoryPort,
+            RestaurantRepositoryPort restaurantRepositoryPort) {
+
+        return new MarkOrderAsDeliveredUseCaseImpl(
+                orderRepositoryPort,
+                restaurantRepositoryPort
+        );
     }
 
     @Bean
-    public MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
-        return new MarkOrderAsOutForDeliveryUseCaseImpl(orderRepositoryPort);
+    public MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase(
+            OrderRepositoryPort orderRepositoryPort,
+            RestaurantRepositoryPort restaurantRepositoryPort) {
+
+        return new MarkOrderAsOutForDeliveryUseCaseImpl(
+                orderRepositoryPort,
+                restaurantRepositoryPort
+        );
     }
 
     @Bean
     public MarkOrderAsRejectedUseCase rejectOrderUseCase(
             OrderRepositoryPort orderRepositoryPort,
-            UserRepositoryPort userRepositoryPort,
-            PaymentRepositoryPort paymentRepositoryPort) {
+            PaymentRepositoryPort paymentRepositoryPort,
+            RestaurantRepositoryPort restaurantRepositoryPort) {
+
         return new MarkOrderAsRejectedUseCaseImpl(
                 orderRepositoryPort,
-                userRepositoryPort,
-                paymentRepositoryPort);
+                paymentRepositoryPort,
+                restaurantRepositoryPort);
     }
 
     @Bean
-    public MarkOrderAsPreparingUseCase startPreparingOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
-        return new MarkOrderAsPreparingUseCaseImpl(orderRepositoryPort);
+    public MarkOrderAsPreparingUseCase startPreparingOrderUseCase(
+            OrderRepositoryPort orderRepositoryPort,
+            RestaurantRepositoryPort restaurantRepositoryPort) {
+
+        return new MarkOrderAsPreparingUseCaseImpl(
+                orderRepositoryPort,
+                restaurantRepositoryPort);
     }
 
     @Bean

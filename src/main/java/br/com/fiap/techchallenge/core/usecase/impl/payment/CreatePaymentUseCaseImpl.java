@@ -4,8 +4,10 @@ import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.InvalidPaymentException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.OverpaymentException;
+import br.com.fiap.techchallenge.core.domain.exception.security.ForbiddenException;
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
+import br.com.fiap.techchallenge.core.domain.security.AuthContext;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.CreatePaymentCommand;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.PaymentView;
@@ -27,7 +29,6 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
         this.orderRepository = orderRepository;
     }
 
-
     @Override
     public PaymentView execute(CreatePaymentCommand command) {
 
@@ -47,7 +48,20 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
         Order order = orderRepository.findById(command.orderId())
                 .orElseThrow(() -> new OrderNotFoundException(command.orderId()));
 
-        doesPaymentExceedBalance(order,command.amount());
+        // Authorization: ADMIN can pay any order; CLIENT can pay only own order
+        if (!AuthContext.isAdmin()) {
+
+            if (!AuthContext.isClient()) {
+                throw new ForbiddenException("Forbidden: only CLIENT can create payments");
+            }
+
+            String requesterUserId = AuthContext.userId();
+            if (!order.getUserId().equals(requesterUserId)) {
+                throw new ForbiddenException("Forbidden: you can only create payments for your own orders");
+            }
+        }
+
+        doesPaymentExceedBalance(order, command.amount());
 
         Payment payment = new Payment(
                 UUID.randomUUID().toString(),
@@ -87,12 +101,12 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
         BigDecimal totalPaid = payments.stream()
                 .filter(p -> p.getStatus() == PaymentStatus.PENDING || p.getStatus() == PaymentStatus.PAID)
                 .map(Payment::getAmount)
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal remaining = order.getTotalAmount().subtract(totalPaid);
 
-        if(remaining.compareTo(amount) < 0){
-            throw  new OverpaymentException("Payment exceeds remaining balance. Remaining amount: " + remaining);
+        if (remaining.compareTo(amount) < 0) {
+            throw new OverpaymentException("Payment exceeds remaining balance. Remaining amount: " + remaining);
         }
     }
 }
