@@ -1,6 +1,6 @@
 package br.com.fiap.techchallenge.core.usecase.impl.auth;
 
-import br.com.fiap.techchallenge.core.domain.security.UnauthorizedException;
+import br.com.fiap.techchallenge.core.domain.exception.security.UnauthorizedException;
 import br.com.fiap.techchallenge.core.usecase.in.auth.LoginCommand;
 import br.com.fiap.techchallenge.core.usecase.in.auth.LoginResult;
 import br.com.fiap.techchallenge.core.usecase.in.auth.LoginUseCase;
