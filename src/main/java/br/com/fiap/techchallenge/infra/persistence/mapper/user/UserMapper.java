@@ -1,6 +1,7 @@
 package br.com.fiap.techchallenge.infra.persistence.mapper.user;
 
 import br.com.fiap.techchallenge.core.domain.enums.UserType;
+import br.com.fiap.techchallenge.core.domain.model.Admin;
 import br.com.fiap.techchallenge.core.domain.model.Client;
 import br.com.fiap.techchallenge.core.domain.model.Owner;
 import br.com.fiap.techchallenge.core.domain.model.User;
@@ -39,6 +40,13 @@ public class UserMapper {
                     document.getPassword()
             );
             case CLIENT -> new Client(
+                    document.getId(),
+                    document.getName(),
+                    document.getEmail(),
+                    document.getLogin(),
+                    document.getPassword()
+            );
+            case ADMIN -> new Admin(
                     document.getId(),
                     document.getName(),
                     document.getEmail(),

@@ -32,79 +32,82 @@ public class SecurityConfig {
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                                .exceptionHandling(ex -> ex
-                                                .authenticationEntryPoint((request, response, authException) -> {
-                                                        response.setStatus(401);
-                                                        response.setContentType("application/json");
-                                                        response.getWriter().write(
-                                                                        "{\"message\":\"Client não possui token para criar o pedido\"}");
-                                                })
-                                                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                                                        response.setStatus(403);
-                                                        response.setContentType("application/json");
-                                                        response.getWriter().write(
-                                                                        "{\"message\":\"Client não possui permissão para criar o pedido\"}");
-                                                }))
-                                .authorizeHttpRequests(auth -> auth
+                        .exceptionHandling(ex -> ex
+                                .authenticationEntryPoint((request, response, authException) -> {
+                                    response.setStatus(401);
+                                    response.setContentType("application/json");
+                                    response.getWriter().write("{\"message\":\"Unauthorized: missing or invalid token\"}");
+                                })
+                                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                    response.setStatus(403);
+                                    response.setContentType("application/json");
+                                    response.getWriter().write("{\"message\":\"Forbidden: insufficient permissions\"}");
+                                })
+                        )
+                        .authorizeHttpRequests(auth -> auth
 
-                                                .requestMatchers("/auth/**").permitAll()
-                                                .requestMatchers(HttpMethod.POST, "/addresses").permitAll()
-                                                .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                                                .requestMatchers(HttpMethod.POST, "/restaurants").permitAll()
+                                // PUBLIC
+                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers(
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**"
+                                ).permitAll()
 
-                                                // ============================
-                                                // 🔐 SOMENTE CLIENT pode criar pedido com autenticação
-                                                // ============================
-                                                .requestMatchers(HttpMethod.POST, "/orders")
-                                                .hasRole("CLIENT")
+                                // USERS
+                                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                                // TODO: deixar GET/PUT /users/{id} autenticado e checa "self or admin" no service:
+                                .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/users/**").authenticated()
 
-                                                // 🔐 SOMENTE CLIENT pode listar seus pedidos com autenticação
-                                                .requestMatchers(HttpMethod.GET, "/orders/me").hasRole("CLIENT")
+                                // ADDRESSES
+                                .requestMatchers(HttpMethod.POST, "/addresses").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/addresses").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/addresses/**").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/addresses/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/addresses/**").hasRole("ADMIN")
 
-                                                // (se quiser liberar outras operações de order, deixe só para elas)
-                                                .requestMatchers(HttpMethod.GET, "/orders/**").permitAll()
-                                                .requestMatchers(HttpMethod.PATCH, "/orders/**").permitAll()
+                                // USER-ADDRESSES
+                                .requestMatchers(HttpMethod.GET, "/user-addresses").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/user-addresses").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/user-addresses/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/user-addresses/**").authenticated()
 
-                                                // PAYMENT continua livre (se existir no seu projeto)
-                                                .requestMatchers("/payments/**").permitAll()
+                                // USERS/{userId}/addresses (link)
+                                .requestMatchers(HttpMethod.POST, "/users/*/addresses").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/users/*/addresses").authenticated()
 
-                                                // MENU
-                                                .requestMatchers(HttpMethod.POST, "/restaurants/*/menus").permitAll()
-                                                .requestMatchers(HttpMethod.GET, "/restaurants/*/menus").permitAll()
-                                                .requestMatchers(HttpMethod.PUT, "/restaurants/*/menus/*").permitAll()
-                                                .requestMatchers(HttpMethod.DELETE, "/restaurants/*/menus/*")
-                                                .permitAll()
+                                // RESTAURANTS
+                                .requestMatchers(HttpMethod.GET, "/restaurants/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/restaurants").hasAnyRole("OWNER", "ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/restaurants/**").hasAnyRole("OWNER", "ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/restaurants/**").hasRole("ADMIN")
 
-                                                .requestMatchers(
-                                                                "/swagger-ui.html",
-                                                                "/swagger-ui/**",
-                                                                "/v3/api-docs/**")
-                                                .permitAll()
+                                // MENUS
+                                .requestMatchers(HttpMethod.GET, "/restaurants/*/menus").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/restaurants/*/menus").hasAnyRole("OWNER", "ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/restaurants/*/menus/*").hasAnyRole("OWNER", "ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/restaurants/*/menus/*").hasAnyRole("OWNER", "ADMIN")
 
-                                                .anyRequest().authenticated())
+                                // ORDERS
+                                .requestMatchers(HttpMethod.POST, "/orders").hasRole("CLIENT")
+                                .requestMatchers(HttpMethod.GET, "/orders/me").hasRole("CLIENT")
+
+                                // GET /orders/{id} -> precisa ser autenticado e a regra "admin OU dono" fica no service
+                                .requestMatchers(HttpMethod.GET, "/orders/**").authenticated()
+
+                                // PATCH /orders/**: //TODO
+                                // .requestMatchers(HttpMethod.PATCH, "/orders/**").authenticated()
+
+                                // PAYMENTS //TODO
+                                .requestMatchers("/payments/**").authenticated()
+
+                                .anyRequest().authenticated()
+                        )
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
         }
-
-        // =====================================================
-        // 🔓 MODO TESTE (LIBERA TUDO)
-        // Para usar: DESCOMENTE este bloco e COMENTE o "MODO SEGURANÇA"
-        // =====================================================
-        /*
-         * @Bean
-         * public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-         * 
-         * http
-         * .csrf(csrf -> csrf.disable())
-         * .sessionManagement(session ->
-         * session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-         * )
-         * .authorizeHttpRequests(auth -> auth
-         * .anyRequest().permitAll()
-         * );
-         * 
-         * return http.build();
-         * }
-         */
 }

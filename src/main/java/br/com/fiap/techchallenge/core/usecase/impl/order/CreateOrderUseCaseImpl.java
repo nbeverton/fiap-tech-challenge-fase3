@@ -2,10 +2,7 @@ package br.com.fiap.techchallenge.core.usecase.impl.order;
 
 import br.com.fiap.techchallenge.core.domain.enums.OrderStatus;
 import br.com.fiap.techchallenge.core.domain.exception.address.AddressNotFoundException;
-import br.com.fiap.techchallenge.core.domain.exception.order.CannotCreateOrderWithoutPrimaryAddress;
-import br.com.fiap.techchallenge.core.domain.exception.order.EmptyOrderItemsException;
-import br.com.fiap.techchallenge.core.domain.exception.order.InvalidOrderItemQuantityException;
-import br.com.fiap.techchallenge.core.domain.exception.order.MenuDoesNotBelongToRestaurantException;
+import br.com.fiap.techchallenge.core.domain.exception.order.*;
 import br.com.fiap.techchallenge.core.domain.exception.restaurant.RestaurantNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.useraddress.UserAddressNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Address;
@@ -22,6 +19,8 @@ import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserAddressRepositoryPort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -54,6 +53,19 @@ public class CreateOrderUseCaseImpl implements CreateOrderUseCase {
         // 0) Busca o vínculo e verifica se o endereço é principal
         UserAddress userAddress = userAddressRepository.findUserAddressById(command.userAddressId())
                 .orElseThrow(() -> new UserAddressNotFoundException(command.userAddressId()));
+
+        // 0.1) Garantir que o userAddress pertence ao usuário autenticado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getPrincipal() == null) {
+
+            throw new OrderUserMismatchException("Unauthorized");
+        }
+
+        String requesterUserId = auth.getPrincipal().toString();
+
+        if (!userAddress.getUserId().equals(requesterUserId)) {
+            throw new OrderUserMismatchException("Forbidden: client cannot create an order for another user");
+        }
 
         if (!userAddress.isPrincipal()) {
             throw new CannotCreateOrderWithoutPrimaryAddress();

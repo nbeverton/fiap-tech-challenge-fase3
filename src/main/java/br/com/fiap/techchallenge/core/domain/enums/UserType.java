@@ -5,7 +5,8 @@ import br.com.fiap.techchallenge.core.domain.exception.user.InvalidUserException
 public enum UserType {
 
     OWNER,
-    CLIENT;
+    CLIENT,
+    ADMIN;
 
     public static UserType fromString(String value) {
         if (value == null || value.isBlank()) {

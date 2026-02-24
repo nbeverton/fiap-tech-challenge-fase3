@@ -15,6 +15,8 @@ import br.com.fiap.techchallenge.core.domain.exception.user.InvalidUserException
 import br.com.fiap.techchallenge.core.domain.exception.user.UserAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.exception.useraddress.CannotDeletePrimaryAddressException;
 import br.com.fiap.techchallenge.core.domain.exception.useraddress.InvalidUserAddressException;
+import br.com.fiap.techchallenge.core.domain.exception.security.ForbiddenException;
+import br.com.fiap.techchallenge.core.domain.exception.security.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -100,6 +102,26 @@ public class GlobalExceptionHandler {
                 "Invalid request body"
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    // 4) 403 – forbidden (authenticated but not allowed / not owner)
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiErrorResponse> handleForbidden(ForbiddenException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    // 5) 401 – unauthorized (optional; usually handled by Spring Security)
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiErrorResponse> handleUnauthorized(UnauthorizedException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     // 4) 500 – generic fallback
