@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.core.usecase.impl.auth;
 
+import br.com.fiap.techchallenge.core.domain.security.UnauthorizedException;
 import br.com.fiap.techchallenge.core.usecase.in.auth.LoginCommand;
 import br.com.fiap.techchallenge.core.usecase.in.auth.LoginResult;
 import br.com.fiap.techchallenge.core.usecase.in.auth.LoginUseCase;
@@ -26,18 +27,14 @@ public class LoginUseCaseImpl implements LoginUseCase {
     public LoginResult login(LoginCommand command) {
 
         var user = findUserByLoginPort.findByLogin(command.login())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
-
-        if (!user.getUserType().equals(br.com.fiap.techchallenge.core.domain.enums.UserType.CLIENT)) {
-            throw new RuntimeException("Only CLIENT can authenticate");
-        }
+                .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
         boolean valid = passwordEncoderPort.matches(
                 command.password(),
                 user.getPassword());
 
         if (!valid) {
-            throw new RuntimeException("Invalid credentials");
+            throw new UnauthorizedException("Invalid credentials");
         }
 
         String token = tokenProviderPort.generateToken(
