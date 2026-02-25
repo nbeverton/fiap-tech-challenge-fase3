@@ -27,7 +27,6 @@ public class OrderController {
     private final GetOrderByIdUseCase getOrderByIdUseCase;
     private final ListOrdersUseCase listOrdersUseCase;
     private final UpdateOrderUseCase updateOrderUseCase;
-    private final DeleteOrderUseCase deleteOrderUseCase;
 
     private final MarkOrderAsAcceptedUseCase acceptOrderUseCase;
     private final MarkOrderAsDeliveredUseCase deliverOrderUseCase;
@@ -41,7 +40,6 @@ public class OrderController {
             GetOrderByIdUseCase getOrderByIdUseCase,
             ListOrdersUseCase listOrdersUseCase,
             UpdateOrderUseCase updateOrderUseCase,
-            DeleteOrderUseCase deleteOrderUseCase,
             MarkOrderAsAcceptedUseCase acceptOrderUseCase,
             MarkOrderAsDeliveredUseCase deliverOrderUseCase,
             MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase,
@@ -53,7 +51,6 @@ public class OrderController {
         this.getOrderByIdUseCase = getOrderByIdUseCase;
         this.listOrdersUseCase = listOrdersUseCase;
         this.updateOrderUseCase = updateOrderUseCase;
-        this.deleteOrderUseCase = deleteOrderUseCase;
 
         this.acceptOrderUseCase = acceptOrderUseCase;
         this.deliverOrderUseCase = deliverOrderUseCase;
@@ -129,12 +126,6 @@ public class OrderController {
         return ResponseEntity.ok(OrderResponseMapper.from(updated));
     }
 
-    // --- DELETE ---
-    @DeleteMapping("/{orderId}")
-    public ResponseEntity<Void> delete(@PathVariable String orderId) {
-        deleteOrderUseCase.execute(orderId);
-        return ResponseEntity.noContent().build();
-    }
 
     // ---------------------------
     // Change Status Endpoints

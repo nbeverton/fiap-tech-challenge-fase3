@@ -2,14 +2,12 @@ package br.com.fiap.techchallenge.infra.config;
 
 import br.com.fiap.techchallenge.core.usecase.impl.order.status.*;
 import br.com.fiap.techchallenge.core.usecase.impl.order.CreateOrderUseCaseImpl;
-import br.com.fiap.techchallenge.core.usecase.impl.order.DeleteOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.GetOrderByIdUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.ListOrdersByClientUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.ListOrdersUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.UpdateOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.in.order.status.*;
 import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderUseCase;
-import br.com.fiap.techchallenge.core.usecase.in.order.DeleteOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.GetOrderByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersByClientUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersUseCase;
@@ -49,11 +47,6 @@ public class OrderBeanConfig {
             OrderRepositoryPort orderRepositoryPort,
             RestaurantRepositoryPort restaurantRepositoryPort) {
         return new UpdateOrderUseCaseImpl(orderRepositoryPort, restaurantRepositoryPort);
-    }
-
-    @Bean
-    public DeleteOrderUseCase deleteOrderUseCase(OrderRepositoryPort orderRepositoryPort) {
-        return new DeleteOrderUseCaseImpl(orderRepositoryPort);
     }
 
     @Bean
