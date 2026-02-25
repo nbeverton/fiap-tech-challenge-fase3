@@ -4,6 +4,7 @@ import br.com.fiap.techchallenge.infra.persistence.documents.RestaurantDocument;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SpringRestaurantRepository
@@ -12,6 +13,8 @@ public interface SpringRestaurantRepository
     Optional<RestaurantDocument> findByAddressId(String addressId);
 
     Optional<RestaurantDocument> findByName(String name);
+
+    List<RestaurantDocument> findByUserId(String userId);
 
     boolean existsByUserId(String userId);
 
