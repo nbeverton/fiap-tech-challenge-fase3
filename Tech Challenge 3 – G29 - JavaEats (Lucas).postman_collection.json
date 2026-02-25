@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "70fa52ca-4ee2-40f3-9ec6-3e022a44c818",
-    "name": "Tech Challenge 2 – G2 - JavaEats (Lucas)",
+    "name": "Tech Challenge 3 – G2 - JavaEats (Lucas)",
     "description": "Coleção baseada nos controllers fornecidos:\n\n- Restaurant: /api/v1/restaurants\n    \n- Menu: /api/v1/restaurants/{restaurantId}/menus\n    \n- User: /users\n    \n- Address: /addresses\n    \n\nImportante: RestaurantDocument é persistência. O contrato real de POST/PUT é definido pelos DTOs (RestaurantRequest etc.).  \nOs bodies aqui são exemplos; ajuste conforme validações (@NotNull/@NotBlank) e estrutura do OpeningHours.\n\nFluxo feliz:\n\n1) Create User -> {{userId}}  \n2) Create Address -> {{addressId}}  \n3) Create Restaurant -> {{restaurantId}}  \n4) Create Menu -> {{menuId}}",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "48649452",
@@ -134,6 +134,57 @@
           "response": []
         },
         {
+          "name": "Autenticar Client",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.environment.set(\"token\", json.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"client.tc\",\n  \"password\": \"SenhaForte123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Create Restaurant",
           "event": [
             {
@@ -166,6 +217,16 @@
             }
           ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
               {
@@ -260,11 +321,21 @@
         {
           "name": "Create Order",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"restaurantId\": \"26d816c7-a18f-498e-a1fe-45a34264e831\",\r\n  \"userAddressId\": \"698a79d7458f11258f1a1d63\",\r\n  \"items\": [\r\n    { \"menuId\": \"5c9685b4-6b04-4e91-b3e1-ba083a91e096\", \"quantity\": 2 }\r\n  ]\r\n}\r\n",
+              "raw": "{\r\n  \"restaurantId\": \"{{restaurantId}}\",\r\n  \"userAddressId\": \"{{userAddressId}}\",\r\n  \"items\": [\r\n    { \"menuId\": \"{{menuId}}\", \"quantity\": 2 }\r\n  ]\r\n}\r\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -553,17 +624,25 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status 2xx\", ()=>pm.expect(pm.response.code).to.be.within(200,299));",
                   "try{pm.response.json(); pm.test(\"JSON válido (se houver body)\", ()=>pm.expect(true).to.be.true);}catch(e){}"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/users",
               "host": [
@@ -580,7 +659,13 @@
           "name": "List Addresses by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/queries/users/{{userId}}/addresses",
               "host": [
@@ -602,15 +687,27 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
                   "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -840,6 +937,16 @@
         {
           "name": "List Todas Relações",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -857,11 +964,21 @@
         {
           "name": "Update Address From User",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"type\": \"OTHER\",\r\n  \"label\": \"Parque\",\r\n  \"principal\": true\r\n}",
+              "raw": "{\r\n  \"type\": \"OTHER\",\r\n  \"label\": \"Lazer\",\r\n  \"principal\": true\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -878,35 +995,6 @@
                 "{{userId}}",
                 "addresses",
                 "{{id}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "updateUserAddress",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"type\": \"OTHER\",\r\n  \"label\": \"Parque\",\r\n  \"principal\": true\r\n}\r\n",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8080/user-addresses/694b66f6ca09b3913cc5726f",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8080",
-              "path": [
-                "user-addresses",
-                "694b66f6ca09b3913cc5726f"
               ]
             }
           },
@@ -1566,6 +1654,16 @@
         {
           "name": "deleteUserAddress",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
             "body": {
@@ -1609,7 +1707,192 @@
       "name": "Order",
       "item": [
         {
-          "name": "List Orders",
+          "name": "Mark Order As",
+          "item": [
+            {
+              "name": "mark As Accepted",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/accept",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "accept"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Preparing",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/preparing",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "preparing"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Reject",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/reject",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "reject"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Out For Delivery",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/out-for-delivery",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "out-for-delivery"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Deliver",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/deliver",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "deliver"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "List My Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List All Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order By Id",
           "request": {
             "method": "GET",
             "header": [],
@@ -1658,6 +1941,84 @@
       "name": "Payment",
       "item": [
         {
+          "name": "Mark Payment As",
+          "item": [
+            {
+              "name": "mark As Paid",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/paid",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments",
+                    "{{paymentId}}",
+                    "paid"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Failed",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/failed",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments",
+                    "{{paymentId}}",
+                    "failed"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Refunded",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/refunded",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments",
+                    "{{paymentId}}",
+                    "refunded"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
           "name": "Get Payment By Id",
           "request": {
             "method": "GET",
@@ -1698,69 +2059,6 @@
                 "orders",
                 "{{orderId}}",
                 "payments"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "mark As Paid",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/paid",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "orders",
-                "{{orderId}}",
-                "payments",
-                "{{paymentId}}",
-                "paid"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "mark As Failed",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/failed",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "orders",
-                "{{orderId}}",
-                "payments",
-                "{{paymentId}}",
-                "failed"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "mark As Refunded",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/refunded",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "orders",
-                "{{orderId}}",
-                "payments",
-                "{{paymentId}}",
-                "refunded"
               ]
             }
           },
