@@ -35,8 +35,8 @@ public class OrderBeanConfig {
     }
 
     @Bean
-    public GetOrderByIdUseCase getOrderByIdUseCase(OrderRepositoryPort orderRepositoryPort) {
-        return new GetOrderByIdUseCaseImpl(orderRepositoryPort);
+    public GetOrderByIdUseCase getOrderByIdUseCase(OrderRepositoryPort orderRepositoryPort, RestaurantRepositoryPort restaurantRepositoryPort) {
+        return new GetOrderByIdUseCaseImpl(orderRepositoryPort, restaurantRepositoryPort);
     }
 
     @Bean

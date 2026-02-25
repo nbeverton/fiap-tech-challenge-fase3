@@ -3,18 +3,27 @@ package br.com.fiap.techchallenge.core.usecase.impl.order;
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderAccessDeniedException;
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Order;
+import br.com.fiap.techchallenge.core.domain.model.Restaurant;
+import br.com.fiap.techchallenge.core.domain.security.AuthContext;
 import br.com.fiap.techchallenge.core.usecase.in.order.GetOrderByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GetOrderByIdUseCaseImpl implements GetOrderByIdUseCase {
 
     private final OrderRepositoryPort orderRepository;
+    private final RestaurantRepositoryPort restaurantRepository;
 
-    public GetOrderByIdUseCaseImpl(OrderRepositoryPort orderRepository) {
+    public GetOrderByIdUseCaseImpl(
+            OrderRepositoryPort orderRepository,
+            RestaurantRepositoryPort restaurantRepository
+    ) {
         this.orderRepository = orderRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
     @Override
@@ -23,22 +32,28 @@ public class GetOrderByIdUseCaseImpl implements GetOrderByIdUseCase {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth == null || auth.getPrincipal() == null) {
-            throw new OrderAccessDeniedException();
+        if (AuthContext.isAdmin()) {
+            return order;
         }
 
-        String requesterUserId = auth.getPrincipal().toString();
+        String requesterId = AuthContext.userId();
 
-        boolean isAdmin = auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(role -> role.equals("ROLE_ADMIN"));
-
-        if (!isAdmin && !order.getUserId().equals(requesterUserId)) {
-            throw new OrderAccessDeniedException();
+        if (AuthContext.isClient() && requesterId.equals(order.getUserId())) {
+            return order;
         }
 
-        return order;
+        if (AuthContext.isOwner()) {
+            List<Restaurant> myRestaurants = restaurantRepository.findByUserId(requesterId);
+
+            Set<String> myRestaurantIds = myRestaurants.stream()
+                    .map(Restaurant::getId)
+                    .collect(Collectors.toSet());
+
+            if (myRestaurantIds.contains(order.getRestaurantId())) {
+                return order;
+            }
+        }
+
+        throw new OrderAccessDeniedException();
     }
 }
