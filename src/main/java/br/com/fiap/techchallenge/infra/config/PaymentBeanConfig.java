@@ -14,6 +14,7 @@ import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPai
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsRefundedUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,9 +34,13 @@ public class PaymentBeanConfig {
     }
 
     @Bean
-    public ListPaymentsByOrderUseCase listPaymentsByOrderUseCase(PaymentRepositoryPort paymentRepositoryPort, OrderRepositoryPort orderRepositoryPort){
+    public ListPaymentsByOrderUseCase listPaymentsByOrderUseCase(
+            PaymentRepositoryPort paymentRepositoryPort,
+            OrderRepositoryPort orderRepositoryPort,
+            RestaurantRepositoryPort restaurantRepositoryPort
+    ){
 
-        return new ListPaymentsByOrderUseCaseImpl(paymentRepositoryPort, orderRepositoryPort);
+        return new ListPaymentsByOrderUseCaseImpl(paymentRepositoryPort, orderRepositoryPort, restaurantRepositoryPort);
     }
 
     @Bean
