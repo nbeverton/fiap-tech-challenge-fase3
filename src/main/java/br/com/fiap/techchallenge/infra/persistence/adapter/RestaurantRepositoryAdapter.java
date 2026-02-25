@@ -67,6 +67,14 @@ public class RestaurantRepositoryAdapter implements RestaurantRepositoryPort {
                 .map(this::toDomain);
     }
 
+    @Override
+    public List<Restaurant> findByUserId(String userId) {
+        return repo.findByUserId(userId)
+                .stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
     // ---------- Domain -> Document conversion ----------
     private RestaurantDocument toEntity(Restaurant restaurant) {
         RestaurantDocument entity = new RestaurantDocument();
