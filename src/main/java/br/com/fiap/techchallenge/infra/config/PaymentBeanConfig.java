@@ -28,9 +28,13 @@ public class PaymentBeanConfig {
     }
 
     @Bean
-    public GetPaymentByIdUseCase getPaymentByIdUseCase(PaymentRepositoryPort paymentRepositoryPort){
+    public GetPaymentByIdUseCase getPaymentByIdUseCase(
+            PaymentRepositoryPort paymentRepositoryPort,
+            OrderRepositoryPort orderRepositoryPort,
+            RestaurantRepositoryPort restaurantRepositoryPort
+    ){
 
-        return new GetPaymentByIdUseCaseImpl(paymentRepositoryPort);
+        return new GetPaymentByIdUseCaseImpl(paymentRepositoryPort, orderRepositoryPort, restaurantRepositoryPort);
     }
 
     @Bean
