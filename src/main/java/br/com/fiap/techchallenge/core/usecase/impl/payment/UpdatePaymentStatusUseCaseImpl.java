@@ -27,7 +27,7 @@ public class UpdatePaymentStatusUseCaseImpl implements UpdatePaymentStatusUseCas
             throw new InvalidPaymentException("command must not be null");
         }
         if (command.paymentId() == null || command.paymentId().isBlank()) {
-            throw new InvalidPaymentException("paymentId must not be null or blank");
+            throw new InvalidPaymentException("pagamento_id must not be null or blank");
         }
         if (command.newStatus() == null) {
             throw new InvalidPaymentException("newStatus must not be null");
