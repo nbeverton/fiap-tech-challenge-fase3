@@ -76,7 +76,7 @@ public class ListPaymentsByOrderUseCaseImpl implements ListPaymentsByOrderUseCas
                 p.getId(), p.getOrderId(), p.getCreatedAt(),
                 p.getAmount(), p.getMethod(), p.getStatus(),
                 p.getTransactionId(), p.getProvider(),
-                p.getPaidAt(), p.getFailedAt(), p.getRefundedAt()
+                p.getPaidAt(), p.getFailedAt(), p.getRefundedAt(), null
         );
     }
 }

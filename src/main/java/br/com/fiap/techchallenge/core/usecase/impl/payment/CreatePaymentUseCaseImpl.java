@@ -115,8 +115,18 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
                 updatePayment.getProvider(),
                 updatePayment.getPaidAt(),
                 updatePayment.getFailedAt(),
-                updatePayment.getRefundedAt()
+                updatePayment.getRefundedAt(),
+                buildPaymentMessage(updatePayment.getStatus())
         );
+    }
+
+    private String buildPaymentMessage(PaymentStatus status) {
+        return switch (status) {
+            case PAID -> "Payment processed successfully.";
+            case FAILED -> "Payment was created, but external payment processing failed.";
+            case PENDING -> "Payment was created and is pending external processing.";
+            case REFUNDED -> "Payment was refunded successfully.";
+        };
     }
 
     private void processExternalPayment(Order order, Payment payment){

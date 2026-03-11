@@ -106,8 +106,18 @@ public class UpdatePaymentStatusUseCaseImpl implements UpdatePaymentStatusUseCas
                 p.getProvider(),
                 p.getPaidAt(),
                 p.getFailedAt(),
-                p.getRefundedAt()
+                p.getRefundedAt(),
+                buildPaymentMessage(p.getStatus())
         );
+    }
+
+    private String buildPaymentMessage(PaymentStatus status) {
+        return switch (status) {
+            case PAID -> "Payment status updated to PAID successfully.";
+            case FAILED -> "Payment status updated to FAILED successfully.";
+            case PENDING -> "Payment status updated to PENDING successfully.";
+            case REFUNDED -> "Payment status updated to REFUNDED successfully.";
+        };
     }
 }
 
