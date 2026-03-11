@@ -28,26 +28,25 @@ public class MarkPaymentAsRefundedUseCaseImpl implements MarkPaymentAsRefundedUs
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new PaymentNotFoundException(paymentId));
 
-
-        if(!payment.getOrderId().equals(orderId)){
+        if (!payment.getOrderId().equals(orderId)) {
             throw new PaymentOrderMismatchException("Payment does not belong to this order");
         }
 
-        if(payment.getStatus() != PaymentStatus.PAID){
+        if (payment.getStatus() != PaymentStatus.PAID) {
             throw new InvalidPaymentStatusException("Only PAID payments can be refunded");
         }
-
-        payment.markAsRefunded();
-
-        paymentRepository.save(payment);
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
 
-        if(order.getOrderStatus() == OrderStatus.PAID){
-
-            order.markOrderAsAwaitPayment();
+        if (order.getOrderStatus() == OrderStatus.PAID) {
+            // escolha uma das duas:
+            // order.markOrderAsAwaitPayment();
+            order.markOrderAsRefundedToAwaitPayment();
             orderRepository.save(order);
         }
+
+        payment.markAsRefunded();
+        paymentRepository.save(payment);
     }
 }

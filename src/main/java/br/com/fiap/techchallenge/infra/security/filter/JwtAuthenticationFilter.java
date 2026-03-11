@@ -23,6 +23,55 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
     }
 
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request,
+//                                    HttpServletResponse response,
+//                                    FilterChain filterChain) throws ServletException, IOException {
+//
+//        String header = request.getHeader("Authorization");
+
+//        if (header != null
+//                && header.startsWith("Bearer ")
+//                && SecurityContextHolder.getContext().getAuthentication() == null) {
+//
+//            String token = header.substring(7);
+//
+//            try {
+//                String userId = jwtService.extractUserId(token);
+//                String role = jwtService.extractRole(token);
+//
+//                // ✅ DIAGNÓSTICO
+//                System.out.println("JWT DEBUG -> userId = " + userId);
+//                System.out.println("JWT DEBUG -> role (raw) = [" + role + "]");
+//
+//                // ✅ NORMALIZAÇÃO (mata ROLE_ROLE_ e variações de case/espaço)
+//                String normalizedRole = role == null ? "" : role.trim().toUpperCase();
+//                if (normalizedRole.startsWith("ROLE_")) {
+//                    normalizedRole = normalizedRole.substring(5);
+//                }
+//
+//                System.out.println("JWT DEBUG -> role (normalized) = [" + normalizedRole + "]");
+//                System.out.println("JWT DEBUG -> " + request.getMethod() + " " + request.getRequestURI());
+//
+//                var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + normalizedRole));
+//                System.out.println("JWT DEBUG -> authorities = " + authorities);
+//
+//                var auth = new UsernamePasswordAuthenticationToken(
+//                        userId,
+//                        null,
+//                        authorities
+//                );
+//
+//                SecurityContextHolder.getContext().setAuthentication(auth);
+//
+//            } catch (Exception e) {
+//                SecurityContextHolder.clearContext();
+//            }
+//        }
+//
+//        filterChain.doFilter(request, response);
+//    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,

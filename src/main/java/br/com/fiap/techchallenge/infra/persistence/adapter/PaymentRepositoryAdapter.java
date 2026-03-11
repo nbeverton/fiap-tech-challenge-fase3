@@ -56,6 +56,15 @@ public class PaymentRepositoryAdapter implements PaymentRepositoryPort {
     }
 
     @Override
+    public boolean existsByOrderIdAndStatus(String orderId, PaymentStatus status) {
+        return repository.findByOrderId(orderId)
+                .stream()
+                .anyMatch(p -> status.name().equals(p.getStatus()));
+    }
+
+
+
+    @Override
     public void updateStatusAndProviderData(
 
             String paymentId,

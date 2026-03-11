@@ -79,10 +79,21 @@ public class Order {
     // ============================
     // Update Status
     // ============================
+
     public void markOrderAsAwaitPayment() {
         requireStatus(
-                Set.of(OrderStatus.CREATED),
+                Set.of(OrderStatus.CREATED, OrderStatus.PAYMENT_CONFIRMED),
                 "Order can only await payment when status is CREATED or PAYMENT_CONFIRMED."
+        );
+
+        this.orderStatus = OrderStatus.AWAITING_PAYMENT;
+        touch();
+    }
+
+    public void markOrderAsRefundedToAwaitPayment() {
+        requireStatus(
+                Set.of(OrderStatus.PAID),
+                "Order can only return to AWAITING_PAYMENT when status is PAID."
         );
 
         this.orderStatus = OrderStatus.AWAITING_PAYMENT;
