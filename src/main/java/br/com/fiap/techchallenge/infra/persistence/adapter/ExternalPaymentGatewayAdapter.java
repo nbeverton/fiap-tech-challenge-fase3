@@ -29,8 +29,11 @@ public class ExternalPaymentGatewayAdapter implements ExternalPaymentGatewayPort
     @Override
     public ExternalPaymentResponse submitPayment(ExternalPaymentRequest request) {
 
+        // The external payment processor accepts only integer amounts.
+        // To preserve monetary precision in the domain model, the application keeps BigDecimal internally
+        // and converts the amount only at the integration boundary.
         ExternalPaymentApiRequest apiRequest = new ExternalPaymentApiRequest(
-                request.amount(),
+                request.amount().setScale(0, java.math.RoundingMode.HALF_UP).intValue(),
                 request.paymentId(),
                 request.clientId()
         );
@@ -52,12 +55,12 @@ public class ExternalPaymentGatewayAdapter implements ExternalPaymentGatewayPort
     public ExternalPaymentStatusResult getPaymentStatus(String paymentId) {
 
         ExternalPaymentApiStatusResponse response = restClient.get()
-                .uri("/requsicao/{paymentId}", paymentId)
+                .uri("/requisicao/{pagamento_id}", paymentId)
                 .retrieve()
                 .body(ExternalPaymentApiStatusResponse.class);
 
         return new ExternalPaymentStatusResult(
-                response != null ? response.paymentId() : paymentId,
+                response != null ? response.pagamento_id() : paymentId,
                 response != null ? response.status() : null
         );
     }

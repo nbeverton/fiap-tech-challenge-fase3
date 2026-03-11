@@ -1,7 +1,7 @@
 package br.com.fiap.techchallenge.infra.web.dto.external_payment;
 
 public record ExternalPaymentApiStatusResponse(
-        String paymentId,
+        String pagamento_id,
         String status
 ) {
 }
