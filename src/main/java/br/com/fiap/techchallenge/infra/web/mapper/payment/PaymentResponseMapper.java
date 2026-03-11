@@ -18,7 +18,8 @@ public class PaymentResponseMapper {
                 paymentView.provider(),
                 paymentView.paidAt(),
                 paymentView.failedAt(),
-                paymentView.refundedAt()
+                paymentView.refundedAt(),
+                paymentView.message()
         );
     }
 }

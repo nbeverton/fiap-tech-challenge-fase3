@@ -18,5 +18,6 @@ public record PaymentView(
         String provider,
         Instant paidAt,
         Instant failedAt,
-        Instant refundedAt
+        Instant refundedAt,
+        String message
 ) {}

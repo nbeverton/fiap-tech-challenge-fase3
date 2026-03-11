@@ -62,7 +62,8 @@ public class GetPaymentByIdUseCaseImpl implements GetPaymentByIdUseCase {
                 payment.getProvider(),
                 payment.getPaidAt(),
                 payment.getFailedAt(),
-                payment.getRefundedAt()
+                payment.getRefundedAt(),
+                null
         );
     }
 

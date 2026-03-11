@@ -40,7 +40,7 @@ public class Payment {
 
         this.id =                               requireNonBlank(id, "id");
         this.orderId =                          requireNonBlank(orderId, "orderId");
-        this.amount =                           requirePositive(amount, "amount");
+        this.amount =                           requirePositive(amount, "valor");
 
         this.method =                           requireNonNull(method, "method");
         this.status =                           requireNonNull(status, "status");

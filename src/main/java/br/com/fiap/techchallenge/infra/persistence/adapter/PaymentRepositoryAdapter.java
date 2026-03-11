@@ -1,6 +1,7 @@
 package br.com.fiap.techchallenge.infra.persistence.adapter;
 
 import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
+import br.com.fiap.techchallenge.core.domain.exception.payment.PaymentNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
 import br.com.fiap.techchallenge.infra.persistence.documents.PaymentDocument;
@@ -66,6 +67,33 @@ public class PaymentRepositoryAdapter implements PaymentRepositoryPort {
             Instant failedAt,
             Instant refundedAt) {
 
-        //TODO
+        PaymentDocument document = repository.findById(paymentId)
+                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
+
+        if(status != null){
+            document.setStatus(status.name());
+        }
+
+        if(transactionId != null && !transactionId.isBlank()){
+            document.setTransactionId(transactionId);
+        }
+
+        if (provider != null && !provider.isBlank()) {
+            document.setProvider(provider);
+        }
+
+        if (paid != null) {
+            document.setPaidAt(paid);
+        }
+
+        if (failedAt != null) {
+            document.setFailedAt(failedAt);
+        }
+
+        if (refundedAt != null) {
+            document.setRefundedAt(refundedAt);
+        }
+
+        repository.save(document);
     }
 }

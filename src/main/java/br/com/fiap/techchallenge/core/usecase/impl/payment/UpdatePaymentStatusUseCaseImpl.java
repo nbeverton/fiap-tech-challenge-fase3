@@ -27,7 +27,7 @@ public class UpdatePaymentStatusUseCaseImpl implements UpdatePaymentStatusUseCas
             throw new InvalidPaymentException("command must not be null");
         }
         if (command.paymentId() == null || command.paymentId().isBlank()) {
-            throw new InvalidPaymentException("paymentId must not be null or blank");
+            throw new InvalidPaymentException("pagamento_id must not be null or blank");
         }
         if (command.newStatus() == null) {
             throw new InvalidPaymentException("newStatus must not be null");
@@ -106,8 +106,18 @@ public class UpdatePaymentStatusUseCaseImpl implements UpdatePaymentStatusUseCas
                 p.getProvider(),
                 p.getPaidAt(),
                 p.getFailedAt(),
-                p.getRefundedAt()
+                p.getRefundedAt(),
+                buildPaymentMessage(p.getStatus())
         );
+    }
+
+    private String buildPaymentMessage(PaymentStatus status) {
+        return switch (status) {
+            case PAID -> "Payment status updated to PAID successfully.";
+            case FAILED -> "Payment status updated to FAILED successfully.";
+            case PENDING -> "Payment status updated to PENDING successfully.";
+            case REFUNDED -> "Payment status updated to REFUNDED successfully.";
+        };
     }
 }
 

@@ -14,6 +14,7 @@ public record PaymentResponse(
         String provider,
         Instant paidAt,
         Instant failedAt,
-        Instant refundedAt
+        Instant refundedAt,
+        String message
 ) {}
 
