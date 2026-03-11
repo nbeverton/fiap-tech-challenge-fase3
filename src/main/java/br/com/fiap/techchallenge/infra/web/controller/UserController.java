@@ -33,7 +33,6 @@ public class UserController {
     private final UpdateUserAddressForUserUseCase updateUserAddressForUserUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
 
-
     public UserController(
             CreateUserUseCase createUserUseCase, AddAddressToUserUseCase addAddressToUserUseCase,
             FindUserByIdUseCase findUserByIdUseCase,

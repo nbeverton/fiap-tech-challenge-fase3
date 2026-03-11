@@ -74,11 +74,13 @@ public class OrderBeanConfig {
     @Bean
     public MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase(
             OrderRepositoryPort orderRepositoryPort,
-            RestaurantRepositoryPort restaurantRepositoryPort) {
+            RestaurantRepositoryPort restaurantRepositoryPort,
+            PaymentRepositoryPort paymentRepositoryPort) {
 
         return new MarkOrderAsOutForDeliveryUseCaseImpl(
                 orderRepositoryPort,
-                restaurantRepositoryPort
+                restaurantRepositoryPort,
+                paymentRepositoryPort
         );
     }
 

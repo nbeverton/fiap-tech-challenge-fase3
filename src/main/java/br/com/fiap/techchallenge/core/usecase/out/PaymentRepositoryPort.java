@@ -17,6 +17,8 @@ public interface PaymentRepositoryPort {
 
     void saveAll(List<Payment> payments);
 
+    boolean existsByOrderIdAndStatus(String orderId, PaymentStatus status);
+
     void updateStatusAndProviderData(
             String paymentId,
             PaymentStatus status,
