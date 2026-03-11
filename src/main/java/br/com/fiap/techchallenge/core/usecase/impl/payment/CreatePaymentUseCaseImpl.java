@@ -62,7 +62,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
             throw new InvalidPaymentException("method must not be null");
         }
         if (command.amount() == null) {
-            throw new InvalidPaymentException("amount must not be null");
+            throw new InvalidPaymentException("valor must not be null");
         }
 
         Order order = orderRepository.findById(command.orderId())
@@ -180,7 +180,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
         BigDecimal remaining = order.getTotalAmount().subtract(totalPaid);
 
         if (remaining.compareTo(amount) < 0) {
-            throw new OverpaymentException("Payment exceeds remaining balance. Remaining amount: " + remaining);
+            throw new OverpaymentException("Payment exceeds remaining balance. Remaining valor: " + remaining);
         }
     }
 }
