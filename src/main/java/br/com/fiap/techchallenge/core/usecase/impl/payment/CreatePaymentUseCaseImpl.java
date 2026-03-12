@@ -15,6 +15,8 @@ import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsFai
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.messaging.PaymentEventPublisherPort;
+import br.com.fiap.techchallenge.core.usecase.out.messaging.dto.PaymentStatusCheckMessage;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.ExternalPaymentGatewayPort;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentRequest;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentResponse;
@@ -34,19 +36,25 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     private final ExternalPaymentGatewayPort externalPaymentGateway;
     private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
     private final MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase;
+    private final PaymentEventPublisherPort paymentEventPublisher;
+    private final long baseDelayMs;
 
     public CreatePaymentUseCaseImpl(
             PaymentRepositoryPort paymentRepository,
             OrderRepositoryPort orderRepository,
             ExternalPaymentGatewayPort externalPaymentGateway,
             MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase,
-            MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase) {
+            MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase,
+            PaymentEventPublisherPort paymentEventPublisher,
+            long baseDelayMs) {
 
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
         this.externalPaymentGateway = externalPaymentGateway;
         this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
         this.markPaymentAsFailedUseCase = markPaymentAsFailedUseCase;
+        this.paymentEventPublisher = paymentEventPublisher;
+        this.baseDelayMs = baseDelayMs;
     }
 
     @Override
@@ -131,7 +139,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
     private void processExternalPayment(Order order, Payment payment){
 
-        try{
+        try {
 
             ExternalPaymentResponse externalPaymentResult = externalPaymentGateway.submitPayment(
                     new ExternalPaymentRequest(
@@ -141,8 +149,8 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
                     )
             );
 
-            if(!externalPaymentResult.accepted()){
-                markPaymentAsFailedUseCase.execute(order.getId(), payment.getOrderId());
+            if (!externalPaymentResult.accepted()) {
+                markPaymentAsFailedUseCase.execute(order.getId(), payment.getId());
                 return;
             }
 
@@ -158,7 +166,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
             ExternalPaymentStatusResult statusResult = externalPaymentGateway.getPaymentStatus(payment.getId());
 
-            if("pago".equalsIgnoreCase(statusResult.rawStatus())){
+            if ("pago".equalsIgnoreCase(statusResult.rawStatus())) {
 
                 markPaymentAsPaidUseCase.execute(order.getId(), payment.getId());
 
@@ -171,9 +179,19 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
                         null,
                         null
                 );
+            } else {
+                paymentEventPublisher.publishPaymentStatusCheck(
+                        new PaymentStatusCheckMessage(
+                                payment.getId(),
+                                order.getId(),
+                                1,
+                                payment.getCreatedAt()
+                        ),
+                        baseDelayMs
+                );
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             markPaymentAsFailedUseCase.execute(order.getId(), payment.getId());
         }
     }
