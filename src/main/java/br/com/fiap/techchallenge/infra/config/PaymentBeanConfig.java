@@ -2,6 +2,7 @@ package br.com.fiap.techchallenge.infra.config;
 
 import br.com.fiap.techchallenge.core.usecase.impl.order.status.MarkOrderAsPendingPaymentUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.payment.CreatePaymentUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.payment.ExternalPaymentProcessor;
 import br.com.fiap.techchallenge.core.usecase.impl.payment.GetPaymentByIdUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.payment.ListPaymentsByOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.payment.status.MarkPaymentAsFailedUseCaseImpl;
@@ -30,12 +31,18 @@ public class PaymentBeanConfig {
             OrderRepositoryPort orderRepositoryPort,
             ExternalPaymentGatewayPort externalPaymentGatewayPort,
             MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase,
-            MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase
+            MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase,
+            ExternalPaymentProcessor externalPaymentProcessor
 
     ){
 
         return new CreatePaymentUseCaseImpl(
-                paymentRepositoryPort, orderRepositoryPort, externalPaymentGatewayPort, markPaymentAsPaidUseCase, markOrderAsPendingPaymentUseCase
+                paymentRepositoryPort,
+                orderRepositoryPort,
+                externalPaymentGatewayPort,
+                markPaymentAsPaidUseCase,
+                markOrderAsPendingPaymentUseCase,
+                externalPaymentProcessor
         );
     }
 

@@ -35,19 +35,21 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     private final ExternalPaymentGatewayPort externalPaymentGateway;
     private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
     private final MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase;
+    private final ExternalPaymentProcessor externalPaymentProcessor;
 
     public CreatePaymentUseCaseImpl(
             PaymentRepositoryPort paymentRepository,
             OrderRepositoryPort orderRepository,
             ExternalPaymentGatewayPort externalPaymentGateway,
             MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase,
-            MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase) {
+            MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase, ExternalPaymentProcessor externalPaymentProcessor) {
 
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
         this.externalPaymentGateway = externalPaymentGateway;
         this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
         this.markOrderAsPendingPaymentUseCase = markOrderAsPendingPaymentUseCase;
+        this.externalPaymentProcessor = externalPaymentProcessor;
     }
 
     @Override
@@ -145,52 +147,47 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
         };
     }
 
-    private void processExternalPayment(Order order, Payment payment){
+    private void processExternalPayment(Order order, Payment payment) {
 
-        try{
+        ExternalPaymentResponse externalPaymentResult = externalPaymentProcessor.submitPayment(
+                new ExternalPaymentRequest(
+                        payment.getAmount(),
+                        payment.getId(),
+                        order.getUserId()
+                ),
+                order.getId(),
+                payment.getId()
+        ).join();
 
-            ExternalPaymentResponse externalPaymentResult = externalPaymentGateway.submitPayment(
-                    new ExternalPaymentRequest(
-                            payment.getAmount(),
-                            payment.getId(),
-                            order.getUserId()
-                    )
-            );
+        if (!externalPaymentResult.accepted()) {
+            return;
+        }
 
-            if(!externalPaymentResult.accepted()){
-                markOrderAsPendingPaymentUseCase.execute(order.getId(), payment.getId());
-                return;
-            }
+        paymentRepository.updateStatusAndProviderData(
+                payment.getId(),
+                PaymentStatus.PENDING,
+                null,
+                EXTERNAL_PAYMENT_PROVIDER,
+                null,
+                null,
+                null
+        );
+
+        ExternalPaymentStatusResult statusResult = externalPaymentGateway.getPaymentStatus(payment.getId());
+
+        if ("pago".equalsIgnoreCase(statusResult.rawStatus())) {
+
+            markPaymentAsPaidUseCase.execute(order.getId(), payment.getId());
 
             paymentRepository.updateStatusAndProviderData(
                     payment.getId(),
-                    PaymentStatus.PENDING,
-                    null,
+                    PaymentStatus.PAID,
+                    UUID.randomUUID().toString(),
                     EXTERNAL_PAYMENT_PROVIDER,
-                    null,
+                    Instant.now(),
                     null,
                     null
             );
-
-            ExternalPaymentStatusResult statusResult = externalPaymentGateway.getPaymentStatus(payment.getId());
-
-            if("pago".equalsIgnoreCase(statusResult.rawStatus())){
-
-                markPaymentAsPaidUseCase.execute(order.getId(), payment.getId());
-
-                paymentRepository.updateStatusAndProviderData(
-                        payment.getId(),
-                        PaymentStatus.PAID,
-                        UUID.randomUUID().toString(),
-                        EXTERNAL_PAYMENT_PROVIDER,
-                        Instant.now(),
-                        null,
-                        null
-                );
-            }
-
-        }catch (Exception ex){
-            markOrderAsPendingPaymentUseCase.execute(order.getId(), payment.getId());
         }
     }
 
