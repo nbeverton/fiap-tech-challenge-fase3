@@ -1,8 +1,8 @@
 package br.com.fiap.techchallenge.core.usecase.impl.order.status;
 
 import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
-import br.com.fiap.techchallenge.core.domain.exception.order.InvalidOrderStatusException;
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
+import br.com.fiap.techchallenge.core.domain.exception.payment.InvalidPaymentException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.PaymentNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.PaymentOrderMismatchException;
 import br.com.fiap.techchallenge.core.domain.model.Order;
@@ -38,7 +38,7 @@ public class MarkOrderAsPendingPaymentUseCaseImpl implements MarkOrderAsPendingP
         }
 
         if(existingPayment.getStatus() != PaymentStatus.PENDING){
-            throw new InvalidOrderStatusException(
+            throw new InvalidPaymentException(
                     "Only PENDING payments can be marked as pending external processing."
             );
         }
