@@ -51,7 +51,7 @@ class OrderStatusTransitionsTest {
     void created_to_paymentConfirmed_ok() {
         Order order = newOrderWithStatus(OrderStatus.CREATED);
 
-        order.markPaymentAsConfirmed();
+        order.markOrderAsConfirmed();
 
         assertEquals(OrderStatus.PAYMENT_CONFIRMED, order.getOrderStatus());
     }

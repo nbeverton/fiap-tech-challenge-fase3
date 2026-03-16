@@ -41,7 +41,7 @@ public class GetPaymentByIdUseCaseImpl implements GetPaymentByIdUseCase {
                 .orElseThrow(() -> new PaymentNotFoundException(paymentId));
 
         if (!payment.getOrderId().equals(orderId)) {
-            throw new PaymentOrderMismatchException("Payment does not belong to this order");
+            throw new PaymentOrderMismatchException();
         }
 
         Order order = orderRepository.findById(orderId)
