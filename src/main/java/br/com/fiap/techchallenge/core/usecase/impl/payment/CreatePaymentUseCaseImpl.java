@@ -9,17 +9,12 @@ import br.com.fiap.techchallenge.core.domain.exception.security.ForbiddenExcepti
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
 import br.com.fiap.techchallenge.core.domain.security.AuthContext;
-import br.com.fiap.techchallenge.core.usecase.in.order.status.MarkOrderAsPendingPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.ProcessPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.CreatePaymentCommand;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.PaymentView;
-import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
-import br.com.fiap.techchallenge.core.usecase.out.external_payment.ExternalPaymentGatewayPort;
-import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentRequest;
-import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentResponse;
-import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentStatusResult;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -28,29 +23,16 @@ import java.util.UUID;
 
 public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
-    private static final String EXTERNAL_PAYMENT_PROVIDER = "PAGAMENTO_EXTERNO_FIAP";
-
     private final PaymentRepositoryPort paymentRepository;
     private final OrderRepositoryPort orderRepository;
-    private final ExternalPaymentGatewayPort externalPaymentGateway;
-    private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
-    private final MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase;
-    private final ExternalPaymentProcessor externalPaymentProcessor;
+    private final ProcessPaymentUseCase processPaymentUseCase;
 
-    public CreatePaymentUseCaseImpl(
-            PaymentRepositoryPort paymentRepository,
-            OrderRepositoryPort orderRepository,
-            ExternalPaymentGatewayPort externalPaymentGateway,
-            MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase,
-            MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase, ExternalPaymentProcessor externalPaymentProcessor) {
-
+    public CreatePaymentUseCaseImpl(PaymentRepositoryPort paymentRepository, OrderRepositoryPort orderRepository, ProcessPaymentUseCase processPaymentUseCase) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
-        this.externalPaymentGateway = externalPaymentGateway;
-        this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
-        this.markOrderAsPendingPaymentUseCase = markOrderAsPendingPaymentUseCase;
-        this.externalPaymentProcessor = externalPaymentProcessor;
+        this.processPaymentUseCase = processPaymentUseCase;
     }
+
 
     @Override
     public PaymentView execute(CreatePaymentCommand command) {
@@ -117,7 +99,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
         paymentRepository.save(payment);
 
-        processExternalPayment(order, payment);
+        processPaymentUseCase.execute(order, payment);
 
         Payment updatePayment = paymentRepository.findById(payment.getId())
                 .orElse(payment);
@@ -147,49 +129,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
         };
     }
 
-    private void processExternalPayment(Order order, Payment payment) {
 
-        ExternalPaymentResponse externalPaymentResult = externalPaymentProcessor.submitPayment(
-                new ExternalPaymentRequest(
-                        payment.getAmount(),
-                        payment.getId(),
-                        order.getUserId()
-                ),
-                order.getId(),
-                payment.getId()
-        ).join();
-
-        if (!externalPaymentResult.accepted()) {
-            return;
-        }
-
-        paymentRepository.updateStatusAndProviderData(
-                payment.getId(),
-                PaymentStatus.PENDING,
-                null,
-                EXTERNAL_PAYMENT_PROVIDER,
-                null,
-                null,
-                null
-        );
-
-        ExternalPaymentStatusResult statusResult = externalPaymentGateway.getPaymentStatus(payment.getId());
-
-        if ("pago".equalsIgnoreCase(statusResult.rawStatus())) {
-
-            markPaymentAsPaidUseCase.execute(order.getId(), payment.getId());
-
-            paymentRepository.updateStatusAndProviderData(
-                    payment.getId(),
-                    PaymentStatus.PAID,
-                    UUID.randomUUID().toString(),
-                    EXTERNAL_PAYMENT_PROVIDER,
-                    Instant.now(),
-                    null,
-                    null
-            );
-        }
-    }
 
     private void doesPaymentExceedBalance(Order order, BigDecimal amount){
 
