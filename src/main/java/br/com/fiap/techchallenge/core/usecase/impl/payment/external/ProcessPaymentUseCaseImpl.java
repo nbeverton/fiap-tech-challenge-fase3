@@ -1,9 +1,9 @@
-package br.com.fiap.techchallenge.core.usecase.impl.payment;
+package br.com.fiap.techchallenge.core.usecase.impl.payment.external;
 
 import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
-import br.com.fiap.techchallenge.core.usecase.in.payment.ProcessPaymentUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.external.ProcessPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.ExternalPaymentGatewayPort;

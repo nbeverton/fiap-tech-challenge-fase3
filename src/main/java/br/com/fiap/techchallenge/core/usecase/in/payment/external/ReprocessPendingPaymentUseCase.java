@@ -1,4 +1,4 @@
-package br.com.fiap.techchallenge.core.usecase.in.payment;
+package br.com.fiap.techchallenge.core.usecase.in.payment.external;
 
 public interface ReprocessPendingPaymentUseCase {
 

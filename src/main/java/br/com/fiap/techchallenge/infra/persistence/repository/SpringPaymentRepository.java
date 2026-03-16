@@ -10,5 +10,5 @@ public interface SpringPaymentRepository extends MongoRepository<PaymentDocument
 
     List<PaymentDocument> findByOrderId(String orderId);
 
-    List<PaymentDocument> findByPaymentStatusAndFailedAtIsNotNullAndPaidAtIsNullAndTransactionIdIsNullAndProviderIsNull(PaymentStatus paymentStatus);
+    List<PaymentDocument> findByStatusAndFailedAtIsNotNullAndPaidAtIsNullAndTransactionIdIsNullAndProviderIsNull(String status);
 }

@@ -10,7 +10,7 @@ import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
 import br.com.fiap.techchallenge.core.domain.security.AuthContext;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
-import br.com.fiap.techchallenge.core.usecase.in.payment.ProcessPaymentUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.external.ProcessPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.CreatePaymentCommand;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.PaymentView;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;

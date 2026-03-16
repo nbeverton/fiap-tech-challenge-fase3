@@ -1,11 +1,11 @@
-package br.com.fiap.techchallenge.core.usecase.impl.payment;
+package br.com.fiap.techchallenge.core.usecase.impl.payment.external;
 
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.PaymentNotFoundException;
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
-import br.com.fiap.techchallenge.core.usecase.in.payment.ProcessPaymentUseCase;
-import br.com.fiap.techchallenge.core.usecase.in.payment.ReprocessPendingPaymentUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.external.ProcessPaymentUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.external.ReprocessPendingPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
 

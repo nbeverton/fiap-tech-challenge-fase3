@@ -1,4 +1,4 @@
-package br.com.fiap.techchallenge.core.usecase.impl.payment;
+package br.com.fiap.techchallenge.core.usecase.impl.payment.external;
 
 import br.com.fiap.techchallenge.core.usecase.in.order.status.MarkOrderAsPendingPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.ExternalPaymentGatewayPort;

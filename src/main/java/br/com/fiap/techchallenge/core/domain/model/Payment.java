@@ -134,6 +134,7 @@ public class Payment {
     public void markAsPaid(){
         this.status = PaymentStatus.PAID;
         this.paidAt = Instant.now();
+        this.failedAt = null;
     }
 
     public void markAsFailed() {

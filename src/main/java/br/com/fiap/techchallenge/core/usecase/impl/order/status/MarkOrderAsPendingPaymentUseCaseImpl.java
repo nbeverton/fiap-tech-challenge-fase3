@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.core.usecase.impl.order.status;
 
+import br.com.fiap.techchallenge.core.domain.enums.OrderStatus;
 import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.InvalidPaymentException;
@@ -43,9 +44,11 @@ public class MarkOrderAsPendingPaymentUseCaseImpl implements MarkOrderAsPendingP
             );
         }
 
-        order.markOrderAsAwaitPayment();
-
-        orderRepository.save(order);
+        if (order.getOrderStatus() == OrderStatus.CREATED
+                || order.getOrderStatus() == OrderStatus.PAYMENT_CONFIRMED) {
+            order.markOrderAsAwaitPayment();
+            orderRepository.save(order);
+        }
 
         Payment payment = new Payment(
                 existingPayment.getId(),

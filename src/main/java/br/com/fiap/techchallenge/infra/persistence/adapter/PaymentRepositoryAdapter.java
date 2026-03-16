@@ -109,7 +109,7 @@ public class PaymentRepositoryAdapter implements PaymentRepositoryPort {
     @Override
     public List<Payment> findPendingPaymentsForReprocessing() {
 
-        return repository.findByPaymentStatusAndFailedAtIsNotNullAndPaidAtIsNullAndTransactionIdIsNullAndProviderIsNull(PaymentStatus.PENDING)
+        return repository.findByStatusAndFailedAtIsNotNullAndPaidAtIsNullAndTransactionIdIsNullAndProviderIsNull(PaymentStatus.PENDING.name())
                 .stream()
                 .map(PaymentPersistenceMapper::toDomain)
                 .toList();
