@@ -29,7 +29,7 @@ public class MarkPaymentAsRefundedUseCaseImpl implements MarkPaymentAsRefundedUs
                 .orElseThrow(() -> new PaymentNotFoundException(paymentId));
 
         if (!payment.getOrderId().equals(orderId)) {
-            throw new PaymentOrderMismatchException("Payment does not belong to this order");
+            throw new PaymentOrderMismatchException();
         }
 
         if (payment.getStatus() != PaymentStatus.PAID) {

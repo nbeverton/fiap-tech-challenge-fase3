@@ -100,7 +100,7 @@ public class Order {
         touch();
     }
 
-    public void markPaymentAsConfirmed() {
+    public void markOrderAsConfirmed() {
         requireStatus(
                 Set.of(OrderStatus.CREATED),
                 "Payment can only be confirmed when order is CREATED."

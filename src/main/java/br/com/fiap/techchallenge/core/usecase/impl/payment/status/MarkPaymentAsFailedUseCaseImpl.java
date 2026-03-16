@@ -26,7 +26,7 @@ public class MarkPaymentAsFailedUseCaseImpl implements MarkPaymentAsFailedUseCas
                 .orElseThrow(()-> new PaymentNotFoundException(paymentId));
 
         if (!payment.getOrderId().equals(orderId)) {
-            throw new PaymentOrderMismatchException("Payment does not belong to this order");
+            throw new PaymentOrderMismatchException();
         }
 
         if (payment.getStatus() != PaymentStatus.PENDING) {

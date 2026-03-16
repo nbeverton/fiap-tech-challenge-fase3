@@ -13,7 +13,6 @@ import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.List;
 
 public class MarkPaymentAsPaidUseCaseImpl implements MarkPaymentAsPaidUseCase {
@@ -34,7 +33,7 @@ public class MarkPaymentAsPaidUseCaseImpl implements MarkPaymentAsPaidUseCase {
                 .orElseThrow(() -> new PaymentNotFoundException(paymentId));
 
         if(!payment.getOrderId().equals(orderId)){
-            throw new PaymentOrderMismatchException("Payment does not belong to this order");
+            throw new PaymentOrderMismatchException();
         }
 
         if(payment.getStatus() != PaymentStatus.PENDING){
@@ -68,7 +67,7 @@ public class MarkPaymentAsPaidUseCaseImpl implements MarkPaymentAsPaidUseCase {
 
             else if(order.getOrderStatus() == OrderStatus.CREATED){
 
-                order.markPaymentAsConfirmed();
+                order.markOrderAsConfirmed();
                 orderRepository.save(order);
             }
         }

@@ -4,14 +4,15 @@ import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.InvalidPaymentException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.OverpaymentException;
+import br.com.fiap.techchallenge.core.domain.exception.payment.PendingPaymentAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.exception.security.ForbiddenException;
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
 import br.com.fiap.techchallenge.core.domain.security.AuthContext;
+import br.com.fiap.techchallenge.core.usecase.in.order.status.MarkOrderAsPendingPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.CreatePaymentCommand;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.PaymentView;
-import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsFailedUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
@@ -33,20 +34,20 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     private final OrderRepositoryPort orderRepository;
     private final ExternalPaymentGatewayPort externalPaymentGateway;
     private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
-    private final MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase;
+    private final MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase;
 
     public CreatePaymentUseCaseImpl(
             PaymentRepositoryPort paymentRepository,
             OrderRepositoryPort orderRepository,
             ExternalPaymentGatewayPort externalPaymentGateway,
             MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase,
-            MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase) {
+            MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase) {
 
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
         this.externalPaymentGateway = externalPaymentGateway;
         this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
-        this.markPaymentAsFailedUseCase = markPaymentAsFailedUseCase;
+        this.markOrderAsPendingPaymentUseCase = markOrderAsPendingPaymentUseCase;
     }
 
     @Override
@@ -67,6 +68,21 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
         Order order = orderRepository.findById(command.orderId())
                 .orElseThrow(() -> new OrderNotFoundException(command.orderId()));
+
+        List<Payment> paymentsFromOrder = paymentRepository.findByOrderId(order.getId());
+
+        for(Payment p : paymentsFromOrder){
+
+            if(
+                    p.getStatus() == PaymentStatus.PENDING &&
+                    p.getFailedAt() != null &&
+                    p.getPaidAt() == null &&
+                    p.getTransactionId() == null &&
+                    p.getProvider() == null
+            ){
+                throw new PendingPaymentAlreadyExistsException();
+            }
+        }
 
         // Authorization: ADMIN can pay any order; CLIENT can pay only own order
         if (!AuthContext.isAdmin()) {
@@ -142,7 +158,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
             );
 
             if(!externalPaymentResult.accepted()){
-                markPaymentAsFailedUseCase.execute(order.getId(), payment.getOrderId());
+                markOrderAsPendingPaymentUseCase.execute(order.getId(), payment.getId());
                 return;
             }
 
@@ -174,7 +190,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
             }
 
         }catch (Exception ex){
-            markPaymentAsFailedUseCase.execute(order.getId(), payment.getId());
+            markOrderAsPendingPaymentUseCase.execute(order.getId(), payment.getId());
         }
     }
 
