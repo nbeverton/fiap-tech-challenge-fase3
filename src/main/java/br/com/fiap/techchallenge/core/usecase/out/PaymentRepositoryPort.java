@@ -28,4 +28,6 @@ public interface PaymentRepositoryPort {
             Instant failedAt,
             Instant refundedAt
     );
+
+    List<Payment> findPendingPaymentsForReprocessing();
 }

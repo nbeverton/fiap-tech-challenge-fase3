@@ -4,21 +4,17 @@ import br.com.fiap.techchallenge.core.domain.enums.PaymentStatus;
 import br.com.fiap.techchallenge.core.domain.exception.order.OrderNotFoundException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.InvalidPaymentException;
 import br.com.fiap.techchallenge.core.domain.exception.payment.OverpaymentException;
+import br.com.fiap.techchallenge.core.domain.exception.payment.PendingPaymentAlreadyExistsException;
 import br.com.fiap.techchallenge.core.domain.exception.security.ForbiddenException;
 import br.com.fiap.techchallenge.core.domain.model.Order;
 import br.com.fiap.techchallenge.core.domain.model.Payment;
 import br.com.fiap.techchallenge.core.domain.security.AuthContext;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.external.ProcessPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.CreatePaymentCommand;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.PaymentView;
-import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsFailedUseCase;
-import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
-import br.com.fiap.techchallenge.core.usecase.out.external_payment.ExternalPaymentGatewayPort;
-import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentRequest;
-import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentResponse;
-import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentStatusResult;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -27,27 +23,16 @@ import java.util.UUID;
 
 public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
-    private static final String EXTERNAL_PAYMENT_PROVIDER = "PAGAMENTO_EXTERNO_FIAP";
-
     private final PaymentRepositoryPort paymentRepository;
     private final OrderRepositoryPort orderRepository;
-    private final ExternalPaymentGatewayPort externalPaymentGateway;
-    private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
-    private final MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase;
+    private final ProcessPaymentUseCase processPaymentUseCase;
 
-    public CreatePaymentUseCaseImpl(
-            PaymentRepositoryPort paymentRepository,
-            OrderRepositoryPort orderRepository,
-            ExternalPaymentGatewayPort externalPaymentGateway,
-            MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase,
-            MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase) {
-
+    public CreatePaymentUseCaseImpl(PaymentRepositoryPort paymentRepository, OrderRepositoryPort orderRepository, ProcessPaymentUseCase processPaymentUseCase) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
-        this.externalPaymentGateway = externalPaymentGateway;
-        this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
-        this.markPaymentAsFailedUseCase = markPaymentAsFailedUseCase;
+        this.processPaymentUseCase = processPaymentUseCase;
     }
+
 
     @Override
     public PaymentView execute(CreatePaymentCommand command) {
@@ -67,6 +52,21 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
         Order order = orderRepository.findById(command.orderId())
                 .orElseThrow(() -> new OrderNotFoundException(command.orderId()));
+
+        List<Payment> paymentsFromOrder = paymentRepository.findByOrderId(order.getId());
+
+        for(Payment p : paymentsFromOrder){
+
+            if(
+                    p.getStatus() == PaymentStatus.PENDING &&
+                    p.getFailedAt() != null &&
+                    p.getPaidAt() == null &&
+                    p.getTransactionId() == null &&
+                    p.getProvider() == null
+            ){
+                throw new PendingPaymentAlreadyExistsException();
+            }
+        }
 
         // Authorization: ADMIN can pay any order; CLIENT can pay only own order
         if (!AuthContext.isAdmin()) {
@@ -99,7 +99,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
 
         paymentRepository.save(payment);
 
-        processExternalPayment(order, payment);
+        processPaymentUseCase.execute(order, payment);
 
         Payment updatePayment = paymentRepository.findById(payment.getId())
                 .orElse(payment);
@@ -129,43 +129,14 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
         };
     }
 
-    private void processExternalPayment(Order order, Payment payment){
-        try {
-            ExternalPaymentResponse externalPaymentResult = externalPaymentGateway.submitPayment(
-                    new ExternalPaymentRequest(
-                            payment.getAmount(),
-                            payment.getId(),
-                            order.getUserId()
-                    )
-            );
 
-            if (!externalPaymentResult.accepted()) {
-                markPaymentAsFailedUseCase.execute(order.getId(), payment.getId());
-                return;
-            }
-
-            // ✅ mantém PENDING, só registra provider (se quiser)
-            paymentRepository.updateStatusAndProviderData(
-                    payment.getId(),
-                    PaymentStatus.PENDING,
-                    null,
-                    EXTERNAL_PAYMENT_PROVIDER,
-                    null,
-                    null,
-                    null
-            );
-
-        } catch (Exception ex) {
-            markPaymentAsFailedUseCase.execute(order.getId(), payment.getId());
-        }
-    }
 
     private void doesPaymentExceedBalance(Order order, BigDecimal amount){
 
         List<Payment> payments = paymentRepository.findByOrderId(order.getId());
 
         BigDecimal totalPaid = payments.stream()
-                .filter(p -> p.getStatus() == PaymentStatus.PENDING || p.getStatus() == PaymentStatus.PAID)
+                .filter(p -> p.getStatus() == PaymentStatus.PAID)
                 .map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 

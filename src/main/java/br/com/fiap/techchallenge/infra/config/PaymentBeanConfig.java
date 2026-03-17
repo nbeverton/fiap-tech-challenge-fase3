@@ -1,14 +1,19 @@
 package br.com.fiap.techchallenge.infra.config;
 
-import br.com.fiap.techchallenge.core.usecase.impl.payment.CreatePaymentUseCaseImpl;
-import br.com.fiap.techchallenge.core.usecase.impl.payment.GetPaymentByIdUseCaseImpl;
-import br.com.fiap.techchallenge.core.usecase.impl.payment.ListPaymentsByOrderUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.order.status.MarkOrderAsPendingPaymentUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.payment.*;
+import br.com.fiap.techchallenge.core.usecase.impl.payment.external.ExternalPaymentProcessor;
+import br.com.fiap.techchallenge.core.usecase.impl.payment.external.ProcessPaymentUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.payment.external.ReprocessPendingPaymentUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.payment.status.MarkPaymentAsFailedUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.payment.status.MarkPaymentAsPaidUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.payment.status.MarkPaymentAsRefundedUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.in.order.status.MarkOrderAsPendingPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.GetPaymentByIdUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.ListPaymentsByOrderUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.external.ProcessPaymentUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.payment.external.ReprocessPendingPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsFailedUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsRefundedUseCase;
@@ -26,13 +31,14 @@ public class PaymentBeanConfig {
     public CreatePaymentUseCase createPaymentUseCase(
             PaymentRepositoryPort paymentRepositoryPort,
             OrderRepositoryPort orderRepositoryPort,
-            ExternalPaymentGatewayPort externalPaymentGatewayPort,
-            MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase,
-            MarkPaymentAsFailedUseCase markPaymentAsFailedUseCase
+            ProcessPaymentUseCase processPaymentUseCase
+
     ){
 
         return new CreatePaymentUseCaseImpl(
-                paymentRepositoryPort, orderRepositoryPort, externalPaymentGatewayPort, markPaymentAsPaidUseCase,markPaymentAsFailedUseCase
+                paymentRepositoryPort,
+                orderRepositoryPort,
+                processPaymentUseCase
         );
     }
 
@@ -72,5 +78,36 @@ public class PaymentBeanConfig {
     public MarkPaymentAsRefundedUseCase markPaymentAsRefundedUseCase(PaymentRepositoryPort paymentRepositoryPort, OrderRepositoryPort orderRepositoryPort){
 
         return new MarkPaymentAsRefundedUseCaseImpl(paymentRepositoryPort, orderRepositoryPort);
+    }
+
+    @Bean
+    public MarkOrderAsPendingPaymentUseCase markOrderAsPendingPaymentUseCase(
+            OrderRepositoryPort orderRepositoryPort,
+            PaymentRepositoryPort paymentRepositoryPort
+    ) {
+        return new MarkOrderAsPendingPaymentUseCaseImpl(orderRepositoryPort, paymentRepositoryPort);
+    }
+
+    @Bean
+    public ProcessPaymentUseCase processPaymentUseCase(
+            ExternalPaymentProcessor externalPaymentProcessor,
+            PaymentRepositoryPort paymentRepositoryPort,
+            ExternalPaymentGatewayPort externalPaymentGatewayPort,
+            MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase
+    ){
+        return new ProcessPaymentUseCaseImpl(externalPaymentProcessor,paymentRepositoryPort,externalPaymentGatewayPort,markPaymentAsPaidUseCase);
+    }
+
+    @Bean
+    public ReprocessPendingPaymentUseCase reprocessPendingPaymentUseCase(
+            PaymentRepositoryPort paymentRepositoryPort,
+            OrderRepositoryPort orderRepositoryPort,
+            ProcessPaymentUseCase processPaymentUseCase
+    ){
+        return new ReprocessPendingPaymentUseCaseImpl(
+                paymentRepositoryPort,
+                orderRepositoryPort,
+                processPaymentUseCase
+        );
     }
 }
