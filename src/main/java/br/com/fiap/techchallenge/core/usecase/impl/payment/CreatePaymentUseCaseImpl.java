@@ -13,6 +13,7 @@ import br.com.fiap.techchallenge.core.usecase.in.payment.CreatePaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.external.ProcessPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.CreatePaymentCommand;
 import br.com.fiap.techchallenge.core.usecase.in.payment.dto.PaymentView;
+import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
 
@@ -26,11 +27,13 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     private final PaymentRepositoryPort paymentRepository;
     private final OrderRepositoryPort orderRepository;
     private final ProcessPaymentUseCase processPaymentUseCase;
+    private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
 
-    public CreatePaymentUseCaseImpl(PaymentRepositoryPort paymentRepository, OrderRepositoryPort orderRepository, ProcessPaymentUseCase processPaymentUseCase) {
+    public CreatePaymentUseCaseImpl(PaymentRepositoryPort paymentRepository, OrderRepositoryPort orderRepository, ProcessPaymentUseCase processPaymentUseCase, MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
         this.processPaymentUseCase = processPaymentUseCase;
+        this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
     }
 
 
@@ -90,16 +93,17 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
                 command.amount(),
                 command.method(),
                 PaymentStatus.PENDING,
-                null,
-                null,
-                null,
-                null,
-                null
+                null,  // transactionId
+                null,  // provider
+                null,  // paidAt
+                null,  // failedAt
+                null   // refundedAt
         );
 
         paymentRepository.save(payment);
 
-        processPaymentUseCase.execute(order, payment);
+        // ✅ aqui ele vira PAID e o order é ajustado conforme sua regra
+        markPaymentAsPaidUseCase.execute(order.getId(), payment.getId());
 
         Payment updatePayment = paymentRepository.findById(payment.getId())
                 .orElse(payment);
