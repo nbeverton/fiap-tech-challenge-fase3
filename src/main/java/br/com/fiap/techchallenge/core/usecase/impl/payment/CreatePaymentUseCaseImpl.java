@@ -130,9 +130,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     }
 
     private void processExternalPayment(Order order, Payment payment){
-
-        try{
-
+        try {
             ExternalPaymentResponse externalPaymentResult = externalPaymentGateway.submitPayment(
                     new ExternalPaymentRequest(
                             payment.getAmount(),
@@ -141,11 +139,12 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
                     )
             );
 
-            if(!externalPaymentResult.accepted()){
-                markPaymentAsFailedUseCase.execute(order.getId(), payment.getOrderId());
+            if (!externalPaymentResult.accepted()) {
+                markPaymentAsFailedUseCase.execute(order.getId(), payment.getId());
                 return;
             }
 
+            // ✅ mantém PENDING, só registra provider (se quiser)
             paymentRepository.updateStatusAndProviderData(
                     payment.getId(),
                     PaymentStatus.PENDING,
@@ -156,24 +155,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
                     null
             );
 
-            ExternalPaymentStatusResult statusResult = externalPaymentGateway.getPaymentStatus(payment.getId());
-
-            if("pago".equalsIgnoreCase(statusResult.rawStatus())){
-
-                markPaymentAsPaidUseCase.execute(order.getId(), payment.getId());
-
-                paymentRepository.updateStatusAndProviderData(
-                        payment.getId(),
-                        PaymentStatus.PAID,
-                        UUID.randomUUID().toString(),
-                        EXTERNAL_PAYMENT_PROVIDER,
-                        Instant.now(),
-                        null,
-                        null
-                );
-            }
-
-        }catch (Exception ex){
+        } catch (Exception ex) {
             markPaymentAsFailedUseCase.execute(order.getId(), payment.getId());
         }
     }
