@@ -1,0 +1,4072 @@
+{
+  "info": {
+    "_postman_id": "aacebf17-207b-412e-825f-40f967e229f3",
+    "name": "Tech Challenge 3 – G2 - JavaEats V3.4 (docker - 8081)",
+    "description": "Coleção baseada nos controllers fornecidos:\n\n- Restaurant: /api/v1/restaurants\n    \n- Menu: /api/v1/restaurants/{restaurantId}/menus\n    \n- User: /users\n    \n- Address: /addresses\n    \n\nImportante: RestaurantDocument é persistência. O contrato real de POST/PUT é definido pelos DTOs (RestaurantRequest etc.).  \nOs bodies aqui são exemplos; ajuste conforme validações (@NotNull/@NotBlank) e estrutura do OpeningHours.\n\nFluxo feliz:\n\n1) Create User -> {{userId}}  \n2) Create Address -> {{addressId}}  \n3) Create Restaurant -> {{restaurantId}}  \n4) Create Menu -> {{menuId}}",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28803614"
+  },
+  "item": [
+    {
+      "name": "00 - Setup (Create)",
+      "item": [
+        {
+          "name": "Create Address - ADMIN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                  "",
+                  "let id = null;",
+                  "let bodyText = \"\";",
+                  "",
+                  "try { bodyText = pm.response.text(); } catch (e) {}",
+                  "",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = j?.id || j?.uuid || j?._id || j?.data?.id || j?.data?.uuid || j?.data?._id || null;",
+                  "} catch (e) {}",
+                  "",
+                  "const loc = pm.response.headers.get(\"Location\");",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split(\"/\");",
+                  "  id = parts[parts.length - 1];",
+                  "}",
+                  "",
+                  "// fallback Mongo ObjectId (24 hex)",
+                  "if (!id && bodyText) {",
+                  "  const m = bodyText.match(/[a-f0-9]{24}/i);",
+                  "  if (m) id = m[0];",
+                  "}",
+                  "",
+                  "if (id) {",
+                  "  pm.environment.set(\"addressIdAdmin\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou addressIdAdmin =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei addressId (ADMIN). Confira response body/header.\");",
+                  "  console.log(\"↳ Body:\", bodyText);",
+                  "  console.log(\"↳ Location:\", loc);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postalCode\": \"012345-789\",\n  \"streetName\": \"Av. Paulista\",\n  \"streetNumber\": \"456\",\n  \"additionalInfo\": \"Sala 2\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Address - CLIENT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                  "",
+                  "let id = null;",
+                  "let bodyText = \"\";",
+                  "",
+                  "try { bodyText = pm.response.text(); } catch (e) {}",
+                  "",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = j?.id || j?.uuid || j?._id || j?.data?.id || j?.data?.uuid || j?.data?._id || null;",
+                  "} catch (e) {}",
+                  "",
+                  "const loc = pm.response.headers.get(\"Location\");",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split(\"/\");",
+                  "  id = parts[parts.length - 1];",
+                  "}",
+                  "",
+                  "if (!id && bodyText) {",
+                  "  const m = bodyText.match(/[a-f0-9]{24}/i);",
+                  "  if (m) id = m[0];",
+                  "}",
+                  "",
+                  "if (id) {",
+                  "  pm.environment.set(\"addressIdClient\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou addressIdClient =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei addressId (CLIENT). Confira response body/header.\");",
+                  "  console.log(\"↳ Body:\", bodyText);",
+                  "  console.log(\"↳ Location:\", loc);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postalCode\": \"012345-789\",\n  \"streetName\": \"Rua das APIs\",\n  \"streetNumber\": \"4476\",\n  \"additionalInfo\": \"Apto 07\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Address - OWNER",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                  "",
+                  "let id = null;",
+                  "let bodyText = \"\";",
+                  "",
+                  "try { bodyText = pm.response.text(); } catch (e) {}",
+                  "",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  id = j?.id || j?.uuid || j?._id || j?.data?.id || j?.data?.uuid || j?.data?._id || null;",
+                  "} catch (e) {}",
+                  "",
+                  "const loc = pm.response.headers.get(\"Location\");",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split(\"/\");",
+                  "  id = parts[parts.length - 1];",
+                  "}",
+                  "",
+                  "if (!id && bodyText) {",
+                  "  const m = bodyText.match(/[a-f0-9]{24}/i);",
+                  "  if (m) id = m[0];",
+                  "}",
+                  "",
+                  "if (id) {",
+                  "  pm.environment.set(\"addressIdOwner\", String(id));",
+                  "  pm.environment.set(\"lastId\", String(id));",
+                  "  console.log(\"✅ Salvou addressIdOwner =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei addressId (OWNER). Confira response body/header.\");",
+                  "  console.log(\"↳ Body:\", bodyText);",
+                  "  console.log(\"↳ Location:\", loc);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postalCode\": \"012378-780\",\n  \"streetName\": \"Rua dos Restaurantes\",\n  \"streetNumber\": \"44\",\n  \"additionalInfo\": \"Loja 2\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User - ADMIN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201/200\", () => {",
+                  "  pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "function extractId() {",
+                  "  let id = null;",
+                  "",
+                  "  try {",
+                  "    const j = pm.response.json();",
+                  "    id = j?.id || j?.uuid || j?._id || j?.data?.id || j?.data?.uuid || j?.data?._id || null;",
+                  "  } catch (e) {}",
+                  "",
+                  "  const loc = pm.response.headers.get(\"Location\");",
+                  "  if (!id && loc) {",
+                  "    const parts = loc.split(\"/\");",
+                  "    id = parts[parts.length - 1];",
+                  "  }",
+                  "",
+                  "  return id ? String(id) : null;",
+                  "}",
+                  "",
+                  "const id = extractId();",
+                  "",
+                  "if (id) {",
+                  "  pm.environment.set(\"userIdAdmin\", id);",
+                  "  pm.environment.set(\"lastId\", id);",
+                  "  console.log(\"✅ Salvou userIdAdmin =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header.\");",
+                  "  console.log(\"↳ body:\", pm.response.text());",
+                  "  console.log(\"↳ location:\", pm.response.headers.get(\"Location\"));",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Usuário admin\",\n  \"userType\": \"ADMIN\",\n  \"email\": \"userTech.admin@example.com\",\n  \"login\": \"admin.techChallenge\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressIdAdmin}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User - CLIENT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201/200\", () => {",
+                  "  pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "function extractId() {",
+                  "  let id = null;",
+                  "",
+                  "  try {",
+                  "    const j = pm.response.json();",
+                  "    id = j?.id || j?.uuid || j?._id || j?.data?.id || j?.data?.uuid || j?.data?._id || null;",
+                  "  } catch (e) {}",
+                  "",
+                  "  const loc = pm.response.headers.get(\"Location\");",
+                  "  if (!id && loc) {",
+                  "    const parts = loc.split(\"/\");",
+                  "    id = parts[parts.length - 1];",
+                  "  }",
+                  "",
+                  "  return id ? String(id) : null;",
+                  "}",
+                  "",
+                  "const id = extractId();",
+                  "",
+                  "if (id) {",
+                  "  pm.environment.set(\"userIdClient\", id);",
+                  "  pm.environment.set(\"lastId\", id);",
+                  "  console.log(\"✅ Salvou userIdClient =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header.\");",
+                  "  console.log(\"↳ body:\", pm.response.text());",
+                  "  console.log(\"↳ location:\", pm.response.headers.get(\"Location\"));",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Usuário client\",\n  \"userType\": \"CLIENT\",\n  \"email\": \"userTech.client@example.com\",\n  \"login\": \"client.techChallenge\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressIdClient}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User - OWNER",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201/200\", () => {",
+                  "  pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "function extractId() {",
+                  "  let id = null;",
+                  "",
+                  "  try {",
+                  "    const j = pm.response.json();",
+                  "    id = j?.id || j?.uuid || j?._id || j?.data?.id || j?.data?.uuid || j?.data?._id || null;",
+                  "  } catch (e) {}",
+                  "",
+                  "  const loc = pm.response.headers.get(\"Location\");",
+                  "  if (!id && loc) {",
+                  "    const parts = loc.split(\"/\");",
+                  "    id = parts[parts.length - 1];",
+                  "  }",
+                  "",
+                  "  return id ? String(id) : null;",
+                  "}",
+                  "",
+                  "const id = extractId();",
+                  "",
+                  "if (id) {",
+                  "  pm.environment.set(\"userIdOwner\", id);",
+                  "  pm.environment.set(\"lastId\", id);",
+                  "  console.log(\"✅ Salvou userIdOwner =\", id);",
+                  "} else {",
+                  "  console.warn(\"⚠️ Não achei ID no body/header.\");",
+                  "  console.log(\"↳ body:\", pm.response.text());",
+                  "  console.log(\"↳ location:\", pm.response.headers.get(\"Location\"));",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Usuário OWNER\",\n  \"userType\": \"OWNER\",\n  \"email\": \"userTech.owner@example.com\",\n  \"login\": \"owner.techChallenge\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressIdOwner}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Autenticar ADMIN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200/201\", () => {",
+                  "  pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "let token = null;",
+                  "",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  token =",
+                  "    j.token ||",
+                  "    j.accessToken ||",
+                  "    j.jwt ||",
+                  "    j.data?.token ||",
+                  "    j.data?.accessToken ||",
+                  "    null;",
+                  "} catch (e) {}",
+                  "",
+                  "pm.test(\"Token encontrado\", () => {",
+                  "  pm.expect(token, \"Token não veio no payload\").to.exist;",
+                  "});",
+                  "",
+                  "pm.environment.set(\"tokenAdmin\", String(token));",
+                  "console.log(\"✅ Salvou tokenAdmin =\", token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"admin.techChallenge\",\n  \"password\": \"SenhaForte123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Autenticar CLIENT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200/201\", () => {",
+                  "  pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "let token = null;",
+                  "",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  token =",
+                  "    j.token ||",
+                  "    j.accessToken ||",
+                  "    j.jwt ||",
+                  "    j.data?.token ||",
+                  "    j.data?.accessToken ||",
+                  "    null;",
+                  "} catch (e) {}",
+                  "",
+                  "pm.test(\"Token encontrado\", () => {",
+                  "  pm.expect(token, \"Token não veio no payload\").to.exist;",
+                  "});",
+                  "",
+                  "pm.environment.set(\"tokenClient\", String(token));",
+                  "console.log(\"✅ Salvou tokenClient =\", token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"client.techChallenge\",\n  \"password\": \"SenhaForte123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Autenticar OWNER",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200/201\", () => {",
+                  "  pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "let token = null;",
+                  "",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "  token =",
+                  "    j.token ||",
+                  "    j.accessToken ||",
+                  "    j.jwt ||",
+                  "    j.data?.token ||",
+                  "    j.data?.accessToken ||",
+                  "    null;",
+                  "} catch (e) {}",
+                  "",
+                  "pm.test(\"Token encontrado\", () => {",
+                  "  pm.expect(token, \"Token não veio no payload\").to.exist;",
+                  "});",
+                  "",
+                  "pm.environment.set(\"tokenOwner\", String(token));",
+                  "console.log(\"✅ Salvou tokenOwner =\", token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"owner.techChallenge\",\n  \"password\": \"SenhaForte123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "createUserAddress",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                  "",
+                  "let id = null;",
+                  "let bodyText = \"\";",
+                  "",
+                  "try { bodyText = pm.response.text(); } catch (e) {}",
+                  "",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "",
+                  "  // caminhos comuns de retorno",
+                  "  id =",
+                  "    j?.id ||",
+                  "    j?._id ||",
+                  "    j?.uuid ||",
+                  "    j?.userAddressId ||",
+                  "    j?.data?.id ||",
+                  "    j?.data?._id ||",
+                  "    j?.data?.uuid ||",
+                  "    j?.data?.userAddressId ||",
+                  "    j?.userAddress?.id ||",
+                  "    j?.userAddress?._id ||",
+                  "    null;",
+                  "",
+                  "} catch (e) {",
+                  "  // se não for JSON, segue com fallbacks",
+                  "}",
+                  "",
+                  "// fallback: Location header",
+                  "const loc = pm.response.headers.get(\"Location\");",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split(\"/\");",
+                  "  id = parts[parts.length - 1];",
+                  "}",
+                  "",
+                  "// fallback: Mongo ObjectId (24 hex) em texto",
+                  "if (!id && bodyText) {",
+                  "  const m = bodyText.match(/[a-f0-9]{24}/i);",
+                  "  if (m) id = m[0];",
+                  "}",
+                  "",
+                  "pm.test(\"UserAddress ID encontrado\", () => {",
+                  "  pm.expect(id, \"Não achei id no body, Location ou texto\").to.exist;",
+                  "});",
+                  "",
+                  "pm.environment.set(\"userAddress\", String(id));",
+                  "pm.environment.set(\"lastId\", String(id));",
+                  "console.log(\"✅ Salvou userAddress =\", id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userId\": \"{{userIdClient}}\",\r\n  \"addressId\": \"{{addressIdClient}}\",\r\n  \"type\": \"HOME\",\r\n  \"label\": \"Casa\",\r\n  \"principal\": true\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user-addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user-addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Restaurant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                  "",
+                  "let id = null;",
+                  "let bodyText = \"\";",
+                  "",
+                  "try { bodyText = pm.response.text(); } catch (e) {}",
+                  "",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "",
+                  "  id =",
+                  "    j?.restaurantId ||",
+                  "    j?.id ||",
+                  "    j?._id ||",
+                  "    j?.uuid ||",
+                  "    j?.data?.restaurantId ||",
+                  "    j?.data?.id ||",
+                  "    j?.data?._id ||",
+                  "    j?.restaurant?.id ||",
+                  "    j?.restaurant?._id ||",
+                  "    null;",
+                  "",
+                  "} catch (e) {}",
+                  "",
+                  "// ✅ melhor fonte: Location header (se existir)",
+                  "const loc = pm.response.headers.get(\"Location\");",
+                  "if (!id && loc) {",
+                  "  const parts = loc.split(\"/\");",
+                  "  id = parts[parts.length - 1];",
+                  "}",
+                  "",
+                  "// ⚠️ fallback bem conservador (só se vier um único ObjectId no body)",
+                  "if (!id && bodyText) {",
+                  "  const matches = bodyText.match(/[a-f0-9]{24}/ig) || [];",
+                  "  if (matches.length === 1) id = matches[0];",
+                  "}",
+                  "",
+                  "pm.test(\"Restaurant ID encontrado\", () => {",
+                  "  pm.expect(id, \"Não achei restaurantId no body nem Location\").to.exist;",
+                  "});",
+                  "",
+                  "pm.environment.set(\"restaurantId\", String(id));",
+                  "pm.environment.set(\"lastId\", String(id));",
+                  "console.log(\"✅ Salvou restaurantId =\", id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tok = pm.environment.get(\"tokenOwner\"); // ou tokenAdmin",
+                  "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${tok}` });",
+                  "console.log(\"USING tokenOwner prefix =\", tok ? tok.slice(0, 25) + \"...\" : \"MISSING\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenOwner}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Restaurante FIAP - Paulista\",\n  \"addressId\": \"{{addressIdOwner}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userIdOwner}}\",\n  \"menu\": []\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Menu (for Restaurant)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                  "",
+                  "// opcional: capture o nome do menu enviado no request (pra achar o item certo)",
+                  "let requestedName = null;",
+                  "try {",
+                  "  const req = JSON.parse(pm.request.body.raw || \"{}\");",
+                  "  requestedName = req.name || null;",
+                  "} catch (e) {}",
+                  "",
+                  "let menuId = null;",
+                  "",
+                  "try {",
+                  "  const j = pm.response.json();",
+                  "",
+                  "  const menus = Array.isArray(j?.menu) ? j.menu",
+                  "              : Array.isArray(j?.data?.menu) ? j.data.menu",
+                  "              : [];",
+                  "",
+                  "  pm.test(\"Resposta contém menu[]\", () => {",
+                  "    pm.expect(menus.length, \"menu[] veio vazio na resposta\").to.be.above(0);",
+                  "  });",
+                  "",
+                  "  // 1) tenta achar pelo nome exato do request (mais confiável)",
+                  "  if (requestedName) {",
+                  "    const found = menus.find(m => m?.name === requestedName);",
+                  "    if (found) menuId = found.id || found._id || null;",
+                  "  }",
+                  "",
+                  "  // 2) fallback: pega o último menu da lista (geralmente o recém-criado)",
+                  "  if (!menuId) {",
+                  "    const last = menus[menus.length - 1];",
+                  "    menuId = last?.id || last?._id || null;",
+                  "  }",
+                  "",
+                  "} catch (e) {}",
+                  "",
+                  "pm.test(\"Menu ID encontrado\", () => {",
+                  "  pm.expect(menuId, \"Não consegui extrair o id do menu do array menu[]\").to.exist;",
+                  "});",
+                  "",
+                  "pm.environment.set(\"menuId\", String(menuId));",
+                  "pm.environment.set(\"lastId\", String(menuId));",
+                  "console.log(\"✅ Salvou menuId =\", menuId);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenOwner}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Prato do dia - Segunda feira\",\n  \"description\": \"Filé parmegiana de frango\",\n  \"price\": 34.90,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurants",
+                "{{restaurantId}}",
+                "menus"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Rode nesta ordem pra preencher IDs automaticamente.",
+      "auth": {
+        "type": "bearer"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Delivered",
+          "item": [
+            {
+              "name": "Create Order",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                      "",
+                      "let id = null;",
+                      "let bodyText = \"\";",
+                      "",
+                      "try { bodyText = pm.response.text(); } catch (e) {}",
+                      "",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "",
+                      "  id =",
+                      "    j?.orderId ||",
+                      "    j?.id ||",
+                      "    j?._id ||",
+                      "    j?.uuid ||",
+                      "    j?.data?.orderId ||",
+                      "    j?.data?.id ||",
+                      "    j?.data?._id ||",
+                      "    j?.order?.id ||",
+                      "    j?.order?._id ||",
+                      "    null;",
+                      "",
+                      "} catch (e) {}",
+                      "",
+                      "// fallback: Location header",
+                      "const loc = pm.response.headers.get(\"Location\");",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split(\"/\");",
+                      "  id = parts[parts.length - 1];",
+                      "}",
+                      "",
+                      "// fallback conservador: só se tiver 1 ObjectId no body",
+                      "if (!id && bodyText) {",
+                      "  const matches = bodyText.match(/[a-f0-9]{24}/ig) || [];",
+                      "  if (matches.length === 1) id = matches[0];",
+                      "}",
+                      "",
+                      "pm.test(\"Order ID encontrado\", () => {",
+                      "  pm.expect(id, \"Não achei orderId no body nem Location\").to.exist;",
+                      "});",
+                      "",
+                      "pm.environment.set(\"orderId\", String(id));",
+                      "pm.environment.set(\"lastId\", String(id));",
+                      "console.log(\"✅ Salvou orderId =\", id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"restaurantId\": \"{{restaurantId}}\",\r\n  \"userAddressId\": \"{{userAddress}}\",\r\n  \"items\": [\r\n    { \"menuId\": \"{{menuId}}\", \"quantity\": 1 }\r\n  ]\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Accepted",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/accept",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "accept"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Payment",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                      "",
+                      "let id = null;",
+                      "let bodyText = \"\";",
+                      "",
+                      "try { bodyText = pm.response.text(); } catch (e) {}",
+                      "",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "",
+                      "  id =",
+                      "    j?.paymentId ||",
+                      "    j?.id ||",
+                      "    j?._id ||",
+                      "    j?.uuid ||",
+                      "    j?.data?.paymentId ||",
+                      "    j?.data?.id ||",
+                      "    j?.data?._id ||",
+                      "    j?.payment?.id ||",
+                      "    j?.payment?._id ||",
+                      "    null;",
+                      "",
+                      "} catch (e) {}",
+                      "",
+                      "// fallback: Location header",
+                      "const loc = pm.response.headers.get(\"Location\");",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split(\"/\");",
+                      "  id = parts[parts.length - 1];",
+                      "}",
+                      "",
+                      "// fallback conservador: só se tiver 1 ObjectId no body",
+                      "if (!id && bodyText) {",
+                      "  const matches = bodyText.match(/[a-f0-9]{24}/ig) || [];",
+                      "  if (matches.length === 1) id = matches[0];",
+                      "}",
+                      "",
+                      "pm.test(\"Payment ID encontrado\", () => {",
+                      "  pm.expect(id, \"Não achei paymentId no body nem Location\").to.exist;",
+                      "});",
+                      "",
+                      "pm.environment.set(\"paymentId\", String(id));",
+                      "pm.environment.set(\"lastId\", String(id));",
+                      "console.log(\"✅ Salvou paymentId =\", id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"amount\": 34.90,\r\n  \"method\": \"PIX\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Paid",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/paid",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments",
+                    "{{paymentId}}",
+                    "paid"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Preparing",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/preparing",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "preparing"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Out For Delivery",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/out-for-delivery",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "out-for-delivery"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Deliver",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/deliver",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "deliver"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Refunded",
+          "item": [
+            {
+              "name": "Create Order",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                      "",
+                      "let id = null;",
+                      "let bodyText = \"\";",
+                      "",
+                      "try { bodyText = pm.response.text(); } catch (e) {}",
+                      "",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "",
+                      "  id =",
+                      "    j?.orderId ||",
+                      "    j?.id ||",
+                      "    j?._id ||",
+                      "    j?.uuid ||",
+                      "    j?.data?.orderId ||",
+                      "    j?.data?.id ||",
+                      "    j?.data?._id ||",
+                      "    j?.order?.id ||",
+                      "    j?.order?._id ||",
+                      "    null;",
+                      "",
+                      "} catch (e) {}",
+                      "",
+                      "// fallback: Location header",
+                      "const loc = pm.response.headers.get(\"Location\");",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split(\"/\");",
+                      "  id = parts[parts.length - 1];",
+                      "}",
+                      "",
+                      "// fallback conservador: só se tiver 1 ObjectId no body",
+                      "if (!id && bodyText) {",
+                      "  const matches = bodyText.match(/[a-f0-9]{24}/ig) || [];",
+                      "  if (matches.length === 1) id = matches[0];",
+                      "}",
+                      "",
+                      "pm.test(\"Order ID encontrado\", () => {",
+                      "  pm.expect(id, \"Não achei orderId no body nem Location\").to.exist;",
+                      "});",
+                      "",
+                      "pm.environment.set(\"orderId\", String(id));",
+                      "pm.environment.set(\"lastId\", String(id));",
+                      "console.log(\"✅ Salvou orderId =\", id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"restaurantId\": \"{{restaurantId}}\",\r\n  \"userAddressId\": \"{{userAddress}}\",\r\n  \"items\": [\r\n    { \"menuId\": \"{{menuId}}\", \"quantity\": 2}\r\n  ]\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Accepted",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/accept",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "accept"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Payment",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                      "",
+                      "let id = null;",
+                      "let bodyText = \"\";",
+                      "",
+                      "try { bodyText = pm.response.text(); } catch (e) {}",
+                      "",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "",
+                      "  id =",
+                      "    j?.paymentId ||",
+                      "    j?.id ||",
+                      "    j?._id ||",
+                      "    j?.uuid ||",
+                      "    j?.data?.paymentId ||",
+                      "    j?.data?.id ||",
+                      "    j?.data?._id ||",
+                      "    j?.payment?.id ||",
+                      "    j?.payment?._id ||",
+                      "    null;",
+                      "",
+                      "} catch (e) {}",
+                      "",
+                      "// fallback: Location header",
+                      "const loc = pm.response.headers.get(\"Location\");",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split(\"/\");",
+                      "  id = parts[parts.length - 1];",
+                      "}",
+                      "",
+                      "// fallback conservador: só se tiver 1 ObjectId no body",
+                      "if (!id && bodyText) {",
+                      "  const matches = bodyText.match(/[a-f0-9]{24}/ig) || [];",
+                      "  if (matches.length === 1) id = matches[0];",
+                      "}",
+                      "",
+                      "pm.test(\"Payment ID encontrado\", () => {",
+                      "  pm.expect(id, \"Não achei paymentId no body nem Location\").to.exist;",
+                      "});",
+                      "",
+                      "pm.environment.set(\"paymentId\", String(id));",
+                      "pm.environment.set(\"lastId\", String(id));",
+                      "console.log(\"✅ Salvou paymentId =\", id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"amount\": 69.80,\r\n  \"method\": \"CREDIT_CARD\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Paid",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/paid",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments",
+                    "{{paymentId}}",
+                    "paid"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Refunded",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/refunded",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments",
+                    "{{paymentId}}",
+                    "refunded"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Failed",
+          "item": [
+            {
+              "name": "Create Order",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                      "",
+                      "let id = null;",
+                      "let bodyText = \"\";",
+                      "",
+                      "try { bodyText = pm.response.text(); } catch (e) {}",
+                      "",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "",
+                      "  id =",
+                      "    j?.orderId ||",
+                      "    j?.id ||",
+                      "    j?._id ||",
+                      "    j?.uuid ||",
+                      "    j?.data?.orderId ||",
+                      "    j?.data?.id ||",
+                      "    j?.data?._id ||",
+                      "    j?.order?.id ||",
+                      "    j?.order?._id ||",
+                      "    null;",
+                      "",
+                      "} catch (e) {}",
+                      "",
+                      "// fallback: Location header",
+                      "const loc = pm.response.headers.get(\"Location\");",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split(\"/\");",
+                      "  id = parts[parts.length - 1];",
+                      "}",
+                      "",
+                      "// fallback conservador: só se tiver 1 ObjectId no body",
+                      "if (!id && bodyText) {",
+                      "  const matches = bodyText.match(/[a-f0-9]{24}/ig) || [];",
+                      "  if (matches.length === 1) id = matches[0];",
+                      "}",
+                      "",
+                      "pm.test(\"Order ID encontrado\", () => {",
+                      "  pm.expect(id, \"Não achei orderId no body nem Location\").to.exist;",
+                      "});",
+                      "",
+                      "pm.environment.set(\"orderId\", String(id));",
+                      "pm.environment.set(\"lastId\", String(id));",
+                      "console.log(\"✅ Salvou orderId =\", id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"restaurantId\": \"{{restaurantId}}\",\r\n  \"userAddressId\": \"{{userAddress}}\",\r\n  \"items\": [\r\n    { \"menuId\": \"{{menuId}}\", \"quantity\": 1 }\r\n  ]\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Accepted",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/accept",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "accept"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Payment",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                      "",
+                      "let id = null;",
+                      "let bodyText = \"\";",
+                      "",
+                      "try { bodyText = pm.response.text(); } catch (e) {}",
+                      "",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "",
+                      "  id =",
+                      "    j?.paymentId ||",
+                      "    j?.id ||",
+                      "    j?._id ||",
+                      "    j?.uuid ||",
+                      "    j?.data?.paymentId ||",
+                      "    j?.data?.id ||",
+                      "    j?.data?._id ||",
+                      "    j?.payment?.id ||",
+                      "    j?.payment?._id ||",
+                      "    null;",
+                      "",
+                      "} catch (e) {}",
+                      "",
+                      "// fallback: Location header",
+                      "const loc = pm.response.headers.get(\"Location\");",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split(\"/\");",
+                      "  id = parts[parts.length - 1];",
+                      "}",
+                      "",
+                      "// fallback conservador: só se tiver 1 ObjectId no body",
+                      "if (!id && bodyText) {",
+                      "  const matches = bodyText.match(/[a-f0-9]{24}/ig) || [];",
+                      "  if (matches.length === 1) id = matches[0];",
+                      "}",
+                      "",
+                      "pm.test(\"Payment ID encontrado\", () => {",
+                      "  pm.expect(id, \"Não achei paymentId no body nem Location\").to.exist;",
+                      "});",
+                      "",
+                      "pm.environment.set(\"paymentId\", String(id));",
+                      "pm.environment.set(\"lastId\", String(id));",
+                      "console.log(\"✅ Salvou paymentId =\", id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"amount\": 34.90,\r\n  \"method\": \"DEBIT_CARD\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Failed",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/failed",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments",
+                    "{{paymentId}}",
+                    "failed"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "mark As Reject",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/reject",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "reject"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Outras requisições",
+      "item": [
+        {
+          "name": "Restaurants",
+          "item": [
+            {
+              "name": "List Restaurants",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 2xx\", ()=>pm.expect(pm.response.code).to.be.within(200,299));",
+                      "try{pm.response.json(); pm.test(\"JSON válido (se houver body)\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Restaurant by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                      "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants",
+                    "{{restaurantId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Restaurant",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                      "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Restaurante Fiap (edit 1)\",\n  \"addressId\": \"{{addressIdOwner}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"userId\": \"{{userIdOwner}}\",\n  \"openingHours\": {\n    \"opens\": \"10:00\",\n    \"closes\": \"22:00\"\n  },\n      \"menu\": [\n        {\n            \"id\": \"5d45dde7-eeb3-439c-8a1d-ec42d9b496ee\",\n            \"name\": \"Prato do dia - Segunda feira\",\n            \"description\": \"Arroz, feijão, bife e salada\",\n            \"price\": 39.9,\n            \"dineInAvailable\": true,\n            \"imageUrl\": \"https://example.com/pf.jpg\"\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants",
+                    "{{restaurantId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "CRUD de /api/v1/restaurants"
+        },
+        {
+          "name": "Menus (by Restaurant)",
+          "item": [
+            {
+              "name": "List Menus",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 2xx\", ()=>pm.expect(pm.response.code).to.be.within(200,299));",
+                      "try{pm.response.json(); pm.test(\"JSON válido (se houver body)\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants",
+                    "{{restaurantId}}",
+                    "menus"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Menu",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                      "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenOwner}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Prato Feito - Segunda feira (edit)\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": 38.90,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants",
+                    "{{restaurantId}}",
+                    "menus",
+                    "{{menuId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "Rotas de /api/v1/restaurants/{restaurantId}/menus"
+        },
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "Create Address To User",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"addressId\": \"{{addressIdClient}}\",\r\n    \"addressType\": \"WORK\", //HOME, WORK or OTHER\r\n    \"label\": \"Minha casa\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users/{{userIdClient}}/addresses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "{{userIdClient}}",
+                    "addresses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List Users",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 2xx\", ()=>pm.expect(pm.response.code).to.be.within(200,299));",
+                      "try{pm.response.json(); pm.test(\"JSON válido (se houver body)\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List Addresses by ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/queries/users/{{userIdClient}}/addresses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "queries",
+                    "users",
+                    "{{userIdClient}}",
+                    "addresses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                      "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/{{userIdClient}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "{{userIdClient}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                      "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Usuário Tech (edit)\",\n  \"email\": \"userTech.tech@example.com\",\n  \"login\": \"user.techChallenge (edit)\",\n  \"password\": \"SenhaForte123!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users/{{userIdClient}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "{{userIdClient}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "CRUD de /users"
+        },
+        {
+          "name": "Addresses",
+          "item": [
+            {
+              "name": "List Addresses",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 2xx\", ()=>pm.expect(pm.response.code).to.be.within(200,299));",
+                      "try{pm.response.json(); pm.test(\"JSON válido (se houver body)\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/addresses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List Users by ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/queries/addresses/{{addressIdClient}}/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "queries",
+                    "addresses",
+                    "{{addressIdClient}}",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Address by ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                      "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/addresses/{{addressIdClient}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses",
+                    "{{addressIdClient}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Address",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", ()=>pm.expect(pm.response.code).to.eql(200));",
+                      "try{pm.response.json(); pm.test(\"JSON OK\", ()=>pm.expect(true).to.be.true);}catch(e){}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"postalCode\": \"01234-567\",\n    \"streetName\": \"Rua A (edit)\",\n    \"streetNumber\": 123,\n    \"additionalInfo\": \"Sala 2\",\n    \"neighborhood\": \"Centro\",\n    \"city\": \"São Paulo\",\n    \"stateProvince\": \"SP\",\n    \"country\": \"Brazil\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/addresses/{{addressIdClient}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses",
+                    "{{addressIdClient}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "CRUD de /addresses"
+        },
+        {
+          "name": "UserAddres (Vinculo Usuário e Endereço)",
+          "item": [
+            {
+              "name": "List Todas Relações",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/user-addresses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "user-addresses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Address From User !",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"type\": \"OTHER\",\r\n  \"label\": \"Lazer\",\r\n  \"principal\": true\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users/{{userIdClient}}/addresses/{{userAddress}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "{{userIdClient}}",
+                    "addresses",
+                    "{{userAddress}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Deletes",
+          "item": [
+            {
+              "name": "Delete Menu",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus/{{menuId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants",
+                    "{{restaurantId}}",
+                    "menus",
+                    "{{menuId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Restaurant",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants",
+                    "{{restaurantId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteUserAddress",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"6941aeb8f0e9d239c3f1354c\",\r\n  \"addressId\": \"694770137554fbaff90caa2b\",\r\n  \"type\": \"HOME\",\r\n  \"label\": \"Casa\",\r\n  \"principal\": true\r\n}\r\n"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/user-addresses/{{userAddress}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "user-addresses",
+                    "{{userAddress}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/{{userIdClient}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "{{userIdClient}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Address",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/addresses/{{addressIdClient}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses",
+                    "{{addressIdClient}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteOrder",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/caef54d6-d7e2-4a46-9a42-b752815077c1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "caef54d6-d7e2-4a46-9a42-b752815077c1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Order",
+          "item": [
+            {
+              "name": "Mark Order As",
+              "item": [
+                {
+                  "name": "mark As Accepted",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{tokenOwner}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/orders/{{orderId}}/accept",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "orders",
+                        "{{orderId}}",
+                        "accept"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "mark As Preparing",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{tokenOwner}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/orders/{{orderId}}/preparing",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "orders",
+                        "{{orderId}}",
+                        "preparing"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "mark As Reject",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{tokenOwner}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/orders/{{orderId}}/reject",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "orders",
+                        "{{orderId}}",
+                        "reject"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "mark As Out For Delivery",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{tokenOwner}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/orders/{{orderId}}/out-for-delivery",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "orders",
+                        "{{orderId}}",
+                        "out-for-delivery"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "mark As Deliver",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{tokenOwner}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/orders/{{orderId}}/deliver",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "orders",
+                        "{{orderId}}",
+                        "deliver"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Create Order",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                      "",
+                      "let id = null;",
+                      "let bodyText = \"\";",
+                      "",
+                      "try { bodyText = pm.response.text(); } catch (e) {}",
+                      "",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "",
+                      "  id =",
+                      "    j?.orderId ||",
+                      "    j?.id ||",
+                      "    j?._id ||",
+                      "    j?.uuid ||",
+                      "    j?.data?.orderId ||",
+                      "    j?.data?.id ||",
+                      "    j?.data?._id ||",
+                      "    j?.order?.id ||",
+                      "    j?.order?._id ||",
+                      "    null;",
+                      "",
+                      "} catch (e) {}",
+                      "",
+                      "// fallback: Location header",
+                      "const loc = pm.response.headers.get(\"Location\");",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split(\"/\");",
+                      "  id = parts[parts.length - 1];",
+                      "}",
+                      "",
+                      "// fallback conservador: só se tiver 1 ObjectId no body",
+                      "if (!id && bodyText) {",
+                      "  const matches = bodyText.match(/[a-f0-9]{24}/ig) || [];",
+                      "  if (matches.length === 1) id = matches[0];",
+                      "}",
+                      "",
+                      "pm.test(\"Order ID encontrado\", () => {",
+                      "  pm.expect(id, \"Não achei orderId no body nem Location\").to.exist;",
+                      "});",
+                      "",
+                      "pm.environment.set(\"orderId\", String(id));",
+                      "pm.environment.set(\"lastId\", String(id));",
+                      "console.log(\"✅ Salvou orderId =\", id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"restaurantId\": \"{{restaurantId}}\",\r\n  \"userAddressId\": \"{{userAddress}}\",\r\n  \"items\": [\r\n    { \"menuId\": \"{{menuId}}\", \"quantity\": 1 }\r\n  ]\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List My Orders",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List All Orders",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Order By Id",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Order",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"items\": [\r\n    { \"menuId\": \"{{menuId}}\", \"quantity\": 1 }\r\n  ]\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Payment",
+          "item": [
+            {
+              "name": "Mark Payment As",
+              "item": [
+                {
+                  "name": "mark As Paid",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{tokenOwner}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/paid",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "orders",
+                        "{{orderId}}",
+                        "payments",
+                        "{{paymentId}}",
+                        "paid"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "mark As Failed",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{tokenAdmin}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/failed",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "orders",
+                        "{{orderId}}",
+                        "payments",
+                        "{{paymentId}}",
+                        "failed"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "mark As Refunded",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{tokenOwner}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/refunded",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "orders",
+                        "{{orderId}}",
+                        "payments",
+                        "{{paymentId}}",
+                        "refunded"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Create Payment",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.expect(pm.response.code).to.eql(201));",
+                      "",
+                      "let id = null;",
+                      "let bodyText = \"\";",
+                      "",
+                      "try { bodyText = pm.response.text(); } catch (e) {}",
+                      "",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "",
+                      "  id =",
+                      "    j?.paymentId ||",
+                      "    j?.id ||",
+                      "    j?._id ||",
+                      "    j?.uuid ||",
+                      "    j?.data?.paymentId ||",
+                      "    j?.data?.id ||",
+                      "    j?.data?._id ||",
+                      "    j?.payment?.id ||",
+                      "    j?.payment?._id ||",
+                      "    null;",
+                      "",
+                      "} catch (e) {}",
+                      "",
+                      "// fallback: Location header",
+                      "const loc = pm.response.headers.get(\"Location\");",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split(\"/\");",
+                      "  id = parts[parts.length - 1];",
+                      "}",
+                      "",
+                      "// fallback conservador: só se tiver 1 ObjectId no body",
+                      "if (!id && bodyText) {",
+                      "  const matches = bodyText.match(/[a-f0-9]{24}/ig) || [];",
+                      "  if (matches.length === 1) id = matches[0];",
+                      "}",
+                      "",
+                      "pm.test(\"Payment ID encontrado\", () => {",
+                      "  pm.expect(id, \"Não achei paymentId no body nem Location\").to.exist;",
+                      "});",
+                      "",
+                      "pm.environment.set(\"paymentId\", String(id));",
+                      "pm.environment.set(\"lastId\", String(id));",
+                      "console.log(\"✅ Salvou paymentId =\", id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenClient}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"amount\": 34.90,\r\n  \"method\": \"PIX\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Payment By Id",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments",
+                    "{{paymentId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List Payments by Order Id",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenAdmin}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "payments"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Erros tratados",
+          "item": [
+            {
+              "name": "Create Address (com erro tratado de número)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                      "let id = null;",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                      "} catch(e) {}",
+                      "const loc = pm.response.headers.get('Location');",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split('/');",
+                      "  id = parts[parts.length-1];",
+                      "}",
+                      "if (id) {",
+                      "  pm.environment.set(\"addressId\", String(id));",
+                      "  pm.environment.set(\"lastId\", String(id));",
+                      "  console.log(\"✅ Salvou addressId =\", id);",
+                      "} else {",
+                      "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"postalCode\": \"01234-567\",\n  \"streetName\": \"teste/errp 14.01\",\n  \"streetNumber\": \"\",\n  \"additionalInfo\": \"Sala 2\",\n  \"neighborhood\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"country\": \"Brazil\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/addresses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Address (deletar endereço principal de um Usuário)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 204\", ()=>pm.expect(pm.response.code).to.eql(204));"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/addresses/{{addressIdAdmin}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "addresses",
+                    "{{addressIdAdmin}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create User (com erro tratado)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                      "let id = null;",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                      "} catch(e) {}",
+                      "const loc = pm.response.headers.get('Location');",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split('/');",
+                      "  id = parts[parts.length-1];",
+                      "}",
+                      "if (id) {",
+                      "  pm.environment.set(\"userId\", String(id));",
+                      "  pm.environment.set(\"lastId\", String(id));",
+                      "  console.log(\"✅ Salvou userId =\", id);",
+                      "} else {",
+                      "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"\",\n  \"userType\": \"OWNER\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech13\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create User (com erro tratado - userType)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                      "let id = null;",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                      "} catch(e) {}",
+                      "const loc = pm.response.headers.get('Location');",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split('/');",
+                      "  id = parts[parts.length-1];",
+                      "}",
+                      "if (id) {",
+                      "  pm.environment.set(\"userId\", String(id));",
+                      "  pm.environment.set(\"lastId\", String(id));",
+                      "  console.log(\"✅ Salvou userId =\", id);",
+                      "} else {",
+                      "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"teste 12.01\",\n  \"userType\": \"outro\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech8\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create User (com erro tratado - login)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                      "let id = null;",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                      "} catch(e) {}",
+                      "const loc = pm.response.headers.get('Location');",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split('/');",
+                      "  id = parts[parts.length-1];",
+                      "}",
+                      "if (id) {",
+                      "  pm.environment.set(\"userId\", String(id));",
+                      "  pm.environment.set(\"lastId\", String(id));",
+                      "  console.log(\"✅ Salvou userId =\", id);",
+                      "} else {",
+                      "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"teste 12.01\",\n  \"userType\": \"OWNER\",\n  \"email\": \"email@fiap.com\",\n  \"login\": \"user.tech2\",\n  \"password\": \"SenhaForte123!\",\n  \"addressId\": \"{{addressId}}\",\n  \"addressType\": \"HOME\",\n  \"label\": \"casa\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Restaurant (Com erro tratado)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                      "let id = null;",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                      "} catch(e) {}",
+                      "const loc = pm.response.headers.get('Location');",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split('/');",
+                      "  id = parts[parts.length-1];",
+                      "}",
+                      "if (id) {",
+                      "  pm.environment.set(\"restaurantId\", String(id));",
+                      "  pm.environment.set(\"lastId\", String(id));",
+                      "  console.log(\"✅ Salvou restaurantId =\", id);",
+                      "} else {",
+                      "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Restaurant (Com erro tratado - Criar com Usuário tipo cliente)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                      "let id = null;",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                      "} catch(e) {}",
+                      "const loc = pm.response.headers.get('Location');",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split('/');",
+                      "  id = parts[parts.length-1];",
+                      "}",
+                      "if (id) {",
+                      "  pm.environment.set(\"restaurantId\", String(id));",
+                      "  pm.environment.set(\"lastId\", String(id));",
+                      "  console.log(\"✅ Salvou restaurantId =\", id);",
+                      "} else {",
+                      "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Restaurante FIAP\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"22:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Restaurant (Com erro tratado - horário)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                      "let id = null;",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                      "} catch(e) {}",
+                      "const loc = pm.response.headers.get('Location');",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split('/');",
+                      "  id = parts[parts.length-1];",
+                      "}",
+                      "if (id) {",
+                      "  pm.environment.set(\"restaurantId\", String(id));",
+                      "  pm.environment.set(\"lastId\", String(id));",
+                      "  console.log(\"✅ Salvou restaurantId =\", id);",
+                      "} else {",
+                      "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Restaurante 14.01\",\n  \"addressId\": \"{{addressId}}\",\n  \"cuisineType\": \"BRAZILIAN\",\n  \"openingHours\": {\n    \"opens\": \"08:00\",\n    \"closes\": \"30:00\"\n  },\n  \"userId\": \"{{userId}}\",\n  \"menu\": []\n}\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Menu (for Restaurant) (com erro tratado - preço)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 201\", ()=>pm.expect(pm.response.code).to.eql(201));",
+                      "let id = null;",
+                      "try {",
+                      "  const j = pm.response.json();",
+                      "  id = (j && (j.id || j.uuid || j._id)) ? (j.id || j.uuid || j._id) : null;",
+                      "} catch(e) {}",
+                      "const loc = pm.response.headers.get('Location');",
+                      "if (!id && loc) {",
+                      "  const parts = loc.split('/');",
+                      "  id = parts[parts.length-1];",
+                      "}",
+                      "if (id) {",
+                      "  pm.environment.set(\"menuId\", String(id));",
+                      "  pm.environment.set(\"lastId\", String(id));",
+                      "  console.log(\"✅ Salvou menuId =\", id);",
+                      "} else {",
+                      "  console.warn(\"⚠️ Não achei ID no body/header. Ajuste o script conforme seu payload.\");",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"prato 2\",\n  \"description\": \"Arroz, feijão, bife e salada\",\n  \"price\": -10.0,\n  \"dineInAvailable\": true,\n  \"imageUrl\": \"https://example.com/pf.jpg\"\n}\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menus",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "restaurants",
+                    "{{restaurantId}}",
+                    "menus"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
