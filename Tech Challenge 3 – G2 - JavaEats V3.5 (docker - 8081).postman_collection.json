@@ -1,7 +1,7 @@
 {
   "info": {
-    "_postman_id": "aacebf17-207b-412e-825f-40f967e229f3",
-    "name": "Tech Challenge 3 – G2 - JavaEats V3.4 (docker - 8081)",
+    "_postman_id": "961b5df1-cd06-4725-943b-42201e42ffdc",
+    "name": "Tech Challenge 3 – G2 - JavaEats V3.5 (docker - 8081)",
     "description": "Coleção baseada nos controllers fornecidos:\n\n- Restaurant: /api/v1/restaurants\n    \n- Menu: /api/v1/restaurants/{restaurantId}/menus\n    \n- User: /users\n    \n- Address: /addresses\n    \n\nImportante: RestaurantDocument é persistência. O contrato real de POST/PUT é definido pelos DTOs (RestaurantRequest etc.).  \nOs bodies aqui são exemplos; ajuste conforme validações (@NotNull/@NotBlank) e estrutura do OpeningHours.\n\nFluxo feliz:\n\n1) Create User -> {{userId}}  \n2) Create Address -> {{addressId}}  \n3) Create Restaurant -> {{restaurantId}}  \n4) Create Menu -> {{menuId}}",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "28803614"
@@ -1251,37 +1251,6 @@
               "response": []
             },
             {
-              "name": "mark As Paid",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{tokenOwner}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "PATCH",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/paid",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "orders",
-                    "{{orderId}}",
-                    "payments",
-                    "{{paymentId}}",
-                    "paid"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
               "name": "mark As Preparing",
               "request": {
                 "auth": {
@@ -1604,37 +1573,6 @@
               "response": []
             },
             {
-              "name": "mark As Paid",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{tokenOwner}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "PATCH",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/paid",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "orders",
-                    "{{orderId}}",
-                    "payments",
-                    "{{paymentId}}",
-                    "paid"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
               "name": "mark As Refunded",
               "request": {
                 "auth": {
@@ -1895,37 +1833,6 @@
                     "orders",
                     "{{orderId}}",
                     "payments"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "mark As Failed",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{tokenAdmin}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "PATCH",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/orders/{{orderId}}/payments/{{paymentId}}/failed",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "orders",
-                    "{{orderId}}",
-                    "payments",
-                    "{{paymentId}}",
-                    "failed"
                   ]
                 }
               },
@@ -4040,6 +3947,22 @@
           ]
         }
       ]
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
     }
   ],
   "auth": {
