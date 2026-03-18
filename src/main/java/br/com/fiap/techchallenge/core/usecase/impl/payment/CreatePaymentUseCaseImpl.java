@@ -27,13 +27,11 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
     private final PaymentRepositoryPort paymentRepository;
     private final OrderRepositoryPort orderRepository;
     private final ProcessPaymentUseCase processPaymentUseCase;
-    private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
 
-    public CreatePaymentUseCaseImpl(PaymentRepositoryPort paymentRepository, OrderRepositoryPort orderRepository, ProcessPaymentUseCase processPaymentUseCase, MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase) {
+    public CreatePaymentUseCaseImpl(PaymentRepositoryPort paymentRepository, OrderRepositoryPort orderRepository, ProcessPaymentUseCase processPaymentUseCase) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
         this.processPaymentUseCase = processPaymentUseCase;
-        this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
     }
 
 
@@ -101,9 +99,7 @@ public class CreatePaymentUseCaseImpl implements CreatePaymentUseCase {
         );
 
         paymentRepository.save(payment);
-
-        // ✅ aqui ele vira PAID e o order é ajustado conforme sua regra
-        markPaymentAsPaidUseCase.execute(order.getId(), payment.getId());
+        processPaymentUseCase.execute(order, payment);
 
         Payment updatePayment = paymentRepository.findById(payment.getId())
                 .orElse(payment);
