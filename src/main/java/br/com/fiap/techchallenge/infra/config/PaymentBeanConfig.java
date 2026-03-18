@@ -31,14 +31,12 @@ public class PaymentBeanConfig {
     public CreatePaymentUseCase createPaymentUseCase(
             PaymentRepositoryPort paymentRepositoryPort,
             OrderRepositoryPort orderRepositoryPort,
-            ProcessPaymentUseCase processPaymentUseCase,
-            MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase
+            ProcessPaymentUseCase processPaymentUseCase
     ) {
         return new CreatePaymentUseCaseImpl(
                 paymentRepositoryPort,
                 orderRepositoryPort,
-                processPaymentUseCase,
-                markPaymentAsPaidUseCase
+                processPaymentUseCase
         );
     }
 

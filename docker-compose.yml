@@ -8,7 +8,7 @@ services:
     environment:
       MONGO_INITDB_DATABASE: techchallenge
     ports:
-      - "27018:27017"   # host:container (só pra você debugar)
+      - "27018:27017"
     networks:
       - fiap-network
     volumes:
@@ -19,6 +19,14 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  payment-simulator:
+    image: docker.io/erickemprobr/procpag:latest
+    platform: linux/amd64
+    ports:
+      - "8089:8089"
+    networks:
+      - fiap-network
 
 
   # Spring Boot App
@@ -32,12 +40,13 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+      # se o simulador tiver healthcheck, dá pra usar condition também
+      payment-simulator:
+        condition: service_started
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/techchallenge?retryWrites=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=5000
       JWT_SECRET_BASE64: wE5aP9xM8vKZbS4j8Q7mN2tYkP3rA1xCqWvL9uT0gHk=
-      EXTERNAL_PAYMENT_BASE_URL: http://host.docker.internal:8089
-    # ✅ remove healthcheck pra não depender de curl dentro do container
-    # healthcheck: ...
+      EXTERNAL_PAYMENT_BASE_URL: http://payment-simulator:8089
 
 networks:
   fiap-network:
@@ -45,5 +54,3 @@ networks:
 
 volumes:
   mongodb_data:
-
-
