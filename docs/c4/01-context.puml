@@ -1,0 +1,26 @@
+@startuml
+title C4 - Context Diagram (Tech Challenge)
+
+skinparam rectangle {
+    RoundCorner 20
+}
+
+skinparam actor {
+    BackgroundColor LightGray
+}
+
+actor Cliente
+actor Administrador
+
+rectangle "Tech Challenge API\n(Sistema de pedidos, usuários e pagamentos)" as SYSTEM #LightBlue
+
+rectangle "Gateway de Pagamento\n(Sistema Externo)" as PAYMENT #Orange
+rectangle "Auth Provider\n(JWT)" as AUTH #Orange
+
+Cliente --> SYSTEM : Faz pedidos / gerencia conta
+Administrador --> SYSTEM : Gerencia restaurantes
+
+SYSTEM --> PAYMENT : Processa pagamentos
+SYSTEM --> AUTH : Autenticação
+
+@enduml

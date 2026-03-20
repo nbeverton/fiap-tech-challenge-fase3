@@ -1,0 +1,32 @@
+@startuml
+title Sequence - Order + Payment Flow
+
+actor Cliente
+
+participant "OrderController" as OC
+participant "Order UseCase" as OU
+participant "OrderGateway" as OG
+participant "MongoDB" as DB
+participant "PaymentController" as PC
+participant "Payment UseCase" as PU
+participant "PaymentGateway" as PG
+participant "Gateway Externo" as EXT
+
+Cliente -> OC : POST /orders
+OC -> OU : criar pedido
+OU -> OG : salvar pedido
+OG -> DB : insert
+
+Cliente -> PC : POST /payments
+PC -> PU : processar pagamento
+PU -> PG : chamar gateway
+PG -> EXT : request pagamento
+
+EXT --> PG : resposta
+
+PU -> OG : atualizar pedido
+PU --> PC : resultado
+
+PC --> Cliente : sucesso
+
+@enduml

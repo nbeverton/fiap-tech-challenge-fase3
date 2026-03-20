@@ -1,0 +1,96 @@
+@startuml
+title C4 - Component Diagram (Tech Challenge - Final)
+
+skinparam rectangle {
+    RoundCorner 15
+}
+
+' =========================
+' WEB LAYER
+' =========================
+rectangle "Infra - Web Layer" as WEB #LightBlue {
+
+    rectangle "Controllers" {
+        rectangle "UserController"
+        rectangle "AddressController"
+        rectangle "UserAddressController"
+        rectangle "UserAddressQueryController"
+        rectangle "RestaurantController"
+        rectangle "OrderController"
+        rectangle "PaymentController"
+        rectangle "AuthController"
+    }
+
+    rectangle "DTOs" {
+        rectangle "UserDTO"
+        rectangle "OrderDTO"
+        rectangle "PaymentDTO"
+    }
+}
+
+' =========================
+' APPLICATION CORE
+' =========================
+rectangle "Core - Use Cases" as CORE #LightGreen {
+
+    rectangle "Input Ports (in)" {
+        rectangle "CreateUserUseCase"
+        rectangle "CreateOrderUseCase"
+        rectangle "ProcessPaymentUseCase"
+    }
+
+    rectangle "UseCase Impl (impl)" {
+        rectangle "CreateUserUseCaseImpl"
+        rectangle "CreateOrderUseCaseImpl"
+        rectangle "ProcessPaymentUseCaseImpl"
+    }
+
+    rectangle "Output Ports (out)" {
+        rectangle "UserGateway"
+        rectangle "OrderGateway"
+        rectangle "PaymentGateway"
+        rectangle "RestaurantGateway"
+    }
+}
+
+' =========================
+' INFRASTRUCTURE
+' =========================
+rectangle "Infra - Persistence (MongoDB)" as PERSISTENCE #LightYellow {
+    rectangle "Repositories"
+    rectangle "Mappers (Persistence)"
+}
+
+rectangle "Infra - External Integration" as EXTERNAL #Orange {
+    rectangle "PaymentGatewayAdapter"
+}
+
+rectangle "Infra - Security" as SECURITY #LightGray {
+    rectangle "SecurityConfig"
+    rectangle "JwtTokenProviderAdapter"
+    rectangle "BCryptPasswordEncoderAdapter"
+}
+
+rectangle "Infra - Mapper Layer" as MAPPER #LightPink {
+    rectangle "DTO ↔ Domain Mapper"
+}
+
+' =========================
+' RELATIONSHIPS
+' =========================
+
+WEB --> CORE : chama use cases
+WEB --> MAPPER : converte DTO ↔ domínio
+
+CORE --> CORE : in → impl
+CORE --> CORE : impl → out
+
+CORE --> PERSISTENCE : via gateways
+CORE --> EXTERNAL : pagamento
+
+PERSISTENCE --> CORE : implementa gateways
+EXTERNAL --> CORE : implementa PaymentGateway
+
+WEB --> SECURITY : autenticação
+
+@enduml

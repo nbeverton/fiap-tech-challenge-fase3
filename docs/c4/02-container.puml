@@ -1,0 +1,30 @@
+@startuml
+title C4 - Container Diagram (Tech Challenge)
+
+skinparam rectangle {
+    RoundCorner 20
+}
+
+actor Cliente #LightGray
+
+rectangle "Tech Challenge System" {
+
+    rectangle "API REST\n(Spring Boot)\n\n- Controllers\n- Endpoints HTTP" as API #LightBlue
+
+    rectangle "Application Layer\n(Java)\n\n- Use Cases\n- Regras de negócio" as APP #LightGreen
+
+    rectangle "MongoDB\n(NoSQL)\n\n- Users\n- Orders\n- Restaurants\n- Payments" as DB #LightYellow
+}
+
+rectangle "Gateway de Pagamento\n(Externo)" as PAYMENT #Orange
+rectangle "Auth Provider\n(JWT)" as AUTH #Orange
+
+Cliente --> API : HTTP / JSON
+
+API --> APP : Executa
+APP --> DB : Persistência
+
+APP --> PAYMENT : Integra pagamento
+API --> AUTH : Autenticação JWT
+
+@enduml

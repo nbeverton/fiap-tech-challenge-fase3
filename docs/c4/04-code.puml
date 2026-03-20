@@ -1,0 +1,96 @@
+@startuml
+title C4 - Code Diagram (Infra Real)
+
+skinparam classAttributeIconSize 0
+
+' =========================
+' CORE
+' =========================
+package "core.domain" #LightGreen {
+    package "enums" {
+        class OrderStatus
+        class PaymentStatus
+    }
+
+    package "valueobjects" {
+        class OrderItem
+        class Menu
+    }
+}
+
+package "core.usecase.in" #LightGreen {
+    interface CreateOrderUseCase
+    interface ProcessPaymentUseCase
+}
+
+package "core.usecase.impl" #Green {
+    class CreateOrderUseCaseImpl
+    class ProcessPaymentUseCaseImpl
+}
+
+package "core.usecase.out" #LightGray {
+    interface OrderGateway
+    interface PaymentGateway
+}
+
+' =========================
+' INFRA WEB
+' =========================
+package "infra.web.controller" #LightBlue {
+    class OrderController
+    class PaymentController
+    class UserController
+}
+
+package "infra.web.dto" #LightBlue {
+    class OrderRequest
+    class PaymentRequest
+}
+
+' =========================
+' INFRA PERSISTENCE
+' =========================
+package "infra.persistence.repository" #LightYellow {
+    class OrderRepository
+}
+
+package "infra.persistence.mapper" #LightYellow {
+    class OrderMapper
+}
+
+' =========================
+' EXTERNAL
+' =========================
+package "infra.external_payment" #Orange {
+    class PaymentGatewayAdapter
+}
+
+' =========================
+' SECURITY
+' =========================
+package "infra.security" #LightGray {
+    class SecurityConfig
+    class JwtTokenProviderAdapter
+}
+
+' =========================
+' RELAÇÕES
+' =========================
+
+OrderController --> CreateOrderUseCase
+PaymentController --> ProcessPaymentUseCase
+
+CreateOrderUseCase <|.. CreateOrderUseCaseImpl
+ProcessPaymentUseCase <|.. ProcessPaymentUseCaseImpl
+
+CreateOrderUseCaseImpl --> OrderGateway
+ProcessPaymentUseCaseImpl --> PaymentGateway
+
+OrderGateway <|.. OrderRepository
+PaymentGateway <|.. PaymentGatewayAdapter
+
+OrderController --> OrderRequest
+CreateOrderUseCaseImpl --> OrderMapper
+OrderMapper --> OrderRepository
+
+@enduml
