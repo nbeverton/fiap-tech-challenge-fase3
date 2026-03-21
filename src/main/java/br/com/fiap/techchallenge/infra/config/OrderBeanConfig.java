@@ -13,6 +13,7 @@ import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersByClientUseCase
 import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.UpdateOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.*;
+import br.com.fiap.techchallenge.core.usecase.out.event.OrderCreatedEventPublisherPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,12 +25,16 @@ public class OrderBeanConfig {
             OrderRepositoryPort orderRepositoryPort,
             UserAddressRepositoryPort userAddressRepositoryPort,
             AddressRepositoryPort addressRepositoryPort,
-            RestaurantRepositoryPort restaurantRepositoryPort) {
+            RestaurantRepositoryPort restaurantRepositoryPort,
+            OrderCreatedEventPublisherPort orderCreatedEventPublisherPort
+    ) {
         return new CreateOrderUseCaseImpl(
                 orderRepositoryPort,
                 userAddressRepositoryPort,
                 addressRepositoryPort,
-                restaurantRepositoryPort);
+                restaurantRepositoryPort,
+                orderCreatedEventPublisherPort
+        );
     }
 
     @Bean

@@ -19,6 +19,8 @@ import br.com.fiap.techchallenge.core.usecase.out.AddressRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.UserAddressRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.event.OrderCreatedEventPublisherPort;
+import br.com.fiap.techchallenge.infra.messaging.kafka.event.OrderCreatedEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -34,17 +36,19 @@ public class CreateOrderUseCaseImpl implements CreateOrderUseCase {
     private final UserAddressRepositoryPort userAddressRepository;
     private final AddressRepositoryPort addressRepository;
     private final RestaurantRepositoryPort restaurantRepository;
+    private final OrderCreatedEventPublisherPort orderCreatedEventPublisher;
 
     public CreateOrderUseCaseImpl(
             OrderRepositoryPort orderRepository,
             UserAddressRepositoryPort userAddressRepository,
             AddressRepositoryPort addressRepository,
-            RestaurantRepositoryPort restaurantRepository
+            RestaurantRepositoryPort restaurantRepository, OrderCreatedEventPublisherPort orderCreatedEventPublisher
     ) {
         this.orderRepository = orderRepository;
         this.userAddressRepository = userAddressRepository;
         this.addressRepository = addressRepository;
         this.restaurantRepository = restaurantRepository;
+        this.orderCreatedEventPublisher = orderCreatedEventPublisher;
     }
 
     @Override
@@ -109,7 +113,18 @@ public class CreateOrderUseCaseImpl implements CreateOrderUseCase {
                 now
         );
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        orderCreatedEventPublisher.publish(
+                new OrderCreatedEvent(
+                        UUID.randomUUID().toString(),
+                        "pedido.criado",
+                        Instant.now(),
+                        savedOrder.getId()
+                )
+        );
+
+        return savedOrder;
     }
 
     // -------------------------
