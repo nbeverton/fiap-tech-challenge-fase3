@@ -3,13 +3,13 @@ package br.com.fiap.techchallenge.infra.config;
 import br.com.fiap.techchallenge.core.usecase.impl.order.status.*;
 import br.com.fiap.techchallenge.core.usecase.impl.order.CreateOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.GetOrderByIdUseCaseImpl;
-import br.com.fiap.techchallenge.core.usecase.impl.order.ListOrdersByClientUseCaseImpl;
+import br.com.fiap.techchallenge.core.usecase.impl.order.ListOrdersByUserUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.ListOrdersUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.impl.order.UpdateOrderUseCaseImpl;
 import br.com.fiap.techchallenge.core.usecase.in.order.status.*;
 import br.com.fiap.techchallenge.core.usecase.in.order.CreateOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.GetOrderByIdUseCase;
-import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersByClientUseCase;
+import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersByUserUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.ListOrdersUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.order.UpdateOrderUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.*;
@@ -112,8 +112,8 @@ public class OrderBeanConfig {
     }
 
     @Bean
-    public ListOrdersByClientUseCase listOrdersByClientUseCase(
+    public ListOrdersByUserUseCase listOrdersByClientUseCase(
             OrderRepositoryPort orderRepositoryPort) {
-        return new ListOrdersByClientUseCaseImpl(orderRepositoryPort);
+        return new ListOrdersByUserUseCaseImpl(orderRepositoryPort);
     }
 }

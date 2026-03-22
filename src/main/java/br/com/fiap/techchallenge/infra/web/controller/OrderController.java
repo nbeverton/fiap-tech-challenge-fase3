@@ -11,10 +11,8 @@ import br.com.fiap.techchallenge.infra.web.dto.order.UpdateOrderRequest;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderResponseMapper;
 import br.com.fiap.techchallenge.infra.web.mapper.order.OrderWebMapper;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
@@ -34,7 +32,7 @@ public class OrderController {
     private final MarkOrderAsRejectedUseCase rejectOrderUseCase;
     private final MarkOrderAsPreparingUseCase startPreparingOrderUseCase;
 
-    private final ListOrdersByClientUseCase listOrdersByClientUseCase;
+    private final ListOrdersByUserUseCase listOrdersByClientUseCase;
 
     public OrderController(CreateOrderUseCase createOrderUseCase,
             GetOrderByIdUseCase getOrderByIdUseCase,
@@ -45,7 +43,7 @@ public class OrderController {
             MarkOrderAsOutForDeliveryUseCase outForDeliveryOrderUseCase,
             MarkOrderAsRejectedUseCase rejectOrderUseCase,
             MarkOrderAsPreparingUseCase startPreparingOrderUseCase,
-            ListOrdersByClientUseCase listOrdersByClientUseCase) {
+            ListOrdersByUserUseCase listOrdersByClientUseCase) {
 
         this.createOrderUseCase = createOrderUseCase;
         this.getOrderByIdUseCase = getOrderByIdUseCase;
