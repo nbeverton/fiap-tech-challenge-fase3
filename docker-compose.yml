@@ -23,6 +23,7 @@ services:
   # External payment simulator
   payment-simulator:
     image: docker.io/erickemprobr/procpag:latest
+    container_name: PAGAMENTO_EXTERNO_FIAP
     platform: linux/amd64
     ports:
       - "8089:8089"
