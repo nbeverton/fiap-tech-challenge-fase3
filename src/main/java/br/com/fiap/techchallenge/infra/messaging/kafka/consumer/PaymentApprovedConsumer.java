@@ -13,7 +13,7 @@ public class PaymentApprovedConsumer {
     @KafkaListener(
             id = "paymentApprovedConsumer",
             topics = "${app.kafka.topic.payment-approved}",
-            groupId = "${spring.kafka.consumer.group-id}"
+            groupId = "${app.kafka.group.payment-approved}"
     )
     public void consume(String payload){
         log.info("Received event from topic pagamento.aprovado: {}", payload);

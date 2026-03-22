@@ -37,7 +37,7 @@ public class PaymentPendingConsumer {
     @KafkaListener(
             id = "paymentPendingConsumer",
             topics = "${app.kafka.topic.payment-pending}",
-            groupId = "${spring.kafka.consumer.group-id}",
+            groupId = "${app.kafka.group.payment-pending}",
             containerFactory = "paymentPendingKafkaListenerContainerFactory"
     )
     public void consume(String payload){

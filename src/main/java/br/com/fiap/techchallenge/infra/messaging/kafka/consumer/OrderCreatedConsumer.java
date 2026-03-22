@@ -14,7 +14,7 @@ public class OrderCreatedConsumer {
     @KafkaListener(
             id = "orderCreatedConsumer",
             topics = "${app.kafka.topic.order-created}",
-            groupId = "${spring.kafka.consumer.group-id}"
+            groupId = "${app.kafka.group.order-created}"
     )
     public void consume(String payload){
         log.info("Received event from topic pedido.criado: {}", payload);

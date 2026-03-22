@@ -1,0 +1,34 @@
+package br.com.fiap.techchallenge.infra.messaging.kafka.config;
+
+import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.TopicBuilder;
+
+@Configuration
+public class KafkaTopicsConfig {
+
+    @Bean
+    public NewTopic orderCreatedTopic(KafkaTopicProperties properties) {
+        return TopicBuilder.name(properties.getOrderCreated())
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic paymentPendingTopic(KafkaTopicProperties properties) {
+        return TopicBuilder.name(properties.getPaymentPending())
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic paymentApprovedTopic(KafkaTopicProperties properties) {
+        return TopicBuilder.name(properties.getPaymentApproved())
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+}
