@@ -20,6 +20,7 @@ services:
       retries: 5
       start_period: 10s
 
+  # External payment simulator
   payment-simulator:
     image: docker.io/erickemprobr/procpag:latest
     platform: linux/amd64
@@ -28,6 +29,28 @@ services:
     networks:
       - fiap-network
 
+  # Kafka broker (KRaft mode for local development)
+  kafka:
+    image: apache/kafka:4.0.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    networks:
+      - fiap-network
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://:9092,EXTERNAL://:9094,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
 
   # Spring Boot App
   app:
@@ -40,13 +63,16 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-      # se o simulador tiver healthcheck, dá pra usar condition também
       payment-simulator:
+        condition: service_started
+      kafka:
         condition: service_started
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/techchallenge?retryWrites=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=5000
       JWT_SECRET_BASE64: wE5aP9xM8vKZbS4j8Q7mN2tYkP3rA1xCqWvL9uT0gHk=
       EXTERNAL_PAYMENT_BASE_URL: http://payment-simulator:8089
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CONSUMER_GROUP_ID: techchallenge-payment-group
 
 networks:
   fiap-network:

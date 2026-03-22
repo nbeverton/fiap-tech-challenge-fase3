@@ -6,10 +6,12 @@ import br.com.fiap.techchallenge.core.domain.model.Payment;
 import br.com.fiap.techchallenge.core.usecase.in.payment.external.ProcessPaymentUseCase;
 import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsPaidUseCase;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.event.PaymentApprovedEventPublisherPort;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.ExternalPaymentGatewayPort;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentRequest;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentResponse;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.dto.ExternalPaymentStatusResult;
+import br.com.fiap.techchallenge.infra.messaging.kafka.event.PaymentApprovedEvent;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -22,12 +24,14 @@ public class ProcessPaymentUseCaseImpl implements ProcessPaymentUseCase {
     private final PaymentRepositoryPort paymentRepository;
     private final ExternalPaymentGatewayPort externalPaymentGateway;
     private final MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase;
+    private final PaymentApprovedEventPublisherPort paymentApprovedEventPublisher;
 
-    public ProcessPaymentUseCaseImpl(ExternalPaymentProcessor externalPaymentProcessor, PaymentRepositoryPort paymentRepository, ExternalPaymentGatewayPort externalPaymentGateway, MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase) {
+    public ProcessPaymentUseCaseImpl(ExternalPaymentProcessor externalPaymentProcessor, PaymentRepositoryPort paymentRepository, ExternalPaymentGatewayPort externalPaymentGateway, MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase, PaymentApprovedEventPublisherPort paymentApprovedEventPublisher) {
         this.externalPaymentProcessor = externalPaymentProcessor;
         this.paymentRepository = paymentRepository;
         this.externalPaymentGateway = externalPaymentGateway;
         this.markPaymentAsPaidUseCase = markPaymentAsPaidUseCase;
+        this.paymentApprovedEventPublisher = paymentApprovedEventPublisher;
     }
 
 
@@ -72,6 +76,16 @@ public class ProcessPaymentUseCaseImpl implements ProcessPaymentUseCase {
                     Instant.now(),
                     null,
                     null
+            );
+
+            paymentApprovedEventPublisher.publish(
+                    new PaymentApprovedEvent(
+                            UUID.randomUUID().toString(),
+                            "pagamento.aprovado",
+                            Instant.now(),
+                            payment.getId(),
+                            order.getId()
+                    )
             );
         }
     }
