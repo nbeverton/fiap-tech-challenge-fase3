@@ -24,4 +24,7 @@ public interface OrderRepositoryPort {
 
     // Listar por usuário
     List<Order> findByUserId(String userId);
+
+    //Listar todos restaurantes de um usuário
+    List<Order> findByRestaurantId(String restaurantId);
 }

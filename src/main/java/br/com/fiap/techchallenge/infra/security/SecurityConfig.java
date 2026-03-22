@@ -93,7 +93,8 @@ public class SecurityConfig {
 
                                 // ORDERS
                                 .requestMatchers(HttpMethod.POST, "/orders").hasRole("CLIENT")
-                                .requestMatchers(HttpMethod.GET, "/orders/me").hasRole("CLIENT")
+                                .requestMatchers(HttpMethod.GET, "/orders").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/orders/me").hasAnyRole("OWNER","ADMIN","CLIENT")
                                 .requestMatchers(HttpMethod.GET, "/orders/**").authenticated()
 
                                 // ORDERS -> STATUS

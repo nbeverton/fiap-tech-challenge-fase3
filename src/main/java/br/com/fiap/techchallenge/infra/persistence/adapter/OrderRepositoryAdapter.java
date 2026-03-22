@@ -1,6 +1,7 @@
 package br.com.fiap.techchallenge.infra.persistence.adapter;
 
 import br.com.fiap.techchallenge.core.domain.model.Order;
+import br.com.fiap.techchallenge.core.domain.model.Restaurant;
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.infra.persistence.documents.OrderDocument;
 import br.com.fiap.techchallenge.infra.persistence.mapper.order.OrderPersistenceMapper;
@@ -58,5 +59,14 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
                 .stream()
                 .map(OrderPersistenceMapper::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Order> findByRestaurantId(String restaurantId) {
+
+        return repository.findByRestaurantId(restaurantId)
+                .stream()
+                .map(OrderPersistenceMapper::toDomain)
+                .toList();
     }
 }

@@ -98,12 +98,9 @@ public class OrderController {
 
     // --- LIST BY CLIENT ---
     @GetMapping("/me")
-    public ResponseEntity<List<CreateOrderResponseDTO>> listMyOrders(
-            Authentication authentication) {
+    public ResponseEntity<List<CreateOrderResponseDTO>> listMyOrders(Authentication authentication) {
 
-        String clientId = authentication.getPrincipal().toString();
-
-        List<Order> orders = listOrdersByClientUseCase.execute(clientId);
+        List<Order> orders = listOrdersByClientUseCase.execute(authentication);
 
         List<CreateOrderResponseDTO> response = orders.stream()
                 .map(OrderResponseMapper::from)

@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface SpringOrderRepository
-        extends MongoRepository<OrderDocument, String> {
-                List<OrderDocument> findByUserId(String userId);
+public interface SpringOrderRepository extends MongoRepository<OrderDocument, String> {
+
+    List<OrderDocument> findByUserId(String userId);
+
+    List<OrderDocument> findByRestaurantId(String restaurantId);
 }

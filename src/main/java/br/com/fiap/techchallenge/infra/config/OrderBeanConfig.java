@@ -43,8 +43,8 @@ public class OrderBeanConfig {
     }
 
     @Bean
-    public ListOrdersUseCase listOrdersUseCase(OrderRepositoryPort orderRepositoryPort, RestaurantRepositoryPort restaurantRepositoryPort) {
-        return new ListOrdersUseCaseImpl(orderRepositoryPort, restaurantRepositoryPort);
+    public ListOrdersUseCase listOrdersUseCase(OrderRepositoryPort orderRepositoryPort) {
+        return new ListOrdersUseCaseImpl(orderRepositoryPort);
     }
 
     @Bean
@@ -113,7 +113,12 @@ public class OrderBeanConfig {
 
     @Bean
     public ListOrdersByUserUseCase listOrdersByClientUseCase(
-            OrderRepositoryPort orderRepositoryPort) {
-        return new ListOrdersByUserUseCaseImpl(orderRepositoryPort);
+            OrderRepositoryPort orderRepositoryPort,
+            RestaurantRepositoryPort restaurantRepositoryPort
+    ) {
+        return new ListOrdersByUserUseCaseImpl(
+                orderRepositoryPort,
+                restaurantRepositoryPort
+        );
     }
 }
