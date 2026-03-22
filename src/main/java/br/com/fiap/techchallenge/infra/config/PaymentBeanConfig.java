@@ -20,6 +20,7 @@ import br.com.fiap.techchallenge.core.usecase.in.payment.status.MarkPaymentAsRef
 import br.com.fiap.techchallenge.core.usecase.out.OrderRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.PaymentRepositoryPort;
 import br.com.fiap.techchallenge.core.usecase.out.RestaurantRepositoryPort;
+import br.com.fiap.techchallenge.core.usecase.out.event.PaymentApprovedEventPublisherPort;
 import br.com.fiap.techchallenge.core.usecase.out.external_payment.ExternalPaymentGatewayPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,9 +92,16 @@ public class PaymentBeanConfig {
             ExternalPaymentProcessor externalPaymentProcessor,
             PaymentRepositoryPort paymentRepositoryPort,
             ExternalPaymentGatewayPort externalPaymentGatewayPort,
-            MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase
+            MarkPaymentAsPaidUseCase markPaymentAsPaidUseCase,
+            PaymentApprovedEventPublisherPort paymentApprovedEventPublisherPort
     ){
-        return new ProcessPaymentUseCaseImpl(externalPaymentProcessor,paymentRepositoryPort,externalPaymentGatewayPort,markPaymentAsPaidUseCase);
+        return new ProcessPaymentUseCaseImpl(
+                externalPaymentProcessor,
+                paymentRepositoryPort,
+                externalPaymentGatewayPort,
+                markPaymentAsPaidUseCase,
+                paymentApprovedEventPublisherPort
+        );
     }
 
     @Bean
