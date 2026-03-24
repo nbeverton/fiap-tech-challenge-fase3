@@ -126,8 +126,6 @@ Users authenticate via **`POST /auth/login`** with login + password, receiving a
 
 The `GET /orders/me` endpoint is context-aware: CLIENTs see their own orders, OWNERs see orders placed at their restaurants.
 
-Full endpoint details are available via Swagger UI.
-
 ---
 
 ## 🔄 Main Flows
@@ -234,7 +232,6 @@ Detailed architecture documentation (C4 Model + diagrams + flows) is available a
 | Test Coverage | JaCoCo |
 | Containerization | Docker / Docker Compose |
 | Observability | Spring Actuator |
-| API Documentation | Springdoc OpenAPI (Swagger UI) |
 
 ---
 
