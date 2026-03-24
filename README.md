@@ -320,8 +320,7 @@ A Postman collection is also available in the repository root:
 
 ## 📺 Presentation
 
-You can see the project running here:
-https://www.youtube.com/watch?v=2OjX8FvAW1U
+You can see the project running here: https://www.youtube.com/watch?v=Va5EO5NqMoc
 
 ---
 
