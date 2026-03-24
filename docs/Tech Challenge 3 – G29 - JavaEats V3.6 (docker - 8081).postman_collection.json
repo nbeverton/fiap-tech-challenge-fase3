@@ -1,7 +1,7 @@
 {
   "info": {
-    "_postman_id": "961b5df1-cd06-4725-943b-42201e42ffdc",
-    "name": "Tech Challenge 3 – G2 - JavaEats V3.5 (docker - 8081)",
+    "_postman_id": "42a34591-7132-47cb-aa30-f021dc114a0c",
+    "name": "Tech Challenge 3 – G29 - JavaEats V3.6 (docker - 8081)",
     "description": "Coleção baseada nos controllers fornecidos:\n\n- Restaurant: /api/v1/restaurants\n    \n- Menu: /api/v1/restaurants/{restaurantId}/menus\n    \n- User: /users\n    \n- Address: /addresses\n    \n\nImportante: RestaurantDocument é persistência. O contrato real de POST/PUT é definido pelos DTOs (RestaurantRequest etc.).  \nOs bodies aqui são exemplos; ajuste conforme validações (@NotNull/@NotBlank) e estrutura do OpeningHours.\n\nFluxo feliz:\n\n1) Create User -> {{userId}}  \n2) Create Address -> {{addressId}}  \n3) Create Restaurant -> {{restaurantId}}  \n4) Create Menu -> {{menuId}}",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "28803614"
@@ -3107,12 +3107,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/orders",
+                  "raw": "{{baseUrl}}/orders/{{orderId}}",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
-                    "orders"
+                    "orders",
+                    "{{orderId}}"
                   ]
                 }
               },
@@ -3947,22 +3948,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "New Request",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "New Request",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
     }
   ],
   "auth": {
