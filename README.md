@@ -299,22 +299,12 @@ End-to-end testing of payment and messaging flows requires the full Docker Compo
 
 ---
 
-## 🌐 Application Access
-
-* API: http://localhost:8081
-* Health Check: http://localhost:8081/actuator/health
-* Swagger UI: http://localhost:8081/swagger-ui/index.html
-
----
-
 ## 📚 API Documentation
-
-Swagger UI allows exploring and testing all endpoints directly in the browser.
 
 A Postman collection is also available in the repository root:
 
-* **Collection:** `Tech Challenge 3 – G2 - JavaEats V3.5 (docker - 8081).postman_collection.json`
-* **Environment:** `Tech Challenge – JavaEats V3.5 (8081).postman_environment.json`
+* **Collection:** `Tech Challenge 3 – G29 - JavaEats V3.6 (docker - 8081).postman_collection.json`
+* **Environment:** `Tech Challenge – JavaEats V3.6 (8081).postman_environment.json`
 
 ---
 
@@ -328,7 +318,7 @@ You can see the project running here: https://www.youtube.com/watch?v=Va5EO5NqMo
 
 This project was developed for academic purposes, applying:
 
-* Clean Architecture
+* Clean / Hexagonal Architecture
 * REST standards
 * Event-driven design with Kafka
 * JWT authentication and role-based access control
